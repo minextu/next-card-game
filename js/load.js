@@ -24,4 +24,7 @@ function load_media()
 	
 	table_image = new Image();
 	table_image.src = "js/images/table.png";
+	
+	skip_image = new Image();
+	skip_image.src = "js/images/skip.png";
 }

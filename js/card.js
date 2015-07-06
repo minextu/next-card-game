@@ -1,11 +1,13 @@
-function Card(id, drawX, drawY, show, rotate)
+function Card(id, drawX, drawY, show, rotate, player_id)
 {
 	var symbols = ["heart", "diamond", "club", "spade"];
 	
 	this.show = show;
 	this.is_moving = false;
+	this.player_id = player_id;
 	this.drawX = drawX;
 	this.drawY = drawY;
+	this.error = false;
 	
 	this.rotate = rotate;
 	if (this.rotate == undefined)
@@ -36,41 +38,49 @@ function Card(id, drawX, drawY, show, rotate)
 	if (this.id >= 0 && this.id < 4)
 	{
 		this.name = "7";
+		this.num = 7;
 		this.symbol = symbols[this.id];
 	}
 	else if (this.id >= 4 && this.id < 8)
 	{
 		this.name = "8";
+			this.num = 8;
 		this.symbol = symbols[this.id - 4];
 	}
 	else if (this.id >= 8 && this.id < 12)
 	{
 		this.name = "9";
+		this.num = 9;
 		this.symbol = symbols[this.id - 8];
 	}
 	else if (this.id >= 12 && this.id < 16)
 	{
 		this.name = "10";
+		this.num = 10;
 		this.symbol = symbols[this.id - 12];
 	}
 	else if (this.id >= 16 && this.id < 20)
 	{
 		this.name = "jack";
+		this.num = 11;
 		this.symbol = symbols[this.id - 16];
 	}
 	else if (this.id >= 20 && this.id < 24)
 	{
 		this.name = "queen";
+		this.num = 12;
 		this.symbol = symbols[this.id - 20];
 	}
 	else if (this.id >= 24 && this.id < 28)
 	{
 		this.name = "king";
+		this.num = 13;
 		this.symbol = symbols[this.id - 24];
 	}
 	else if (this.id >= 28 && this.id < 32)
 	{
 		this.name = "ace";
+		this.num = 14;
 		this.symbol = symbols[this.id - 28];
 	}
 	
@@ -89,6 +99,7 @@ function Card(id, drawX, drawY, show, rotate)
 		this.symbol_srcX = 118;
 	
 	this.symbol_srcY = 0;
+	this.hide_old_cards = false;
 	
 }
 Card.prototype.draw = function()
@@ -112,7 +123,7 @@ Card.prototype.draw = function()
 			main_ctx.fillStyle = "black";
 		
 		if (highlight == this.name || mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1)
-			&& mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1) && !this.is_moving)
+			&& mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1) && !this.is_moving && player_turn == this.player_id && can_play)
 		{
 			main_ctx.globalAlpha = 0.3;
 			main_ctx.fillStyle = "red";
@@ -121,12 +132,32 @@ Card.prototype.draw = function()
 			
 			if (mouse_is_down)
 			{
-				this.play();
+				if (table_cards.length == 0 || table_cards[table_cards.length-1].num < this.num || table_cards[table_cards.length-1].done == true)
+				{
+					this.play();
+					mouse_is_down = false;
+				}
+				else
+					this.error = 50;
 			}
 		}
+		if (this.error !== false)
+		{
+			this.error -= (1).speed();
+			if (this.error <= 0)
+				this.error = false;
+			
+			
+			main_ctx.fillStyle = "red";
+			main_ctx.textBaseline = "middle";
+			main_ctx.textAlign = "center";
+			main_ctx.font = (50).ratio(0,1) + "px Arial";
+			main_ctx.fillText("X", (0).ratio(0,1), (0).ratio(1,1));
+		}
+		
 		main_ctx.textBaseline = "top";
 		main_ctx.textAlign = "left";
-		main_ctx.font = "10px Arial";
+		main_ctx.font = (15).ratio(0,1) + "px Arial";
 		main_ctx.fillText(this.name, -(this.width / 2 - 5).ratio(0,1), -(this.height / 2 - 5).ratio(1,1));
 		
 		if (this.is_moving)
@@ -145,8 +176,19 @@ Card.prototype.draw = function()
 			if (this.speed < 1)
 			{
 				this.is_moving = false;
-				this.disabled = true;
-				table_cards[table_cards.length] = new Card(this.id, this.drawX, this.drawY, true, this.rotate);
+				can_play = true;
+				
+				if (this.player_id !== false)
+				{
+					this.disabled = true;
+					table_cards[table_cards.length] = new Card(this.id, this.drawX, this.drawY, true, this.rotate, false);
+					table_cards[table_cards.length-1].from_player = this.player_id;
+					
+					players[this.player_id].updated_cards();
+					
+					if (this.hide_old_cards)
+						hide_cards();
+				}
 			}
 		}
 		
@@ -157,10 +199,47 @@ Card.prototype.draw = function()
 Card.prototype.play = function()
 {
 	this.is_moving = true;
+	can_play = false;
 	this.newDrawX = 0 - this.width;
 	this.newDrawY = original_height / 2 - this.height;
 	this.newRotate = Math.round(Math.random()*20);
 	this.show = true;
 	this.width = this.original_width;
 	this.height = this.original_height;
+	
+	if (this.id >= 28)
+	{
+		this.hide_old_cards = true;
+	}
+	else
+	{
+		for (var i = 0; i < player_num; i++)
+		{
+			if (player_turn < player_num - 1)
+				player_turn++;
+			else
+				player_turn = 0;
+			
+			if (skipped_players.indexOf(player_turn) == -1)
+				break;
+		}
+	}
 };
+
+function hide_cards()
+{
+	skipped_players = finished_players.slice();
+	var card = new Card(0,0,0, true);
+	for (var i = 0; i < table_cards.length; i++)
+	{
+		table_cards[i].is_moving = true;
+		table_cards[i].newDrawX = -table_width / 2;
+		table_cards[i].newDrawY = original_height / 2 - table_height / 2 + card.height;
+		table_cards[i].newRotate = 360;
+		table_cards[i].show = false;
+		table_cards[i].width = card.original_width / 2;
+		table_cards[i].height = card.original_height / 2;
+		table_cards[i].srcX = 0;
+		table_cards[i].done = true;
+	}
+}

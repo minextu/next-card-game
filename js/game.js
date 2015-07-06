@@ -13,6 +13,10 @@ function new_game()
 	table_cards = [];
 	player_num = 4;
 	players = [];
+	player_turn = 0;
+	skipped_players = [];
+	finished_players = [];
+	can_play = true;
 	
 	var test_player = new Player(0,0,0,0,true);
 	
@@ -30,7 +34,7 @@ function new_game()
 		if (i == 0)
 			var drawY = original_height / 2 + table_width / 2 + 20;
 		else if (i >= 1 && i <= 2)
-			var drawY = original_height / 2 - table_height / 2 + (i-1)*200 + 70;
+			var drawY = original_height / 2 - table_height / 2 + 200 - (i-1)*200 + 70;
 		else if (i >= 3 && i <= 4)
 			var drawY = original_height / 2 - table_height / 2 + (i-3)*200 + 70;
 		else
@@ -51,7 +55,7 @@ function new_game()
 		else
 			card_pos = "top";
 		
-		players[i] = new Player(drawX, drawY, show_cards, card_pos);
+		players[i] = new Player(drawX, drawY, show_cards, card_pos, false, i);
 	}
 	
 	camera = new Camera(true);
@@ -63,6 +67,12 @@ function game()
 		bg_ctx.drawImage(background_image, 0,0,original_width, original_height, 0,0, game_width, game_height);
 	
 	//camera.pre();
+	if (skipped_players.length == player_num - 1)
+	{
+		console.debug(skipped_players.length + " Players skipped the round");
+		hide_cards();
+		player_turn = table_cards[table_cards.length - 1].from_player;
+	}
 	
 	main_ctx.drawImage(table_image, game_width / 2 - (table_width / 2).ratio(0,1), game_height / 2 - (table_height / 2).ratio(1,1), table_width.ratio(0,1), table_height.ratio(1,1));
 	
