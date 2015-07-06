@@ -1,0 +1,10 @@
+{
+	"name": "Next Card Game",
+	"main": "index.html",
+	"window": 
+	{
+	    "title": "Next Card Game",
+		"toolbar": false,
+		"frame": true
+	}
+}

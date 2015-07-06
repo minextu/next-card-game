@@ -1,0 +1,26 @@
+@font-face{
+	font-family: Droid;
+	src: url("Droid.ttf");
+}
+
+html{
+	height: 100%;
+}
+
+body{
+	padding: 0px;
+	margin: 0px;
+	font-family: Droid;
+	height: 100%;
+	overflow: hidden;
+	background-size: 100px 100px;
+}
+
+canvas, .container {
+	margin: 0px;
+	padding: 0px;
+	top: 0px;
+	left: 0px;
+	position: absolute;
+	font-family: Droid;
+} 
