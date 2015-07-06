@@ -10,9 +10,18 @@ function load_media()
 	}
 	*/
 	
+	background_image = new Image();
+	background_image.src = "js/images/game_background.png";
+	
 	cards_image = new Image();
 	cards_image.src = "js/images/cards.png";
 	
 	suits_image = new Image();
 	suits_image.src = "js/images/suits.png";
+	
+	player_image = new Image();
+	player_image.src = "js/images/player.png";
+	
+	table_image = new Image();
+	table_image.src = "js/images/table.png";
 }

@@ -16,6 +16,7 @@ var this_fps_entry = 0;
 var loop_num = 0;
 var fps = "?";
 var this_fps = 60;
+var redraw_canvas = false;
 
 function loop()
 {

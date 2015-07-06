@@ -10,9 +10,9 @@ function init()
 	{
 		if (l == 0)
 		{
-			//n = Number(this) / original_width * game_width;
-			//if (ll != true)
-				n = Number(this) / original_height * game_height;
+			n = Number(this) / original_height * game_height;
+			if (ll != true)
+				n = Number(this) / original_height * game_height + game_width / 2;
 		}
 		else
 			n = Number(this) / original_height * game_height;
