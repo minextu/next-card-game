@@ -10,8 +10,8 @@ function mouse(type, e)
 		var e_x = e.pageX;
 		var e_y = e.pageY;
 
-		mouseX = e_x / (1).ratio(0); 
-		mouseY = e_y / (1).ratio(1);
+		mouseX = e_x;
+		mouseY = e_y;
 
 
 		if (type == "down")

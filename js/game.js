@@ -10,6 +10,7 @@ function new_game()
 	
 	available_cards = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
 	available_card_num = available_cards.length;
+	table_cards = [];
 	player_num = 4;
 	players = [];
 	
@@ -64,6 +65,12 @@ function game()
 	//camera.pre();
 	
 	main_ctx.drawImage(table_image, game_width / 2 - (table_width / 2).ratio(0,1), game_height / 2 - (table_height / 2).ratio(1,1), table_width.ratio(0,1), table_height.ratio(1,1));
+	
+	for (var i = 0; i < table_cards.length; i++)
+	{
+		table_cards[i].draw();
+	}
+	
 	for (var i = 0; i < players.length; i++)
 	{
 		players[i].draw();
