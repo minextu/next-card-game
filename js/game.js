@@ -3,7 +3,7 @@ table_height = 440;
 
 highlight = 0;
 
-function new_game()
+function new_game(num)
 {
 	is_menu = false;
 	game_type = "game";
@@ -12,7 +12,7 @@ function new_game()
 	available_card_num = available_cards.length;
 	cards_played = 0;
 	
-	player_num = 7;
+	player_num = num + 1;
 	players = [];
 	player_turn = 0;
 	skipped_players = [];
@@ -86,6 +86,11 @@ function game()
 	{
 		if (finished_players.length == player_num-1)
 		{
+			if (first_player_give < player_num -1)
+				first_player_give++;
+			else
+				first_player_give = 0;
+			
 			game_finished = true;
 			console.debug("game finished");
 			for (var i = 0; i < players.length; i++)

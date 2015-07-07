@@ -28,16 +28,26 @@ function menu()
 		{
 			case "main":
 				menu_buttons = {};
-				menu_buttons["Singleplayer"] = 'new_game()';
+				menu_buttons["Singleplayer"] = 'menu_place = "singleplayer";';
 				menu_buttons["Multiplayer"] = '';
-				menu_buttons["Optionen"] = "";
+				menu_buttons["Options"] = "";
 				menu_buttons["Credits"] = "";
-				menu_buttons["Beenden"] = 'try { gui.App.quit(); } catch(e) { alert("Du spielst in einem Browser, schließ den Tab einfach :D"); }';
+				menu_buttons["Exit"] = 'try { gui.App.quit(); } catch(e) { alert("You are playing in a Browser. Just close the tab ;)"); }';
+				break;
+			case "singleplayer":
+				menu_buttons = {};
+				menu_buttons["1 Enemy"] = 'new_game(1)';
+				menu_buttons["2 Enemies"] = 'new_game(2)';
+				menu_buttons["3 Enemies"] = 'new_game(3)';
+				menu_buttons["4 Enemies"] = 'new_game(4)';
+				menu_buttons["5 Enemies"] = 'new_game(5)';
+				menu_buttons["6 Enemies"] = 'new_game(6)';
+				menu_buttons["Back"] = 'menu_place = "main";';
 				break;
 			default:
 				menu_buttons ={};
-				menu_buttons["Fehler"] = "";
-				menu_buttons["Zur&uuml;ck zum Hauptmen&uuml;"] = 'menu_place = "main";';
+				menu_buttons["Error"] = "";
+				menu_buttons["Back to mainmenu"] = 'menu_place = "main";';
 				is_error = true;
 				break;
 		}
