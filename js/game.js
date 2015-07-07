@@ -120,7 +120,7 @@ function game()
 			//give_cards();
 		}
 		
-		if (skipped_players.length >= player_num - 1)
+		if (table_cards.length > 0 && skipped_players.length >= player_num - 1)
 		{
 			console.debug(skipped_players.length + " Players skipped the round");
 			hide_cards();
