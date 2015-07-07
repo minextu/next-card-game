@@ -325,11 +325,16 @@ Player.prototype.ai = function()
 		
 		if (this.played_card == false)
 		{
-			skipped_players[skipped_players.length] = this.key;
-			if (player_turn < player_num - 1)
-					player_turn++;
-			else
-				player_turn = 0;
+			this.played_card = true;
+			var timeout = Math.round(Math.random()*2000);
+			var player = this;
+			window.setTimeout(function() {
+				skipped_players[skipped_players.length] = player.key;
+				if (player_turn < player_num - 1)
+						player_turn++;
+				else
+					player_turn = 0;
+			}, timeout);
 		}
 	}
 }
