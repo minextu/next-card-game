@@ -32,7 +32,12 @@ function Card(id, drawX, drawY, show, rotate, player_id, key)
 	
 	this.srcWidth = 200;
 	this.srcHeight = 272;
-	this.srcX = 200;
+	
+	if (this.show)
+		this.srcX = 200;
+	else
+		this.srcX = 0;
+	
 	this.srcY = 0;
 	
 	this.id = id;
@@ -114,15 +119,17 @@ Card.prototype.draw = function()
 		// blank card
 		main_ctx.drawImage(cards_image, this.srcX, this.srcY, this.srcWidth, this.srcHeight, (-this.width / 2).ratio(0,1), (-this.height/ 2).ratio(1,1), this.width.ratio(0,1), (this.height).ratio(1,1));
 		
-		// suit / symbol
-		main_ctx.drawImage(suits_image, this.symbol_srcX, this.symbol_srcY, this.symbol_srcWidth, this.symbol_srcHeight, -(this.symbol_width / 2).ratio(0,1), -(this.symbol_height / 2).ratio(1,1), this.symbol_width.ratio(0,1), this.symbol_height.ratio(1,1));
-		
-		// name
-		if (this.symbol == "heart" || this.symbol == "diamond")
-			main_ctx.fillStyle = "#a31919";
-		else
-			main_ctx.fillStyle = "black";
-		
+		if (this.show)
+		{
+			// suit / symbol
+			main_ctx.drawImage(suits_image, this.symbol_srcX, this.symbol_srcY, this.symbol_srcWidth, this.symbol_srcHeight, -(this.symbol_width / 2).ratio(0,1), -(this.symbol_height / 2).ratio(1,1), this.symbol_width.ratio(0,1), this.symbol_height.ratio(1,1));
+			
+			// name
+			if (this.symbol == "heart" || this.symbol == "diamond")
+				main_ctx.fillStyle = "#a31919";
+			else
+				main_ctx.fillStyle = "black";
+		}
 		if (!this.is_moving && player_turn == this.player_id && can_play && (highlight == this.player_id + "" + this.key || mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1)))
 		{
 			main_ctx.globalAlpha = 0.3;
@@ -167,10 +174,14 @@ Card.prototype.draw = function()
 			main_ctx.fillText("X", (0).ratio(0,1), (0).ratio(1,1));
 		}
 		
-		main_ctx.textBaseline = "top";
-		main_ctx.textAlign = "left";
-		main_ctx.font = (15).ratio(0,1) + "px Arial";
-		main_ctx.fillText(this.name, -(this.width / 2 - 5).ratio(0,1), -(this.height / 2 - 5).ratio(1,1));
+		if (this.show)
+		{
+			//name
+			main_ctx.textBaseline = "top";
+			main_ctx.textAlign = "left";
+			main_ctx.font = (15).ratio(0,1) + "px Arial";
+			main_ctx.fillText(this.name, -(this.width / 2 - 5).ratio(0,1), -(this.height / 2 - 5).ratio(1,1));
+		}
 		
 		if (this.is_moving)
 		{
@@ -199,6 +210,7 @@ Card.prototype.draw = function()
 				
 				if (this.player_id !== false && this.moving_action !== "fix")
 				{
+					players[this.player_id].played_card = false;
 					this.disabled = true;
 					table_cards[table_cards.length] = new Card(this.id, this.drawX, this.drawY, true, this.rotate, false);
 					table_cards[table_cards.length-1].from_player = this.player_id;
@@ -206,7 +218,7 @@ Card.prototype.draw = function()
 					var no_update = false;
 					for (var i = 0; i < players[this.player_id].cards.length; i++)
 					{
-						if (players[this.player_id].cards[i].is_moving)
+						if (players[this.player_id].cards[i].is_moving && players[this.player_id].cards[i].moving_action != "fix")
 							no_update = true;
 					}
 					if (no_update == false)
@@ -231,9 +243,19 @@ Card.prototype.draw = function()
 	}
 };
 
-Card.prototype.play = function(no_new_turn, offsetX)
-{
-	if (table_cards.length == 0 || table_cards[table_cards.length-1].done == true)
+Card.prototype.play = function(no_new_turn, offsetX, is_ai)
+{	
+	if (is_ai === true)
+	{
+		var card = this;
+		var timeout = Math.round(Math.random()*2000);
+		window.setTimeout(function() { card.play(no_new_turn, offsetX, false) }, timeout);
+		return false;
+	}
+	
+	players[this.player_id].played_card = false;
+	
+	if (is_ai != "2" && (table_cards.length == 0 || table_cards[table_cards.length-1].done == true))
 		cards_played++;
 	
 	if (offsetX == undefined)
@@ -255,6 +277,8 @@ Card.prototype.play = function(no_new_turn, offsetX)
 	this.show = true;
 	this.width = this.original_width;
 	this.height = this.original_height;
+	this.srcX = 200;
+	this.show = true;
 	
 	if (this.id >= 28)
 	{

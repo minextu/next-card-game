@@ -60,7 +60,7 @@ function menu()
 			if (menu_buttons[index] != "")
 				buttons += menu_buttons[index];
 			else
-				buttons += 'alert("Noch nicht vorhanden...")';
+				buttons += 'alert("In Development...")';
 		
 			buttons += "'>" + index + "</a></li>";
 		}

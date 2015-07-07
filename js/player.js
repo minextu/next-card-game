@@ -23,6 +23,12 @@ function Player(drawX, drawY, show_cards, card_pos, no_cards, key)
 		
 	this.cards = [];
 	
+	if (this.key != 0)
+		this.enable_ai = true;
+	else
+		this.enable_ai = false;
+	this.played_card = false;
+	
 	/*if (key == 0)
 		this.win_cards = 2;
 	else if (key == 1)
@@ -50,6 +56,9 @@ function Player(drawX, drawY, show_cards, card_pos, no_cards, key)
 
 Player.prototype.draw = function()
 {
+	if (this.enable_ai && player_turn == this.key && can_play)
+		this.ai();
+	
 	main_ctx.save();
 	main_ctx.translate(this.drawX.ratio(0) + (this.width/2).ratio(0,1), this.drawY.ratio(1) + (this.height/2).ratio(1,1));
 	main_ctx.rotate(this.rotate*Math.PI / 180);
@@ -95,7 +104,7 @@ Player.prototype.draw = function()
 	
 	if (player_turn == this.key && can_play)
 		main_ctx.drawImage(arrow_image, this.drawX.ratio(0) + (this.width / 2 - 50 / 2).ratio(0,1), this.drawY.ratio(1), (50).ratio(0,1), (50).ratio(1,1));
-	if (player_turn == this.key && table_cards.length != 0 && table_cards[table_cards.length-1].done != true && can_play)
+	if (player_turn == this.key && table_cards.length != 0 && table_cards[table_cards.length-1].done != true && can_play && this.key == 0)
 	{
 		var skipX = this.drawX;
 		var skipY = this.drawY;
@@ -136,7 +145,10 @@ Player.prototype.updated_cards = function()
 		}
 	}
 	
-	this.cards.sort(compare_card);
+	if (this.enable_ai)
+		this.cards.sort(compare_card_ai);
+	else
+		this.cards.sort(compare_card);
 	
 	var card_num = this.cards.length;
 	
@@ -273,11 +285,69 @@ Player.prototype.updated_cards = function()
 	}
 };
 
+Player.prototype.ai = function()
+{
+	if (this.played_card == false)
+	{
+		for (var i = 0; i < this.cards.length; i++)
+		{
+			if (table_cards.length == 0)
+			{
+				if (this.cards[i].num == 7)
+				{
+					this.cards[i].play(false, 0, true);
+					this.played_card = true;
+					break;
+				}
+			}
+			else if (table_cards[table_cards.length-1].done == true)
+			{
+				this.cards[i].play(false, 0, true);
+				this.played_card = true;
+				break;
+			}
+			else if (table_cards[table_cards.length-1].num < this.cards[i].num)
+			{
+				var current_played = 0;
+				for (var ii = 0; ii < 4; ii++)
+				{
+					if (this.cards[i+ii] != undefined && this.cards[i+ii].num == this.cards[i].num)
+						current_played++;
+				}
+				if (current_played == cards_played)
+				{
+					this.cards[i].play(false, 0, true);
+					this.played_card = true;
+					break;
+				}
+			}
+		}
+		
+		if (this.played_card == false)
+		{
+			skipped_players[skipped_players.length] = this.key;
+			if (player_turn < player_num - 1)
+					player_turn++;
+			else
+				player_turn = 0;
+		}
+	}
+}
+
 function compare_card(a,b) 
 {
 	if (a.num > b.num)
 		return -1;
 	if (a.num < b.num)
+		return 1;
+	return 0;
+}
+
+function compare_card_ai(a,b) 
+{
+	if (a.num < b.num)
+		return -1;
+	if (a.num > b.num)
 		return 1;
 	return 0;
 }

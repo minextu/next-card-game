@@ -101,7 +101,7 @@ function game()
 					for (var ii = 0; ii < players[i].cards.length; ii++)
 					{
 						console.debug("playing card");
-						players[i].cards[ii].play(true);
+						players[i].cards[ii].play(true, -200 + 100*ii);
 					}
 				}
 			}
@@ -119,7 +119,7 @@ function game()
 			//give_cards();
 		}
 		
-		if (skipped_players.length == player_num - 1)
+		if (skipped_players.length >= player_num - 1)
 		{
 			console.debug(skipped_players.length + " Players skipped the round");
 			hide_cards();
@@ -228,6 +228,7 @@ function handle_card_switch()
 	if (card_players["win2"] != undefined && card_players["give2"] != undefined)
 	{
 		console.debug("switch cards");
+		card_players["win2"].cards.sort(compare_card);
 		card1 = card_players["win2"].cards[card_players["win2"].cards.length-1];
 		card2 = card_players["win2"].cards[card_players["win2"].cards.length-2];
 		card1.disabled = true;
@@ -242,6 +243,7 @@ function handle_card_switch()
 		if (card2.id == 0)
 			player_turn = card_players["give2"].key;
 		
+		card_players["give2"].cards.sort(compare_card);
 		card1 = card_players["give2"].cards[0];
 		card2 = card_players["give2"].cards[1];
 		card1.disabled = true;
@@ -261,6 +263,7 @@ function handle_card_switch()
 		
 		if (card_players["win1"] != undefined && card_players["give1"] != undefined)
 		{
+			card_players["win1"].cards.sort(compare_card);
 			card1 = card_players["win1"].cards[card_players["win1"].cards.length-1];
 			card1.disabled = true;
 			
@@ -268,6 +271,7 @@ function handle_card_switch()
 			if (card1.id == 0)
 				player_turn = card_players["give1"].key;
 			
+			card_players["give1"].cards.sort(compare_card);
 			card1 = card_players["give1"].cards[0];
 			card1.disabled = true;
 			
