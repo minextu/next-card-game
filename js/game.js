@@ -111,7 +111,6 @@ function game()
 				give_cards();
 				finished_players = [];
 				skipped_players = [];
-				game_finished = false;
 				can_play = false;
 			}, 2000);
 			
@@ -294,5 +293,9 @@ function handle_card_switch()
 	}
 	else
 		console.debug("No cards to switch!")
-	can_play = true;	
+
+	finished_players = [];
+	skipped_players = [];
+	game_finished = false;
+	can_play = true;
 }
