@@ -122,11 +122,6 @@ Player.prototype.draw = function()
 			if (mouse_is_down)
 			{
 				skipped_players[skipped_players.length] = this.key;
-				if (player_turn < player_num - 1)
-					player_turn++;
-				else
-					player_turn = 0;
-				
 				mouse_is_down = false;
 			}
 		}
@@ -335,10 +330,6 @@ Player.prototype.ai = function()
 			var player = this;
 			window.setTimeout(function() {
 				skipped_players[skipped_players.length] = player.key;
-				if (player_turn < player_num - 1)
-						player_turn++;
-				else
-					player_turn = 0;
 			}, timeout);
 		}
 	}
