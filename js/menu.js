@@ -33,7 +33,7 @@ function menu()
 			case "main":
 				menu_buttons = {};
 				menu_buttons["Singleplayer"] = 'menu_place = "singleplayer";';
-				menu_buttons["Multiplayer"] = '';
+				menu_buttons["Multiplayer"] = 'is_menu = false; game_type = "multiplayer_table"';
 				menu_buttons["Options"] = "";
 				menu_buttons["Credits"] = "";
 				menu_buttons["Exit"] = 'try { gui.App.quit(); } catch(e) { alert("You are playing in a Browser. Just close the tab ;)"); }';

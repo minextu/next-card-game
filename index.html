@@ -4,6 +4,7 @@
 	<title>Next card game</title>
 	<link rel="stylesheet" href="css/main.css" type="text/css">
 	<link rel="stylesheet" href="css/menu.css" type="text/css">
+	<link rel="stylesheet" href="css/multiplayer.css" type="text/css">
 </head>
 <body>
 	<div id='game_object'></div>
@@ -19,12 +20,28 @@
 	<span id="speed" class='container'>
 			<button style='display: block' id='slow' onclick='ai_speed=0; this.style.display = "none"; document.getElementById("fast").style.display = "block"'>AI: Slow</button>
 			<button style='display: none' id='fast' onclick='ai_speed="auto"; this.style.display = "none"; document.getElementById("slow").style.display = "block"'>AI: Fast</button>
-		</span>
+	</span>
+	
+	<div id='multiplayer_table' class='container'>
+		<table>
+			<tr>
+				<th>Name</th>
+				<th>Players</th>
+				<th>Join</th>
+			</tr>
+			<tr>
+				<td>Test</td>
+				<td>?</td>
+				<td><button onclick='new_game(0, "multiplayer")'>Join</button></td>
+			</tr>
+		</table>
+	</div>
 
 
 	<script type='text/javascript' src='js/camera.js'></script>
 	<script type='text/javascript' src='js/player.js'></script>
 	<script type='text/javascript' src='js/card.js'></script>
+	<script type='text/javascript' src='js/multiplayer.js'></script>
 	
 	<script type='text/javascript' src='js/game.js'></script>
 	<script type='text/javascript' src='js/menu.js'></script>

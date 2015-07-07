@@ -1,0 +1,20 @@
+#multiplayer_table
+{
+	width: 100%;
+	margin-top: 100px;
+	display: none;
+}
+
+#multiplayer_table table
+{
+	width: 100%;
+	border-top: 1px solid rgba(0,0,0,0.1);
+	border-left: 1px solid rgba(0,0,0,0.1);
+	font-size: 14px;
+}
+#multiplayer_table table td, #multiplayer_table table th
+{
+	border-right: 1px solid rgba(0,0,0,0.1);
+	border-bottom: 1px solid rgba(0,0,0,0.1);
+	text-align: center;
+}
