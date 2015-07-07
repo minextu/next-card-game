@@ -6,6 +6,7 @@ function Player(drawX, drawY, show_cards, card_pos, no_cards, key)
 	this.height = 100;
 	this.key = key;
 	this.text = "";
+	this.selected_cards = 0;
 	
 	this.show_cards = show_cards;
 	this.card_pos = card_pos;
@@ -34,7 +35,7 @@ function Player(drawX, drawY, show_cards, card_pos, no_cards, key)
 				var drawY = this.drawY + this.height / 2 - test_card.height / 2;
 			
 			var card_key = Math.round(Math.random()*(available_cards.length - 1));
-			this.cards[i] = new Card(available_cards[card_key], drawX, drawY, show_cards, 0, this.key);
+			this.cards[i] = new Card(available_cards[card_key], drawX, drawY, show_cards, 0, this.key, i);
 			available_cards.splice(card_key, 1);
 		}
 		this.updated_cards();
@@ -121,16 +122,14 @@ Player.prototype.draw = function()
 
 Player.prototype.updated_cards = function()
 {
-	this.unused_cards = new Array();
 	for (var i = 0; i < this.cards.length; i++)
 	{
 		if (this.cards[i].disabled === true)
-			this.unused_cards[this.unused_cards.length] = i;
-	}
-	
-	for (var i = 0; i < this.unused_cards.length;i++)
-	{
-		this.cards.splice(this.unused_cards[i], 1);
+		{
+			this.cards.splice(i, 1);
+			i = -1;
+			continue;
+		}
 	}
 	
 	this.cards.sort(compare_card);
@@ -157,6 +156,7 @@ Player.prototype.updated_cards = function()
 		
 		this.cards[i].drawX = drawX;
 		this.cards[i].drawY = drawY;
+		this.cards[i].key = i;
 	}
 	
 	if (this.cards.length <= 0)
@@ -244,9 +244,9 @@ Player.prototype.updated_cards = function()
 
 function compare_card(a,b) 
 {
-	if (a.num < b.num)
-		return -1;
 	if (a.num > b.num)
+		return -1;
+	if (a.num < b.num)
 		return 1;
 	return 0;
 }

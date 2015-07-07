@@ -1,4 +1,4 @@
-function Card(id, drawX, drawY, show, rotate, player_id)
+function Card(id, drawX, drawY, show, rotate, player_id, key)
 {
 	var symbols = ["heart", "diamond", "club", "spade"];
 	
@@ -8,6 +8,7 @@ function Card(id, drawX, drawY, show, rotate, player_id)
 	this.drawX = drawX;
 	this.drawY = drawY;
 	this.error = false;
+	this.key = key;
 	
 	this.rotate = rotate;
 	if (this.rotate == undefined)
@@ -122,7 +123,7 @@ Card.prototype.draw = function()
 		else
 			main_ctx.fillStyle = "black";
 		
-		if (highlight == this.name || mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1)
+		if (highlight == this.player_id + "" + this.key || mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1)
 			&& mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1) && !this.is_moving && player_turn == this.player_id && can_play)
 		{
 			main_ctx.globalAlpha = 0.3;
@@ -132,13 +133,26 @@ Card.prototype.draw = function()
 			
 			if (mouse_is_down)
 			{
-				if (table_cards.length == 0 || table_cards[table_cards.length-1].num < this.num || table_cards[table_cards.length-1].done == true)
+				if (table_cards.length == 0 || table_cards[table_cards.length-1].done == true)
+					this.play();
+				else if (table_cards[table_cards.length-1].num < this.num && players[this.player_id].selected_cards == cards_played)
 					this.play();
 				else
 					this.error = 50;
 				
 				mouse_is_down = false;
 			}
+			
+			if (highlight == "" && players[this.player_id] != undefined)
+				players[this.player_id].selected_cards = 1;
+			
+			if (players[this.player_id] != undefined && players[this.player_id].cards[this.key+1] != undefined && players[this.player_id].cards[this.key+1].num == this.num)
+			{
+				players[this.player_id].selected_cards++;
+				highlight = this.player_id + "" + (this.key+1);
+			}
+			else
+				highlight = "";
 		}
 		if (this.error !== false)
 		{
@@ -175,18 +189,27 @@ Card.prototype.draw = function()
 			if (this.speed < 1)
 			{
 				this.is_moving = false;
-				can_play = true;
 				
 				if (this.player_id !== false)
-				{
+				{					
 					this.disabled = true;
 					table_cards[table_cards.length] = new Card(this.id, this.drawX, this.drawY, true, this.rotate, false);
 					table_cards[table_cards.length-1].from_player = this.player_id;
 					
-					players[this.player_id].updated_cards();
-					
-					if (this.hide_old_cards)
-						hide_cards();
+					var no_update = false;
+					for (var i = 0; i < players[this.player_id].cards.length; i++)
+					{
+						if (players[this.player_id].cards[i].is_moving)
+							no_update = true;
+					}
+					if (no_update == false)
+					{
+						var player_id = this.player_id;
+						players[this.player_id].updated_cards();
+						can_play = true;
+						if (this.hide_old_cards)
+							hide_cards();
+					}
 				}
 			}
 		}
@@ -195,11 +218,24 @@ Card.prototype.draw = function()
 	}
 };
 
-Card.prototype.play = function()
+Card.prototype.play = function(no_new_turn, offsetX)
 {
+	if (table_cards.length == 0 || table_cards[table_cards.length-1].done == true)
+		cards_played++;
+	
+	if (offsetX == undefined)
+		offsetX = 0;
+	
+	if (players[this.player_id].cards[this.key+1] != undefined && players[this.player_id].cards[this.key+1].num == this.num)
+	{
+		if (offsetX == 0)
+			offsetX-= 99;
+		players[this.player_id].cards[this.key+1].play(true, offsetX+100);
+	}
+	
 	this.is_moving = true;
 	can_play = false;
-	this.newDrawX = 0 - this.width;
+	this.newDrawX = 0 - this.width + offsetX;
 	this.newDrawY = original_height / 2 - this.height;
 	this.newRotate = Math.round(Math.random()*20);
 	this.show = true;
@@ -210,7 +246,7 @@ Card.prototype.play = function()
 	{
 		this.hide_old_cards = true;
 	}
-	else
+	else if (no_new_turn !== true)
 	{
 		for (var i = 0; i < player_num; i++)
 		{
@@ -228,6 +264,7 @@ Card.prototype.play = function()
 function hide_cards()
 {
 	skipped_players = finished_players.slice();
+	cards_played = 0;
 	var card = new Card(0,0,0, true);
 	for (var i = 0; i < table_cards.length; i++)
 	{
