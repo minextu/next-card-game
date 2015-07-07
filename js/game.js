@@ -111,6 +111,7 @@ function game()
 				finished_players = [];
 				skipped_players = [];
 				game_finished = false;
+				can_play = false;
 			}, 2000);
 			
 			
@@ -164,6 +165,8 @@ function game()
 
 function give_cards(player_id)
 {
+	can_play = false;
+	
 	if (player_id == undefined)
 		player_id = first_player_give;
 	
@@ -222,7 +225,7 @@ function handle_card_switch()
 			card_players["give2"] = players[i];
 	}
 	
-	if (card_players["win2"] != undefined && card_players["win1"] != undefined)
+	if (card_players["win2"] != undefined && card_players["give2"] != undefined)
 	{
 		console.debug("switch cards");
 		card1 = card_players["win2"].cards[card_players["win2"].cards.length-1];
