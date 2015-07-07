@@ -8,10 +8,14 @@ function show_hide_menu(type)
 		bg_canvas.style.background = "url('css/images/menu_background.png')";
 		main_canvas.style.background = "none";
 		menu_nav.style.visibility = "visible";
+		document.getElementById("speed").style.display = "none";
 		console.debug("show menu");
 	}
 	else
+	{
 		menu_nav.style.visibility = "hidden";
+		document.getElementById("speed").style.display = "block";
+	}
 }
 
 try{gui = require('nw.gui');}catch(e){}

@@ -28,6 +28,7 @@ function Player(drawX, drawY, show_cards, card_pos, no_cards, key)
 	else
 		this.enable_ai = false;
 	this.played_card = false;
+	this.skipped = false;
 	
 	/*if (key == 0)
 		this.win_cards = 2;
@@ -287,7 +288,7 @@ Player.prototype.updated_cards = function()
 
 Player.prototype.ai = function()
 {
-	if (this.played_card == false)
+	if (this.played_card == false && this.skipped == false)
 	{
 		for (var i = 0; i < this.cards.length; i++)
 		{
@@ -325,8 +326,12 @@ Player.prototype.ai = function()
 		
 		if (this.played_card == false)
 		{
-			this.played_card = true;
-			var timeout = Math.round(Math.random()*2000);
+			this.skipped = true;
+			console.debug("Player " + this.key + " will skip")
+			if (ai_speed == "auto")
+				var timeout = Math.round(Math.random()*2000);
+			else
+				var timeout = ai_speed;
 			var player = this;
 			window.setTimeout(function() {
 				skipped_players[skipped_players.length] = player.key;

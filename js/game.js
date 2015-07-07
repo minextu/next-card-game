@@ -20,6 +20,7 @@ function new_game(num)
 	can_play = false;
 	first_player_give = 0;
 	game_finished = false;
+	ai_speed = "auto";
 	
 	table_cards = [];
 	for (var i = 0; i < available_cards.length; i++)
@@ -131,6 +132,14 @@ function game()
 			if (skipped_players.indexOf(player_turn) === -1)
 				skipped_players[skipped_players.length] = player_turn;
 			
+			if (player_turn < player_num - 1)
+				player_turn++;
+			else
+				player_turn = 0;
+		}
+		
+		if (skipped_players.indexOf(player_turn) !== -1)
+		{
 			if (player_turn < player_num - 1)
 				player_turn++;
 			else

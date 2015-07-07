@@ -15,6 +15,11 @@
 			</ul>
 		</nav><!-- end: main-menu-id -->
 	</div>
+	
+	<span id="speed" class='container'>
+			<button style='display: block' id='slow' onclick='ai_speed=0; this.style.display = "none"; document.getElementById("fast").style.display = "block"'>AI: Slow</button>
+			<button style='display: none' id='fast' onclick='ai_speed="auto"; this.style.display = "none"; document.getElementById("slow").style.display = "block"'>AI: Fast</button>
+		</span>
 
 
 	<script type='text/javascript' src='js/camera.js'></script>

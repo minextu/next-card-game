@@ -248,7 +248,11 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai)
 	if (is_ai === true)
 	{
 		var card = this;
-		var timeout = Math.round(Math.random()*2000);
+		if (ai_speed == "auto")
+			var timeout = Math.round(Math.random()*2000);
+		else
+			var timeout = ai_speed;
+		
 		window.setTimeout(function() { card.play(no_new_turn, offsetX, false) }, timeout);
 		return false;
 	}
@@ -320,4 +324,10 @@ function hide_cards()
 		table_cards[i].srcX = 0;
 		table_cards[i].done = true;
 	}
+	
+	for (var i = 0; i < players.length; i++)
+	{
+		players[i].skipped = false;
+	}
+	
 }
