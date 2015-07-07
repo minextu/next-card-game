@@ -81,8 +81,6 @@ function loop()
 	main_ctx.textBaseline = "bottom";
 	main_ctx.textAlign = "left";
 	main_ctx.fillText("FPS: " + fps, 0, game_height);
-  
-	mouse_is_down = false;
 	
 	/* END */
 	loop_num++;

@@ -133,12 +133,11 @@ Card.prototype.draw = function()
 			if (mouse_is_down)
 			{
 				if (table_cards.length == 0 || table_cards[table_cards.length-1].num < this.num || table_cards[table_cards.length-1].done == true)
-				{
 					this.play();
-					mouse_is_down = false;
-				}
 				else
 					this.error = 50;
+				
+				mouse_is_down = false;
 			}
 		}
 		if (this.error !== false)
@@ -167,11 +166,11 @@ Card.prototype.draw = function()
 			
 			this.speed = (Math.abs(this.diffX) + Math.abs(this.diffY)) / 20;
 			this.angle = Math.atan2(this.diffY, this.diffX);
-			this.drawX += Math.cos(this.angle) * this.speed;
-			this.drawY += Math.sin(this.angle) * this.speed;
+			this.drawX += Math.cos(this.angle) * this.speed.speed();
+			this.drawY += Math.sin(this.angle) * this.speed.speed();
 			
 			this.rotateSpeed = (this.newRotate - this.rotate) / 100;
-			this.rotate += this.rotateSpeed;
+			this.rotate += this.rotateSpeed.speed();
 			
 			if (this.speed < 1)
 			{

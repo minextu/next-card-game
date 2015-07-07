@@ -111,6 +111,8 @@ Player.prototype.draw = function()
 					player_turn++;
 				else
 					player_turn = 0;
+				
+				mouse_is_down = false;
 			}
 		}
 		main_ctx.drawImage(skip_image, (skipX).ratio(0), (skipY).ratio(1), (skipWidth).ratio(0,1),(skipHeight).ratio(1,1));

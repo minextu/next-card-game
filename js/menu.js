@@ -28,17 +28,11 @@ function menu()
 		{
 			case "main":
 				menu_buttons = {};
-				menu_buttons["Spiel starten"] = 'menu_place = "start_game";';
+				menu_buttons["Singleplayer"] = 'new_game()';
+				menu_buttons["Multiplayer"] = '';
 				menu_buttons["Optionen"] = "";
 				menu_buttons["Credits"] = "";
 				menu_buttons["Beenden"] = 'try { gui.App.quit(); } catch(e) { alert("Du spielst in einem Browser, schließ den Tab einfach :D"); }';
-				break;
-			case "start_game":
-				menu_buttons = {};
-				menu_buttons["Fortsetzen"] = "";
-				menu_buttons["Neues Spiel"] = "new_game();";
-				menu_buttons["Editor"] = "start_editor();";
-				menu_buttons["Zur&uuml;ck"] = 'menu_place = "main";';
 				break;
 			default:
 				menu_buttons ={};

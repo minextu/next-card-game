@@ -74,6 +74,15 @@ function game()
 		player_turn = table_cards[table_cards.length - 1].from_player;
 	}
 	
+	if (finished_players.indexOf(player_turn) !== -1)
+	{
+		skipped_players[skipped_players.length] = player_turn;
+		if (player_turn < player_num - 1)
+			player_turn++;
+		else
+			player_turn = 0;
+	}
+	
 	main_ctx.drawImage(table_image, game_width / 2 - (table_width / 2).ratio(0,1), game_height / 2 - (table_height / 2).ratio(1,1), table_width.ratio(0,1), table_height.ratio(1,1));
 	
 	for (var i = 0; i < table_cards.length; i++)
