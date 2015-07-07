@@ -123,8 +123,7 @@ Card.prototype.draw = function()
 		else
 			main_ctx.fillStyle = "black";
 		
-		if (highlight == this.player_id + "" + this.key || mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1)
-			&& mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1) && !this.is_moving && player_turn == this.player_id && can_play)
+		if (!this.is_moving && player_turn == this.player_id && can_play && (highlight == this.player_id + "" + this.key || mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1)))
 		{
 			main_ctx.globalAlpha = 0.3;
 			main_ctx.fillStyle = "red";
@@ -133,9 +132,9 @@ Card.prototype.draw = function()
 			
 			if (mouse_is_down)
 			{
-				if (table_cards.length == 0 || table_cards[table_cards.length-1].done == true)
+				if (table_cards.length == 0 && this.num == 7 || table_cards.length > 0 && table_cards[table_cards.length-1].done == true)
 					this.play();
-				else if (table_cards[table_cards.length-1].num < this.num && players[this.player_id].selected_cards == cards_played)
+				else if (table_cards.length > 0 && table_cards[table_cards.length-1].num < this.num && players[this.player_id].selected_cards == cards_played)
 					this.play();
 				else
 					this.error = 50;
@@ -175,8 +174,16 @@ Card.prototype.draw = function()
 		
 		if (this.is_moving)
 		{
-			this.diffX = this.newDrawX  - this.drawX + this.width / 2;
-			this.diffY = this.newDrawY - this.drawY + this.height / 2;
+			if (this.moving_action == "fix")
+			{
+				this.diffX = this.newDrawX  - this.drawX;
+				this.diffY = this.newDrawY - this.drawY;
+			}
+			else
+			{
+				this.diffX = this.newDrawX  - this.drawX + this.width / 2;
+				this.diffY = this.newDrawY - this.drawY + this.height / 2;
+			}
 			
 			this.speed = (Math.abs(this.diffX) + Math.abs(this.diffY)) / 20;
 			this.angle = Math.atan2(this.diffY, this.diffX);
@@ -186,12 +193,12 @@ Card.prototype.draw = function()
 			this.rotateSpeed = (this.newRotate - this.rotate) / 100;
 			this.rotate += this.rotateSpeed.speed();
 			
-			if (this.speed < 1)
+			if (this.speed < 1 && this.moving_action !== "fix" || this.speed <= 0.1)
 			{
 				this.is_moving = false;
 				
-				if (this.player_id !== false)
-				{					
+				if (this.player_id !== false && this.moving_action !== "fix")
+				{
 					this.disabled = true;
 					table_cards[table_cards.length] = new Card(this.id, this.drawX, this.drawY, true, this.rotate, false);
 					table_cards[table_cards.length-1].from_player = this.player_id;
@@ -210,6 +217,12 @@ Card.prototype.draw = function()
 						if (this.hide_old_cards)
 							hide_cards();
 					}
+				}
+				else if (this.moving_action == "fix")
+				{
+					this.drawX = this.newDrawX;
+					this.drawY = this.newDrawY;
+					this.rotate = this.newRotate;
 				}
 			}
 		}
@@ -234,6 +247,7 @@ Card.prototype.play = function(no_new_turn, offsetX)
 	}
 	
 	this.is_moving = true;
+	this.moving_action = false;
 	can_play = false;
 	this.newDrawX = 0 - this.width + offsetX;
 	this.newDrawY = original_height / 2 - this.height;
@@ -263,7 +277,11 @@ Card.prototype.play = function(no_new_turn, offsetX)
 
 function hide_cards()
 {
-	skipped_players = finished_players.slice();
+	skipped_players = [];
+	skipped_players = [];
+	
+	console.debug("new Round!");
+	
 	cards_played = 0;
 	var card = new Card(0,0,0, true);
 	for (var i = 0; i < table_cards.length; i++)

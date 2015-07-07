@@ -27,4 +27,7 @@ function load_media()
 	
 	skip_image = new Image();
 	skip_image.src = "js/images/skip.png";
+	
+	arrow_image = new Image();
+	arrow_image.src = "js/images/arrow_down.png";
 }
