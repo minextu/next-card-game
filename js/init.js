@@ -57,14 +57,14 @@ function init()
 					window.clearTimeout(cancel);
 				};
 	})();
-  
+	
 	loop_timeout = undefined;
 	is_playing = false;
-	is_menu = true;
 	old_is_menu = false;
 	game_type = "menu";
 	old_game_type = game_type;
 	is_debug = true;
+	is_menu = true;
   
 	init_mouse();
 	load_media();

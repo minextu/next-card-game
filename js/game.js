@@ -3,8 +3,12 @@ table_height = 440;
 
 highlight = 0;
 
-function new_game(num)
+function new_game(num, type)
 {
+	if (type == "multiplayer")
+		is_multiplayer = true;
+	else
+		is_multiplayer = false;
 	is_menu = false;
 	game_type = "game";
 	
@@ -21,6 +25,9 @@ function new_game(num)
 	first_player_give = 0;
 	game_finished = false;
 	ai_speed = "auto";
+	
+	window.clearTimeout(switch_timeout);
+	window.clearTimeout(give_timeout);
 	
 	table_cards = [];
 	for (var i = 0; i < available_cards.length; i++)
@@ -171,6 +178,9 @@ function game()
 	//camera.post();
 }
 
+var give_timeout;
+var switch_timeout;
+
 function give_cards(player_id)
 {
 	can_play = false;
@@ -198,6 +208,10 @@ function give_cards(player_id)
 		var drawY = player.drawY + player.height / 2 - test_card.height / 2;
 			
 	var card_key = Math.round(Math.random()*(table_cards.length - 1));
+	
+	if (card_key < 0)
+		console.warn("Unknown Cardkey: " + card_key);
+	
 	player.cards[player.cards.length] = new Card(table_cards[card_key].id, table_cards[card_key].drawX, table_cards[card_key].drawY, player.show_cards, 0, player.key, player.cards.length);
 	
 	if (table_cards[card_key].id == 0)
@@ -212,10 +226,10 @@ function give_cards(player_id)
 			var new_id = player_id + 1;
 		else
 			var new_id = 0;
-		window.setTimeout(function() { give_cards(new_id) }, 100);
+		give_timeout = window.setTimeout(function() { give_cards(new_id) }, 100);
 	}
 	else
-		window.setTimeout(function() { handle_card_switch() }, 2000);
+		switch_timeout = window.setTimeout(function() { handle_card_switch() }, 2000);
 }
 
 function handle_card_switch()

@@ -2,6 +2,8 @@ function start_loop()
 {
 	is_playing = true;
 	loop();
+	new_game(0);
+	is_menu = true;
 }
 function stop_loop()
 {
@@ -44,13 +46,19 @@ function loop()
 	
 	/*Loop function*/
 	if (is_menu)
+	{
+		if (typeof game_finished != "undefined")
+			game();
 		menu();
+	}
 	else
 	{
 		switch (game_type)
 		{
 			case "game":
 				game();
+				break;
+			case "multiplayer_table":
 				break;
 			default:
 				console.error("Unknown Gamemode!");
@@ -99,6 +107,13 @@ function check_changes()
 			show_hide_menu("hide");
 		else
 			show_hide_menu("true");
+	}
+	if (old_game_type != game_type)
+	{
+		if (game_type == "multiplayer_table")
+			show_hide_multiplayer_table("true");
+		else
+			show_hide_multiplayer_table("hide");
 	}
 		
 	
