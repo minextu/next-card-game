@@ -204,6 +204,8 @@ function multiplayer_request_cards()
 				players[i].win_cards = Number(answer['ranks'][players[i].multiplayer_id]);
 					console.debug("set win cards of player " + i + " to " + players[i].win_cards);
 			}
+			else
+				players[i].win_cards = false;
 		}
 		
 		table_cards = [];
