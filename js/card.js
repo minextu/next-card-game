@@ -156,6 +156,9 @@ Card.prototype.draw = function()
 			{
 				players[this.player_id].selected_cards++;
 				highlight = this.player_id + "" + (this.key+1);
+				
+				if (this.error != false)
+					players[this.player_id].cards[this.key+1].error = this.error;
 			}
 			else
 				highlight = "";
