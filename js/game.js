@@ -144,13 +144,6 @@ function game()
 			}
 		}
 		
-		if (table_cards.length > 0 && skipped_players.length >= player_num - 1)
-		{
-			console.debug(skipped_players.length + " Players skipped the round");
-			hide_cards();
-			player_turn = table_cards[table_cards.length - 1].from_player;
-		}
-		
 		if (table_cards.length > 0 && finished_players.indexOf(table_cards[table_cards.length-1].from_player) !== -1)
 		{
 			for (var i = 0; i < player_num; i++)
@@ -163,6 +156,13 @@ function game()
 				if (finished_players.indexOf(table_cards[table_cards.length-1].from_player) === -1)
 					break;
 			}
+		}
+		
+		if (table_cards.length > 0 && skipped_players.length >= player_num - 1)
+		{
+			console.debug(skipped_players.length + " Players skipped the round");
+			hide_cards();
+			player_turn = table_cards[table_cards.length - 1].from_player;
 		}
 	}
 	main_ctx.drawImage(table_image, game_width / 2 - (table_width / 2).ratio(0,1), game_height / 2 - (table_height / 2).ratio(1,1), table_width.ratio(0,1), table_height.ratio(1,1));
