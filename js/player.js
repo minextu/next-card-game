@@ -135,7 +135,7 @@ Player.prototype.draw = function()
 	
 	if (player_turn == this.key && can_play)
 		main_ctx.drawImage(arrow_image, this.drawX.ratio(0) + (this.width / 2 - 50 / 2).ratio(0,1), this.drawY.ratio(1), (50).ratio(0,1), (50).ratio(1,1));
-	if (player_turn == this.key && table_cards.length != 0 && table_cards[table_cards.length-1].done != true && can_play && this.key == 0)
+	if (!game_finished && player_turn == this.key && table_cards.length != 0 && table_cards[table_cards.length-1].done != true && can_play && this.key == 0)
 	{
 		var skipX = this.drawX;
 		var skipY = this.drawY;
