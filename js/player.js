@@ -27,6 +27,9 @@ function Player(drawX, drawY, show_cards, card_pos, no_cards, key)
 		this.enable_ai = true;
 	else
 		this.enable_ai = false;
+	
+	this.enable_multiplayer = false;
+	
 	this.played_card = false;
 	this.skipped = false;
 	
@@ -57,8 +60,13 @@ function Player(drawX, drawY, show_cards, card_pos, no_cards, key)
 
 Player.prototype.draw = function()
 {
-	if (this.enable_ai && player_turn == this.key && can_play && game_finished == false)
-		this.ai();
+	if (player_turn == this.key && can_play && game_finished == false)
+	{
+		if (this.enable_ai)
+			this.ai();
+		else if (this.enable_multiplayer == true)
+			this.check_multiplayer();
+	}
 	
 	main_ctx.save();
 	main_ctx.translate(this.drawX.ratio(0) + (this.width/2).ratio(0,1), this.drawY.ratio(1) + (this.height/2).ratio(1,1));
@@ -122,6 +130,10 @@ Player.prototype.draw = function()
 			if (mouse_is_down)
 			{
 				skipped_players[skipped_players.length] = this.key;
+				
+				if (is_multiplayer && this.key == 0 && this.enable_multiplayer == false)
+					multiplayer_played_cards[multiplayer_played_cards.length] = "skip";
+				
 				mouse_is_down = false;
 			}
 		}
@@ -323,7 +335,7 @@ Player.prototype.ai = function()
 		{
 			this.skipped = true;
 			console.debug("Player " + this.key + " will skip")
-			if (ai_speed == "auto")
+			if (ai_speed == "auto" && (!is_multiplayer || multiplayer_cards_to_play.length <= 0))
 				var timeout = Math.round(Math.random()*2000);
 			else
 				var timeout = ai_speed;
@@ -333,7 +345,24 @@ Player.prototype.ai = function()
 			}, timeout);
 		}
 	}
-}
+};
+
+Player.prototype.check_multiplayer = function()
+{
+	for (var i = 0; i < multiplayer_cards_to_play.length; i++)
+	{
+		if (multiplayer_cards_to_play[i]['player_id'] == this.multiplayer_id)
+		{
+			if (multiplayer_cards_to_play[i]['card_key'] == "skip")
+				skipped_players[skipped_players.length] = this.key;
+			else
+				this.cards[multiplayer_cards_to_play[i]['card_key']].play();
+			
+			multiplayer_cards_to_play.splice(i,1);
+			break;
+		}
+	}
+};
 
 function compare_card(a,b) 
 {

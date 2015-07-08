@@ -47,8 +47,13 @@ function loop()
 	/*Loop function*/
 	if (is_menu)
 	{
-		if (typeof game_finished != "undefined")
+		if (typeof game_finished != "undefined" && game_type != "multiplayer_table")
 			game();
+		else if (game_type == "multiplayer_table")
+		{
+			window.clearTimeout(switch_timeout);
+			window.clearTimeout(give_timeout);
+		}
 		menu();
 	}
 	else

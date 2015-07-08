@@ -10,11 +10,19 @@ function new_game(num, type)
 	else
 		is_multiplayer = false;
 	is_menu = false;
-	game_type = "game";
 	
-	available_cards = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
+	if (!is_multiplayer)
+		game_type = "game";
+	
+	if (is_multiplayer)
+		available_cards = [];
+	else
+		available_cards = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
+	
 	available_card_num = available_cards.length;
 	cards_played = 0;
+	cards_requested = false;
+	new_cards_ready = false;
 	
 	player_num = num + 1;
 	players = [];
@@ -22,12 +30,13 @@ function new_game(num, type)
 	skipped_players = [];
 	finished_players = [];
 	can_play = false;
+
 	first_player_give = 0;
 	game_finished = false;
 	ai_speed = "auto";
-	
-	window.clearTimeout(switch_timeout);
-	window.clearTimeout(give_timeout);
+	is_giving = false;
+	give_timeout = 0;
+	give_player = first_player_give;
 	
 	table_cards = [];
 	for (var i = 0; i < available_cards.length; i++)
@@ -81,7 +90,11 @@ function new_game(num, type)
 	camera = new Camera(true);
 	redraw_canvas = true;
 	
-	give_cards();
+	if (is_multiplayer == false)
+		is_giving = true;
+	
+	if (is_multiplayer)
+		handle_multiplayer();
 }
 function game()
 {
@@ -90,7 +103,40 @@ function game()
 	
 	//camera.pre();
 	
-	if (game_finished == false)
+	if (is_giving)
+	{
+		if (give_timeout <= 0)
+			give_cards(give_player);
+		else
+			give_timeout -= (1).speed();
+	}
+	
+	if (game_finished == true && !is_giving && !cards_requested)
+	{
+		if (finish_timeout <= 0)
+		{
+			if (is_multiplayer && !new_cards_ready)
+			{
+				table_cards = [];
+				multiplayer_request_cards();
+			}
+			else if (is_multiplayer)
+				new_cards_ready = false;
+			
+			if (table_cards.length > 0)
+			{
+				finished_players = [];
+				skipped_players = [];
+				can_play = false;
+				hide_cards();
+				give_player = first_player_give;
+				is_giving = true;
+			}
+		}
+		else
+			finish_timeout -= (1).speed();
+	}
+	else if (!is_giving)
 	{
 		if (finished_players.length == player_num-1)
 		{
@@ -100,6 +146,8 @@ function game()
 				first_player_give = 0;
 			
 			game_finished = true;
+			finish_timeout = 200;
+			
 			console.debug("game finished");
 			for (var i = 0; i < players.length; i++)
 			{
@@ -109,21 +157,12 @@ function game()
 					for (var ii = 0; ii < players[i].cards.length; ii++)
 					{
 						console.debug("playing card");
-						players[i].cards[ii].play(true, -200 + 100*ii);
+						players[i].cards[ii].play(true, -200 + 100*ii, false, true);
 					}
 				}
 			}
-			window.setTimeout(function() {
-				hide_cards();
-				give_cards();
-				finished_players = [];
-				skipped_players = [];
-				can_play = false;
-			}, 2000);
-			
 			
 			can_play = false;
-			//give_cards();
 		}
 		
 		if (table_cards.length > 0 && skipped_players.length >= player_num - 1)
@@ -162,14 +201,32 @@ function game()
 	}
 	main_ctx.drawImage(table_image, game_width / 2 - (table_width / 2).ratio(0,1), game_height / 2 - (table_height / 2).ratio(1,1), table_width.ratio(0,1), table_height.ratio(1,1));
 	
+	
 	for (var i = 0; i < table_cards.length; i++)
 	{
 		table_cards[i].draw();
 	}
 	
-	for (var i = 0; i < players.length; i++)
+	if (is_multiplayer && multiplayer_cards_to_play.length > 0 && players[0].enable_multiplayer)
 	{
-		players[i].draw();
+		for (var i = 0; i < players.length; i++)
+		{
+			players[i].draw();
+			for (var ii = 0; ii < 10; ii++)
+			{
+				for (var iii = 0; iii < players[i].cards.length; iii++)
+				{
+					players[i].cards[iii].draw();
+				}
+			}
+		}
+	}
+	else
+	{
+		for (var i = 0; i < players.length; i++)
+		{
+			players[i].draw();
+		}
 	}
 	
 	
@@ -178,15 +235,18 @@ function game()
 	//camera.post();
 }
 
-var give_timeout;
-var switch_timeout;
-
 function give_cards(player_id)
 {
-	can_play = false;
+	if (player_id == "switch")
+	{
+		handle_card_switch();
+		is_giving = false;
+		return false;
+	}
+	console.debug("give");
+	is_giving = true;
 	
-	if (player_id == undefined)
-		player_id = first_player_give;
+	can_play = false;
 	
 	var player = players[player_id];
 	
@@ -207,7 +267,10 @@ function give_cards(player_id)
 	else
 		var drawY = player.drawY + player.height / 2 - test_card.height / 2;
 			
-	var card_key = Math.round(Math.random()*(table_cards.length - 1));
+	if (is_multiplayer == false)
+		var card_key = Math.round(Math.random()*(table_cards.length - 1));
+	else
+		var card_key = table_cards.length - 1;
 	
 	if (card_key < 0)
 		console.warn("Unknown Cardkey: " + card_key);
@@ -223,13 +286,19 @@ function give_cards(player_id)
 	if (table_cards.length > 0)
 	{
 		if (players[player_id + 1] != undefined)
-			var new_id = player_id + 1;
+			give_player = player_id + 1;
 		else
-			var new_id = 0;
-		give_timeout = window.setTimeout(function() { give_cards(new_id) }, 100);
+			give_player = 0;
+		
+		if (!is_multiplayer || multiplayer_cards_to_play.length <= 0)
+			give_timeout = 10;
 	}
 	else
-		switch_timeout = window.setTimeout(function() { handle_card_switch() }, 2000);
+	{
+		give_player = "switch";
+		if (!is_multiplayer || multiplayer_cards_to_play.length <= 0)
+			give_timeout = 100;
+	}
 }
 
 function handle_card_switch()

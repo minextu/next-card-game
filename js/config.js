@@ -1,1 +1,1 @@
-//var server_url = "../dapadajaki-server/";
+var server_url = "../next-card-game-server/";

@@ -130,7 +130,7 @@ Card.prototype.draw = function()
 			else
 				main_ctx.fillStyle = "black";
 		}
-		if (!this.is_moving && player_turn == this.player_id && can_play && (highlight == this.player_id + "" + this.key || mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1)))
+		if (this.player_id == 0 && !this.is_moving && player_turn == this.player_id && can_play && (highlight == this.player_id + "" + this.key || mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1)))
 		{
 			main_ctx.globalAlpha = 0.3;
 			main_ctx.fillStyle = "red";
@@ -243,12 +243,12 @@ Card.prototype.draw = function()
 	}
 };
 
-Card.prototype.play = function(no_new_turn, offsetX, is_ai)
+Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 {	
 	if (is_ai === true)
 	{
 		var card = this;
-		if (ai_speed == "auto")
+		if (ai_speed == "auto" && (!is_multiplayer || multiplayer_cards_to_play.length <= 0))
 			var timeout = Math.round(Math.random()*2000);
 		else
 			var timeout = ai_speed;
@@ -269,7 +269,7 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai)
 	{
 		if (offsetX == 0)
 			offsetX-= 99;
-		players[this.player_id].cards[this.key+1].play(true, offsetX+100);
+		players[this.player_id].cards[this.key+1].play(true, offsetX+100, false, true);
 	}
 	
 	this.is_moving = true;
@@ -283,6 +283,12 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai)
 	this.height = this.original_height;
 	this.srcX = 200;
 	this.show = true;
+	
+	if (this.player_id == 0 && is_multiplayer && not_first_card !== true && players[0].enable_multiplayer == false)
+	{
+		multiplayer_played_cards[multiplayer_played_cards.length] = this.key;
+		console.debug("saved card");
+	}
 	
 	if (this.id >= 28)
 	{
