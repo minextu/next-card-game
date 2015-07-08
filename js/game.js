@@ -153,10 +153,8 @@ function game()
 			{
 				if (finished_players.indexOf(i) === -1)
 				{
-					console.debug("unfinished Player found!");
 					for (var ii = 0; ii < players[i].cards.length; ii++)
 					{
-						console.debug("playing card");
 						players[i].cards[ii].play(true, -200 + 100*ii, false, true);
 					}
 				}
@@ -165,38 +163,45 @@ function game()
 			can_play = false;
 		}
 		
+		if (finished_players.indexOf(player_turn) !== -1)
+		{
+			if (skipped_players.indexOf(player_turn) === -1)
+				skipped_players[skipped_players.length] = player_turn;
+		}
+		
+		if (skipped_players.indexOf(player_turn) !== -1)
+		{
+			for (var i = 0; i < player_num; i++)
+			{
+				if (player_turn < player_num - 1)
+					player_turn++;
+				else
+					player_turn = 0;
+				
+				if (skipped_players.indexOf(player_turn) === -1)
+					break;
+			}
+		}
+		
+		if (table_cards.length > 0 && finished_players.indexOf(table_cards[table_cards.length-1].from_player) !== -1)
+		{
+			for (var i = 0; i < player_num; i++)
+			{
+				if (table_cards[table_cards.length-1].from_player < player_num-1)
+					table_cards[table_cards.length-1].from_player++;
+				else
+					table_cards[table_cards.length-1].from_player = 0;
+				
+				if (finished_players.indexOf(table_cards[table_cards.length-1].from_player) === -1)
+					break;
+			}
+		}
+		
 		if (table_cards.length > 0 && skipped_players.length >= player_num - 1)
 		{
 			console.debug(skipped_players.length + " Players skipped the round");
 			hide_cards();
 			player_turn = table_cards[table_cards.length - 1].from_player;
-		}
-		
-		if (finished_players.indexOf(player_turn) !== -1)
-		{
-			if (skipped_players.indexOf(player_turn) === -1)
-				skipped_players[skipped_players.length] = player_turn;
-			
-			if (player_turn < player_num - 1)
-				player_turn++;
-			else
-				player_turn = 0;
-		}
-		
-		if (skipped_players.indexOf(player_turn) !== -1)
-		{
-			if (player_turn < player_num - 1)
-				player_turn++;
-			else
-				player_turn = 0;
-		}
-		
-		if (table_cards.length > 0 && finished_players.indexOf(table_cards[table_cards.length-1].from_player) !== -1)
-		{
-			if (table_cards[table_cards.length-1].from_player < player_num-1)
-				table_cards[table_cards.length-1].from_player++;
-			else
-				table_cards[table_cards.length-1].from_player = 0;
 		}
 	}
 	main_ctx.drawImage(table_image, game_width / 2 - (table_width / 2).ratio(0,1), game_height / 2 - (table_height / 2).ratio(1,1), table_width.ratio(0,1), table_height.ratio(1,1));
