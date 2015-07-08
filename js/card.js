@@ -130,7 +130,7 @@ Card.prototype.draw = function()
 			else
 				main_ctx.fillStyle = "black";
 		}
-		if (!this.is_moving && player_turn == this.player_id && can_play && (highlight == this.player_id + "" + this.key || mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1)))
+		if ((!this.is_moving || this.moving_action == "fix") && player_turn == this.player_id && can_play && (highlight == this.player_id + "" + this.key || mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1)))
 		{
 			main_ctx.globalAlpha = 0.3;
 			main_ctx.fillStyle = "red";
@@ -329,5 +329,4 @@ function hide_cards()
 	{
 		players[i].skipped = false;
 	}
-	
 }
