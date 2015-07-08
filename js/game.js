@@ -26,6 +26,8 @@ function new_game(num, type)
 	
 	player_num = num + 1;
 	players = [];
+	set_players_position();
+	
 	player_turn = 0;
 	skipped_players = [];
 	finished_players = [];
@@ -45,6 +47,18 @@ function new_game(num, type)
 	}
 	hide_cards();
 	
+	camera = new Camera(true);
+	redraw_canvas = true;
+	
+	if (is_multiplayer == false)
+		is_giving = true;
+	
+	if (is_multiplayer)
+		handle_multiplayer();
+}
+
+function set_players_position()
+{
 	var test_player = new Player(0,0,0,0,true);
 	
 	for (i = 0; i < player_num; i++)
@@ -84,17 +98,19 @@ function new_game(num, type)
 		else
 			card_pos = "right";
 		
-		players[i] = new Player(drawX, drawY, show_cards, card_pos, false, i);
+		if (players[i] == undefined)
+			players[i] = new Player(drawX, drawY, show_cards, card_pos, false, i);
+		else
+		{
+			players[i].drawX = drawX;
+			players[i].drawY = drawY;
+			players[i].show_cards = show_cards;
+			players[i].card_pos = card_pos;
+		}
 	}
 	
-	camera = new Camera(true);
-	redraw_canvas = true;
-	
-	if (is_multiplayer == false)
-		is_giving = true;
-	
-	if (is_multiplayer)
-		handle_multiplayer();
+	if (player_num < players.length)
+		players.splice(player_num,players.length - player_num);
 }
 function game()
 {
@@ -138,9 +154,19 @@ function game()
 	}
 	else if (!is_giving)
 	{
+		if (players[player_turn].disabled == true)
+		{
+			console.debug("skipping disabled player " + player_turn);
+			if (player_turn < players.length - 1)
+				player_turn++;
+			else
+				player_turn = 0;
+			console.debug("to " + player_turn);
+		}
+		
 		if (finished_players.length == player_num-1)
 		{
-			if (first_player_give < player_num -1)
+			if (first_player_give < players.length - 1)
 				first_player_give++;
 			else
 				first_player_give = 0;
@@ -166,14 +192,19 @@ function game()
 		if (finished_players.indexOf(player_turn) !== -1)
 		{
 			if (skipped_players.indexOf(player_turn) === -1)
+			{
 				skipped_players[skipped_players.length] = player_turn;
+				console.debug("adding finished player to skiplist");
+			}
 		}
 		
 		if (skipped_players.indexOf(player_turn) !== -1)
 		{
-			for (var i = 0; i < player_num; i++)
+			for (var i = 0; i < players.length; i++)
 			{
-				if (player_turn < player_num - 1)
+				console.debug("skipping player " + player_turn + " on skiplist");
+				
+				if (player_turn < players.length - 1)
 					player_turn++;
 				else
 					player_turn = 0;
@@ -183,21 +214,7 @@ function game()
 			}
 		}
 		
-		if (table_cards.length > 0 && finished_players.indexOf(table_cards[table_cards.length-1].from_player) !== -1)
-		{
-			for (var i = 0; i < player_num; i++)
-			{
-				if (table_cards[table_cards.length-1].from_player < player_num-1)
-					table_cards[table_cards.length-1].from_player++;
-				else
-					table_cards[table_cards.length-1].from_player = 0;
-				
-				if (finished_players.indexOf(table_cards[table_cards.length-1].from_player) === -1)
-					break;
-			}
-		}
-		
-		if (table_cards.length > 0 && skipped_players.length >= player_num - 1)
+		if (table_cards.length > 0 && skipped_players.length >= players.length - 1)
 		{
 			console.debug(skipped_players.length + " Players skipped the round");
 			hide_cards();
@@ -290,10 +307,17 @@ function give_cards(player_id)
 	
 	if (table_cards.length > 0)
 	{
-		if (players[player_id + 1] != undefined)
-			give_player = player_id + 1;
-		else
-			give_player = 0;
+		give_player = player_id;
+		for (var i = 0; i < players.length; i++)
+		{
+			if (players[give_player+1] != undefined)
+				give_player = give_player + 1;
+			else
+				give_player = 0;
+			
+			if (players[give_player].disabled == false)
+				break;
+		}
 		
 		if (!is_multiplayer || multiplayer_cards_to_play.length <= 0)
 			give_timeout = 10;
@@ -382,7 +406,6 @@ function handle_card_switch()
 	else
 		console.debug("No cards to switch!")
 
-	finished_players = [];
 	skipped_players = [];
 	game_finished = false;
 	can_play = true;

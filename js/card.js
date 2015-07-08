@@ -252,7 +252,10 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 	if (is_ai === true)
 	{
 		var card = this;
-		if (ai_speed == "auto" && (!is_multiplayer || multiplayer_cards_to_play.length <= 0))
+		
+		if (is_multiplayer && multiplayer_cards_to_play.length > 0)
+			var timeout = 0;
+		else if (ai_speed == "auto")
 			var timeout = Math.round(Math.random()*2000);
 		else
 			var timeout = ai_speed;
@@ -300,9 +303,9 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 	}
 	else if (no_new_turn !== true)
 	{
-		for (var i = 0; i < player_num; i++)
+		for (var i = 0; i < players.length; i++)
 		{
-			if (player_turn < player_num - 1)
+			if (player_turn < players.length - 1)
 				player_turn++;
 			else
 				player_turn = 0;

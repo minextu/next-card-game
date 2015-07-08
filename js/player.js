@@ -8,6 +8,7 @@ function Player(drawX, drawY, show_cards, card_pos, no_cards, key)
 	this.text = "";
 	this.selected_cards = 0;
 	this.win_cards = false;
+	this.disabled = false;
 	
 	this.show_cards = show_cards;
 	this.card_pos = card_pos;
@@ -32,30 +33,6 @@ function Player(drawX, drawY, show_cards, card_pos, no_cards, key)
 	
 	this.played_card = false;
 	this.skipped = false;
-	
-	/*if (key == 0)
-		this.win_cards = 2;
-	else if (key == 1)
-		this.win_cards = 1;
-	else if (key == 2)
-		this.win_cards = -1;
-	else if (key == 3)
-		this.win_cards = -2;
-	else
-		this.win_cards = 0;
-	
-	if (this.win_cards == 2)
-		this.text = "Big Winner";
-	else if (this.win_cards == 1)
-		this.text = "Small Winner";
-	else if (this.win_cards == 0)
-		this.text = "Neutral";
-	else if (this.win_cards == -1)
-		this.text = "Small Loser";
-	else if (this.win_cards == -2)
-		this.text = "Big Loser";
-	else
-		this.text = "Unknown!";*/
 }
 
 Player.prototype.draw = function()
@@ -104,6 +81,51 @@ Player.prototype.draw = function()
 		main_ctx.fillStyle = "white";
 		main_ctx.font = (font_size).ratio(0,1) + "px Arial";
 		main_ctx.fillText(this.text, drawX.ratio(0), (drawY).ratio(1));
+	}
+	
+	if (this.win_cards !== false)
+	{
+		if (this.win_cards == 2)
+			var text = "Big Winner";
+		else if (this.win_cards == 1)
+			var text = "Small Winner";
+		else if (this.win_cards == 0)
+			var text = "Neutral";
+		else if (this.win_cards == -1)
+			var text = "Small Loser";
+		else if (this.win_cards == -2)
+			var text = "Big Loser";
+		else
+			var text = "Unknown!";
+		
+		var font_size = 30;
+
+		var drawX = this.drawX + this.width / 2;
+		main_ctx.textAlign = "center";
+
+		if (this.card_pos == "bottom")
+		{
+			var drawY = this.drawY - font_size;
+			var rectY = this.drawY - font_size*2;
+			main_ctx.textBaseline = "bottom";
+		}
+		else if (this.card_pos == "top" || this.card_pos == "left" || this.card_pos == "right")
+		{
+			var drawY = this.drawY + this.height + font_size;
+			var rectY = this.drawY + this.height + font_size
+			main_ctx.textBaseline = "top";
+		}
+		var rectWidth = 200;
+		var rectX = this.drawX.ratio(0) + (this.width / 2 - rectWidth / 2).ratio(0,1);
+		
+		main_ctx.fillStyle = "black";
+		main_ctx.globalAlpha = 0.5;
+		main_ctx.fillRect(rectX, rectY.ratio(1), rectWidth.ratio(0,1), font_size.ratio(0,1));
+		main_ctx.globalAlpha = 1;
+		
+		main_ctx.fillStyle = "blue";
+		main_ctx.font = (font_size).ratio(0,1) + "px Arial";
+		main_ctx.fillText(text, drawX.ratio(0), (drawY).ratio(1));
 	}
 	
 	for (var i = 0; i < this.cards.length; i++)
@@ -246,50 +268,7 @@ Player.prototype.updated_cards = function()
 				this.win_cards = -2;
 		}
 		
-		if (this.win_cards == 2)
-			this.text = "Big Winner";
-		else if (this.win_cards == 1)
-			this.text = "Small Winner";
-		else if (this.win_cards == 0)
-			this.text = "Neutral";
-		else if (this.win_cards == -1)
-			this.text = "Small Loser";
-		else if (this.win_cards == -2)
-			this.text = "Big Loser";
-		else
-			this.text = "Unknown!";
-			
-		
 		finished_players[finished_players.length] = this.key;
-		
-		if (table_cards[table_cards.length-1].num == 14)
-		{
-			for (var i = 0; i < player_num; i++)
-			{
-				if (player_turn < player_num - 1)
-					player_turn++;
-				else
-					player_turn = 0;
-				
-				if (finished_players.indexOf(player_turn) == -1)
-					break;
-			}
-		}
-		else
-		{
-			var new_player = this.key;
-			for (var i = 0; i < player_num; i++)
-			{
-				if (new_player+1 < player_num - 1)
-					new_player++;
-				else
-					new_player = 0;
-				
-				if (finished_players.indexOf(player_turn) == -1)
-					break;
-			}
-			table_cards[table_cards.length-1].from_player = new_player;
-		}
 	}
 };
 
@@ -335,7 +314,10 @@ Player.prototype.ai = function()
 		{
 			this.skipped = true;
 			console.debug("Player " + this.key + " will skip")
-			if (ai_speed == "auto" && (!is_multiplayer || multiplayer_cards_to_play.length <= 0))
+			
+			if (is_multiplayer && multiplayer_cards_to_play.length > 0)
+				var timeout = 0;
+			else if (ai_speed == "auto")
 				var timeout = Math.round(Math.random()*2000);
 			else
 				var timeout = ai_speed;

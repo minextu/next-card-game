@@ -49,11 +49,6 @@ function loop()
 	{
 		if (typeof game_finished != "undefined" && game_type != "multiplayer_table")
 			game();
-		else if (game_type == "multiplayer_table")
-		{
-			window.clearTimeout(switch_timeout);
-			window.clearTimeout(give_timeout);
-		}
 		menu();
 	}
 	else
@@ -64,6 +59,8 @@ function loop()
 				game();
 				break;
 			case "multiplayer_table":
+				break;
+			case "multiplayer_new_room":
 				break;
 			default:
 				console.error("Unknown Gamemode!");
@@ -119,6 +116,11 @@ function check_changes()
 			show_hide_multiplayer_table("true");
 		else
 			show_hide_multiplayer_table("hide");
+		
+		if (game_type == "multiplayer_new_room")
+			show_hide_multiplayer_new_room("true");
+		else
+			show_hide_multiplayer_new_room("hide");
 	}
 		
 	

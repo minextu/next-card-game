@@ -4,12 +4,25 @@ function show_hide_multiplayer_table(type)
 {
 	if (type != "hide")
 	{
+		clear_multiplayer_table();
+		get_multiplayer_table();
 		document.getElementById("multiplayer_table").style.display = "block";
 	}
 	else
 	{
-		get_multiplayer_table();
 		document.getElementById("multiplayer_table").style.display = "none";
+	}
+}
+
+function show_hide_multiplayer_new_room(type)
+{
+	if (type != "hide")
+	{
+		document.getElementById("multiplayer_new_room").style.display = "block";
+	}
+	else
+	{
+		document.getElementById("multiplayer_new_room").style.display = "none";
 	}
 }
 
@@ -28,43 +41,64 @@ function join_multiplayer_room(id)
 			alert("Couldn't Join the Room!")
 		}
 		
+		if (answer["error"] != undefined)
+		{
+			alert(answer['error']);
+			return false;
+		}
+		
 		if (answer['can_join'] === true)
 		{
 			last_id = answer['last_id'];
 			multiplayer_played_cards = [];
-			new_game(answer['players'].length-1, "multiplayer");
 			
-			var player_key = 1;
-			for (var i = 0; i < answer['players'].length; i++)
+			new_game(answer['slots']-1, "multiplayer");
+			if (answer['is_existing_game'] == true)
 			{
-				if (answer['players'][i]['id'] != multiplayer_id)
+				var is_existing_game = true;
+				for (var i = 0; i < answer['players'].length; i++)
 				{
-					players[player_key].enable_ai = false;
-					players[player_key].text = answer['players'][i]['name'];
-					players[player_key].multiplayer_id = answer['players'][i]['id'];
-					players[player_key].enable_multiplayer = true;
-					
-					if (answer['first_player_give'] == answer['players'][i]['id'])
-					{
-						first_player_give = player_key;
-						console.debug("first player: " + player_key);
-					}
-					
-					player_key++;
+					if (answer['players'][i]["id"] == multiplayer_id)
+						is_existing_game = false;
 				}
-				else
+				
+				if (is_existing_game)
 				{
-					players[0].text = answer['players'][i]['name'];
-					players[0].enable_multiplayer = true;
-					players[0].multiplayer_id = answer['players'][i]['id'];
+					player_num++;
+					set_players_position();
+					player_num--;
 					
-					if (answer['first_player_give'] == answer['players'][i]['id'])
-					{
-						first_player_give = 0;
-						console.debug("first player: 0");
-					}
+					answer['players'][answer['players'].length] = [];
+					var player = answer['players'][answer['players'].length-1];
+					player["id"] = multiplayer_id;
+					player["name"] = multiplayer_name + " Waiting...";
 				}
 			}
+			else
+			{
+
+				var is_existing_game = false;
+			}
+			
+			
+			var player_position = 0;
+			
+			if (!is_existing_game)
+				player_position = get_player_position(answer);
+			
+			var player_key = -player_position;
+			
+			set_multiplayer_players(player_key, answer, is_existing_game);
+			
+			for (var i = 0; i < players.length; i++)
+			{
+				if (answer['ranks'][players[i].multiplayer_id] != undefined)
+				{
+					players[i].win_cards = Number(answer['ranks'][players[i].multiplayer_id]);
+					console.debug("set win cards of player " + i + " to " + players[i].win_cards);
+				}
+			}
+			
 			available_cards = answer['table_cards'];
 			table_cards = [];
 			for (var i = 0; i < available_cards.length; i++)
@@ -131,7 +165,6 @@ function get_multiplayer_table()
 				"<td><button onclick='join_multiplayer_room(" + rooms[key]["id"] + ")'>Join</button></td>" +
 				"</tr>";
 		}
-		
 		multiplayer_id = answer['id'];
 		multiplayer_name = answer['name'];
 	}
@@ -159,15 +192,20 @@ function multiplayer_request_cards()
 		answer =  JSON.parse(httpobject.responseText);
 		available_cards = answer["cards"];
 		
-		var player_key = 1;
+		set_players_position();
+		var player_position = get_player_position(answer);
+		var player_key = -player_position;
+		set_multiplayer_players(player_key, answer, false);
+		
 		for (var i = 0; i < players.length; i++)
 		{
-			if (answer['first_player_give'] == players[i].multiplayer_key)
+			if (answer['ranks'][players[i].multiplayer_id] != undefined)
 			{
-				first_player_give = i;
-				console.debug("first player: " + i);
+				players[i].win_cards = Number(answer['ranks'][players[i].multiplayer_id]);
+					console.debug("set win cards of player " + i + " to " + players[i].win_cards);
 			}
 		}
+		
 		table_cards = [];
 		for (var i = 0; i < available_cards.length; i++)
 		{
@@ -178,9 +216,96 @@ function multiplayer_request_cards()
 		cards_requested = false;
 		new_cards_ready = true;
 	}
-	httpobject.send();
+	var ranks = {};
+	for (var i = 0; i < players.length; i++)
+	{
+		ranks[players[i].multiplayer_id] = players[i].win_cards;
+	}
+	httpobject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
+	httpobject.send("ranks=" +encodeURIComponent(JSON.stringify(ranks)));
 }
 
-		/*		<td>Test</td>
-				<td>?</td>
-				<td><button onclick='new_game(0, "multiplayer")'>Join</button></td>*/
+function set_multiplayer_players(player_key, answer, is_existing_game)
+{
+	for (var i = 0; i < answer['players'].length; i++)
+	{
+		if (player_key < 0)
+			key = players.length + player_key;
+		else if (player_key >= 0)
+			key = player_key + 1;
+				
+		if (answer['players'][i]['id'] != multiplayer_id)
+		{
+			if (answer['players'][i]['bot'] != true)
+			{
+				players[key].enable_ai = false;
+				players[key].enable_multiplayer = true;
+			}
+			
+			players[key].text = answer['players'][i]['name'];
+				
+			players[key].multiplayer_id = answer['players'][i]['id'];
+			
+			if (answer['first_player_give'] == answer['players'][i]['id'])
+			{
+				first_player_give = key;
+				console.debug("first player: " + key);
+			}
+					
+			player_key++;
+		}
+		else
+		{
+			players[0].text = answer['players'][i]['name'];
+			
+			if (is_existing_game)
+			{
+				players[0].disabled = true;
+			}
+			else
+			{
+				players[0].disabled = false;
+			}
+			players[0].enable_multiplayer = true;
+			players[0].multiplayer_id = answer['players'][i]['id'];
+			
+			if (answer['first_player_give'] == answer['players'][i]['id'])
+			{
+				first_player_give = 0;
+				console.debug("first player: 0");
+			}
+		}
+	}
+}
+
+function get_player_position(answer)
+{
+	player_position = 0;
+	
+	for (var i = 0; i < answer['players'].length; i++)
+	{
+		if (answer['players'][i]['id'] == multiplayer_id)
+			player_position = i;
+	}
+	
+	return player_position;
+}
+
+function multiplayer_create_new_room()
+{
+	var title = document.getElementById("room_title").value;
+	var slots = document.getElementById("room_slots").value;
+	
+	var httpobject = new XMLHttpRequest();
+	httpobject.open("POST", server_url + "next_card_game.php?task=create_new_room", true);
+	httpobject.onload = function ()
+	{
+		var answer = JSON.parse(httpobject.responseText);
+		if (answer['error'] != undefined)
+			alert(answer['error']);
+		else
+			join_multiplayer_room(answer['id']);
+	}
+	httpobject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
+	httpobject.send("title=" + encodeURIComponent(title) + "&slots=" + slots);
+}
