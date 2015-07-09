@@ -29,6 +29,8 @@ function new_game(num, type)
 	set_players_position();
 	
 	player_turn = 0;
+	last_player_turn = false;
+	
 	skipped_players = [];
 	finished_players = [];
 	can_play = false;
@@ -106,6 +108,11 @@ function set_players_position()
 			players[i].drawY = drawY;
 			players[i].show_cards = show_cards;
 			players[i].card_pos = card_pos;
+			
+			if (i != 0)
+				players[i].enable_ai = true;
+			
+			players[i].enable_multiplayer = false;
 		}
 	}
 	
@@ -127,8 +134,10 @@ function game()
 			give_timeout -= (1).speed();
 	}
 	
+	
 	if (game_finished == true && !is_giving && !cards_requested)
 	{
+		last_player_turn = false;
 		if (finish_timeout <= 0)
 		{
 			if (is_multiplayer && !new_cards_ready)
@@ -154,6 +163,13 @@ function game()
 	}
 	else if (!is_giving)
 	{
+			
+		if (player_turn != last_player_turn)
+			turn_send = false;
+		
+		if (!game_finished)
+			last_player_turn = player_turn;
+		
 		if (players[player_turn].disabled == true)
 		{
 			console.debug("skipping disabled player " + player_turn);
@@ -203,7 +219,7 @@ function game()
 			for (var i = 0; i < players.length; i++)
 			{
 				console.debug("skipping player " + player_turn + " on skiplist");
-				
+				players[player_turn].skip_timeout = false;
 				if (player_turn < players.length - 1)
 					player_turn++;
 				else
@@ -250,9 +266,6 @@ function game()
 			players[i].draw();
 		}
 	}
-	
-	
-	
 	
 	//camera.post();
 }

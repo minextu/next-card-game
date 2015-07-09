@@ -8,6 +8,7 @@ function Player(drawX, drawY, show_cards, card_pos, no_cards, key)
 	this.text = "";
 	this.selected_cards = 0;
 	this.win_cards = false;
+	this.skip_timeout = false;
 	this.disabled = false;
 	
 	this.show_cards = show_cards;
@@ -130,33 +131,76 @@ Player.prototype.draw = function()
 	
 	if (player_turn == this.key && can_play)
 		main_ctx.drawImage(arrow_image, this.drawX.ratio(0) + (this.width / 2 - 50 / 2).ratio(0,1), this.drawY.ratio(1), (50).ratio(0,1), (50).ratio(1,1));
-	if (!game_finished && player_turn == this.key && table_cards.length != 0 && table_cards[table_cards.length-1].done != true && can_play && this.key == 0)
+	if (!game_finished && player_turn == this.key && can_play && !this.enable_ai)
 	{
-		var skipX = this.drawX;
-		var skipY = this.drawY;
-		var skipWidth = 100;
-		var skipHeight = 100;
+		var skipWidth = 30;
+		var skipHeight = 30;
+		var skipX = this.drawX + this.width / 2 - skipWidth / 2;
+		var skipY = this.drawY + this.height / 2;
 		
-		if (!mouse_is_down && !is_touch_end && mouseX >= skipX.ratio(0) && mouseX <= skipX.ratio(0) + skipWidth.ratio(0,1) && mouseY >= skipY.ratio(1) && mouseY <= skipY.ratio(1) + skipHeight.ratio(1,1) || startX >= skipX.ratio(0) && startX <= skipX.ratio(0) + skipWidth.ratio(0,1) && startY >= skipY.ratio(1) && startY <= skipY.ratio(1) + skipHeight.ratio(1,1))
+		var skipRectX = this.drawX;
+		var skipRectY = skipY;
+		var skipRectWidth = this.width;
+		var skipRectHeight = skipHeight;
+		
+		main_ctx.globalAlpha = 0.5;
+		main_ctx.fillStyle = "white";
+		main_ctx.fillRect(skipRectX.ratio(0), skipRectY.ratio(1), skipRectWidth.ratio(0,1), skipRectHeight.ratio(1,1));
+		main_ctx.globalAlpha = 1;
+		
+		if (this.skip_timeout !== false && !this.disabled)
 		{
-			main_ctx.globalAlpha = 0.2;
-			main_ctx.fillStyle = "blue";
-			main_ctx.fillRect(skipX.ratio(0), (skipY).ratio(1), (skipWidth).ratio(0,1), (skipHeight).ratio(1,1));
+			var skip_time =3*6000;
+			var target_skip = this.skip_timeout + skip_time;
+			skip_diff = target_skip - (new Date().getTime());
+			var skipProgressWidth = skipRectWidth - skipRectWidth /  skip_time * skip_diff;
+		
+			main_ctx.globalAlpha = 0.9;
+			main_ctx.fillStyle = "red";
+			main_ctx.fillRect(skipRectX.ratio(0), skipRectY.ratio(1), skipProgressWidth.ratio(0,1), skipRectHeight.ratio(1,1));
 			main_ctx.globalAlpha = 1;
 			
-			if (mouse_is_down || is_touch_end)
+			if (skip_diff <= 0 && this.key == 0)
 			{
-				skipped_players[skipped_players.length] = this.key;
+				if (table_cards.length != 0 && table_cards[table_cards.length-1].done != true && this.key == 0)
+				{
+					skipped_players[skipped_players.length] = this.key;
+						
+					if (is_multiplayer && this.key == 0 && this.enable_multiplayer == false)
+						multiplayer_played_cards[multiplayer_played_cards.length] = "skip";
+				}
+				else
+					this.cards[this.cards.length-1].play();
 				
-				if (is_multiplayer && this.key == 0 && this.enable_multiplayer == false)
-					multiplayer_played_cards[multiplayer_played_cards.length] = "skip";
-				
-				mouse_is_down = false;
-				is_touch = false;
-				is_touch_end = false;
+				this.skip_timeout = false;
 			}
 		}
-		main_ctx.drawImage(skip_image, (skipX).ratio(0), (skipY).ratio(1), (skipWidth).ratio(0,1),(skipHeight).ratio(1,1));
+		
+		if (table_cards.length != 0 && table_cards[table_cards.length-1].done != true && this.key == 0)
+		{
+			table_cards.length != 0 && table_cards[table_cards.length-1].done != true
+			if (!mouse_is_down && !is_touch_end && mouseX >= skipRectX.ratio(0) && mouseX <= skipRectX.ratio(0) + skipRectWidth.ratio(0,1) && mouseY >= skipRectY.ratio(1) && mouseY <= skipRectY.ratio(1) + skipRectHeight.ratio(1,1) || startX >= skipRectX.ratio(0) && startX <= skipRectX.ratio(0) + skipRectWidth.ratio(0,1) && startY >= skipRectY.ratio(1) && startY <= skipRectY.ratio(1) + skipRectHeight.ratio(1,1))
+			{
+				main_ctx.globalAlpha = 0.5;
+				main_ctx.fillStyle = "blue";
+				main_ctx.fillRect(skipRectX.ratio(0), skipRectY.ratio(1), skipRectWidth.ratio(0,1), skipRectHeight.ratio(1,1));
+				main_ctx.globalAlpha = 1;
+				
+				if (mouse_is_down || is_touch_end)
+				{
+					skipped_players[skipped_players.length] = this.key;
+					
+					if (is_multiplayer && this.key == 0 && this.enable_multiplayer == false)
+						multiplayer_played_cards[multiplayer_played_cards.length] = "skip";
+					
+					mouse_is_down = false;
+					is_touch = false;
+					is_touch_end = false;
+				}
+			}
+			
+			main_ctx.drawImage(skip_image, (skipX).ratio(0), (skipY).ratio(1), (skipWidth).ratio(0,1),(skipHeight).ratio(1,1));
+		}
 	}
 	
 	for (var i = 0; i < this.cards.length; i++)
@@ -339,6 +383,12 @@ Player.prototype.check_multiplayer = function()
 		{
 			if (multiplayer_cards_to_play[i]['card_key'] == "skip")
 				skipped_players[skipped_players.length] = this.key;
+			else if (multiplayer_cards_to_play[i]['card_key'] == "bot")
+			{
+				this.enable_multiplayer = false;
+				this.enable_ai = true;
+				this.text = "Offline (Bot)";
+			}
 			else
 				this.cards[multiplayer_cards_to_play[i]['card_key']].play();
 			

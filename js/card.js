@@ -41,7 +41,7 @@ function Card(id, drawX, drawY, show, rotate, player_id, key)
 	
 	this.srcY = 0;
 	
-	this.id = id;
+	this.id = Number(id);
 	if (this.id >= 0 && this.id < 4)
 	{
 		this.name = "7";
@@ -281,6 +281,8 @@ Card.prototype.draw = function()
 Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 {	
 	this.is_down = false;
+	players[this.player_id].skip_timeout = false;
+	
 	if (is_ai === true)
 	{
 		var card = this;
@@ -295,7 +297,6 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 		window.setTimeout(function() { card.play(no_new_turn, offsetX, false) }, timeout);
 		return false;
 	}
-	
 	players[this.player_id].played_card = false;
 	
 	if (is_ai != "2" && (table_cards.length == 0 || table_cards[table_cards.length-1].done == true))

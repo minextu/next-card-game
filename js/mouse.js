@@ -44,7 +44,6 @@ function mouse(type, e)
 			startX = mouseX;
 			startY = mouseY;
 			is_touch_end = false;
-			console.debug("down");
 		}
 		else if (type == "up")
 			mouse_is_down = false;

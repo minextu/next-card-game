@@ -49,6 +49,9 @@ function join_multiplayer_room(id)
 		
 		if (answer['can_join'] === true)
 		{
+			multiplayer_id = answer['id'];
+			multiplayer_name = answer['name'];
+			
 			last_id = answer['last_id'];
 			multiplayer_played_cards = [];
 			
@@ -120,26 +123,51 @@ function join_multiplayer_room(id)
 
 var last_id = 0;
 var multiplayer_cards_to_play = [];
+var turn_send = false
 
 function handle_multiplayer()
 {
 	var httpobject = new XMLHttpRequest();
-	httpobject.open("POST", server_url + "next_card_game.php?task=get_cards&last_id=" + last_id, true);
+	
+	if (player_turn == 0 && !game_finished && !turn_send && !is_giving && can_play)
+	{
+		httpobject.open("POST", server_url + "next_card_game.php?task=get_cards&last_id=" + last_id + "&turn=true", true);
+		turn_send = true;
+	}
+	else
+		httpobject.open("POST", server_url + "next_card_game.php?task=get_cards&last_id=" + last_id, true);
+	
 	httpobject.onload = function ()
 	{
-		played_cards = JSON.parse(httpobject.responseText);
-		for (var i = 0; i < played_cards.length; i++)
+		answer = JSON.parse(httpobject.responseText);
+		played_cards = answer['cards'];
+		
+		if (played_cards['error'] != undefined)
 		{
-			last_id = played_cards[i]["id"];
-			
-			if (players[0].enable_multiplayer == true || players[0].multiplayer_id != played_cards[i]["player_id"])
-				multiplayer_cards_to_play[multiplayer_cards_to_play.length] = played_cards[i];
+			is_menu = true;
+			game_type = "game";
+			alert(played_cards['error']);
 		}
-		
-		if (multiplayer_cards_to_play.length <= 0)
-			players[0].enable_multiplayer = false;
-		
-		window.setTimeout(handle_multiplayer, 1000);
+		else
+		{
+			if (players[player_turn].multiplayer_id == answer['last_turn']['player_id'] && can_play)
+				players[player_turn].skip_timeout = Date.parse(answer['last_turn']['time']);
+			
+			for (var i = 0; i < played_cards.length; i++)
+			{
+				last_id = played_cards[i]["id"];
+				
+				if (players[0].enable_multiplayer == true || players[0].multiplayer_id != played_cards[i]["player_id"])
+					multiplayer_cards_to_play[multiplayer_cards_to_play.length] = played_cards[i];
+			}
+			
+			if ( multiplayer_cards_to_play.length <= 0 || multiplayer_cards_to_play[0].player_id != players[0].multiplayer_id && multiplayer_cards_to_play.length <= 1)
+				players[0].enable_multiplayer = false;
+			else
+				players[0].enable_multiplayer = true;
+			
+			window.setTimeout(handle_multiplayer, 1000);
+		}
 	}
 	httpobject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
 	httpobject.send("played_cards=" +encodeURIComponent(JSON.stringify(multiplayer_played_cards)));
