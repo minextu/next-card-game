@@ -131,7 +131,7 @@ Player.prototype.draw = function()
 	
 	if (player_turn == this.key && can_play)
 		main_ctx.drawImage(arrow_image, this.drawX.ratio(0) + (this.width / 2 - 50 / 2).ratio(0,1), this.drawY.ratio(1), (50).ratio(0,1), (50).ratio(1,1));
-	if (!game_finished && player_turn == this.key && can_play && !this.enable_ai)
+	if ((!game_finished && player_turn == this.key && can_play) && (!this.enable_ai && is_multiplayer || !is_multiplayer && table_cards.length != 0 && table_cards[table_cards.length-1].done != true && this.key == 0))
 	{
 		var skipWidth = 30;
 		var skipHeight = 30;
@@ -233,11 +233,27 @@ Player.prototype.updated_cards = function()
 		var test_card = this.cards[i];
 		
 		if (this.card_pos == "top" || this.card_pos == "bottom")
-			var drawX = this.drawX - (card_num*test_card.width) / 2 + test_card.width*i + this.width / 2;
+		{
+			if (this.show_cards)
+				var drawX = this.drawX - (card_num*test_card.width) / 2 + test_card.width*i + this.width / 2;
+			else
+				var drawX = this.drawX - (card_num*(test_card.width / 3)) / 2 + (test_card.width/3)*i + this.width / 3;
+			
+		}
 		else if (this.card_pos == "left")
-			var drawX = this.drawX - test_card.width - test_card.width*i;
+		{
+			if (this.show_cards)
+				var drawX = this.drawX - test_card.width - test_card.width*i;
+			else
+				var drawX = this.drawX - test_card.width - (test_card.width / 3)*i;
+		}
 		else
-			var drawX = this.drawX + this.width + test_card.width*i;
+		{
+			if (this.show_cards)
+				var drawX = this.drawX + this.width + test_card.width*i;
+			else
+				var drawX = this.drawX + this.width + (test_card.width / 3)*i;
+		}
 			
 		if (this.card_pos == "top")
 			var drawY = this.drawY - test_card.height;
@@ -246,13 +262,23 @@ Player.prototype.updated_cards = function()
 		else
 			var drawY = this.drawY + this.height / 2 - test_card.height / 2;
 		
+		
+		if (this.show_cards == false)
+		{
+			var diff = (i -(this.cards.length-1)/2);
+			drawY-= Math.abs(diff*2);
+			this.cards[i].newRotate = diff*8;
+		}
+		else
+			this.cards[i].newRotate = 0;
+		
 		this.cards[i].newDrawX = drawX;
 		this.cards[i].newDrawY = drawY;
-		this.cards[i].newRotate = 0;
+		
 		this.cards[i].is_moving = true;
 		this.cards[i].moving_action = "fix";
 		this.cards[i].key = i;
-		this.cards[i].player_id = this.key
+		this.cards[i].player_id = this.key;
 	}
 	
 	if (this.cards.length <= 0)

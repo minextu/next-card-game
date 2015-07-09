@@ -129,7 +129,11 @@ Card.prototype.draw = function()
 	{
 		main_ctx.save();
 		main_ctx.translate(this.drawX.ratio(0) + (this.width/2).ratio(0,1), this.drawY.ratio(1) + (this.height/2).ratio(1,1));
-		main_ctx.rotate(Math.PI / this.rotate);
+		
+		if (this.moving_action != "fix")
+			main_ctx.rotate(Math.PI / this.rotate);
+		else
+			main_ctx.rotate(this.rotate * Math.PI / 180);
 		
 		
 	
@@ -342,6 +346,7 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 	this.newDrawX = 0 - this.width + offsetX;
 	this.newDrawY = original_height / 2 - this.height;
 	this.newRotate = Math.round(Math.random()*20);
+	this.rotate = 0;
 	this.show = true;
 	this.width = this.original_width;
 	this.height = this.original_height;
