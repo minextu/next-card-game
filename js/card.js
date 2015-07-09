@@ -9,6 +9,7 @@ function Card(id, drawX, drawY, show, rotate, player_id, key)
 	this.drawY = drawY;
 	this.error = false;
 	this.key = key;
+	this.is_touch = false;
 	
 	this.rotate = rotate;
 	if (this.rotate == undefined)
@@ -138,6 +139,29 @@ Card.prototype.draw = function()
 			main_ctx.fillRect(-(this.width / 2).ratio(0,1), (-this.height / 2).ratio(1,1), this.width.ratio(0,1), this.height.ratio(1,1));
 			main_ctx.globalAlpha = 1;
 			
+			if (is_touch && this.player_key !== false)
+			{
+				this.is_touch = true;
+				this.is_moving = false;
+				var diff = 2*((startY).ratio(1) - (mouseY).ratio(1));
+				this.drawY = this.newDrawY - diff;
+				
+				for (var i = 1; i < players[this.player_id].cards.length; i++)
+				{
+					if (players[this.player_id].cards[this.key+i] != undefined && players[this.player_id].cards[this.key+i].num == this.num)
+					{
+						players[this.player_id].cards[this.key+i].drawY = players[this.player_id].cards[this.key+i].newDrawY - diff;;
+						players[this.player_id].cards[this.key+i].is_moving = false;
+					}
+				}
+				
+				if (this.drawY < this.newDrawY - this.height)
+				{
+					mouse_is_down = true;
+					is_touch = false;
+				}
+			}
+			
 			if (mouse_is_down)
 			{
 				if (table_cards.length == 0 && this.num == 7 || table_cards.length > 0 && table_cards[table_cards.length-1].done == true)
@@ -176,6 +200,11 @@ Card.prototype.draw = function()
 			main_ctx.textAlign = "center";
 			main_ctx.font = (50).ratio(0,1) + "px Arial";
 			main_ctx.fillText("X", (0).ratio(0,1), (0).ratio(1,1));
+		}
+		if (this.is_touch && !is_touch && this.player_id !== false)
+		{
+			players[this.player_id].updated_cards();
+			this.is_touch = false;
 		}
 		
 		if (this.show)
@@ -249,6 +278,7 @@ Card.prototype.draw = function()
 
 Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 {	
+	this.is_touch = false;
 	if (is_ai === true)
 	{
 		var card = this;

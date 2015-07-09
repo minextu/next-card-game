@@ -68,6 +68,13 @@ function loop()
 		}
 	}
 	
+	if (is_touch_end)
+	{
+		mouseX = 0;
+		mouseY = 0;
+		is_touch_end = false;
+	}
+	
 	/*FPS*/
 	var this_loop = new Date();
 	this_fps = 1000 / (this_loop - last_loop);

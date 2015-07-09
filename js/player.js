@@ -142,14 +142,14 @@ Player.prototype.draw = function()
 		var skipWidth = 100;
 		var skipHeight = 100;
 		
-		if (mouseX >= skipX.ratio(0) && mouseX <= skipX.ratio(0) + skipWidth.ratio(0,1) && mouseY >= skipY.ratio(1) && mouseY <= skipY.ratio(1) + skipHeight.ratio(1,1))
+		if (mouseX >= skipX.ratio(0) && mouseX <= skipX.ratio(0) + skipWidth.ratio(0,1) && mouseY >= skipY.ratio(1) && mouseY <= skipY.ratio(1) + skipHeight.ratio(1,1) && (!is_touch || (is_touch_end || is_touch) && startX >= skipX.ratio(0) && startX <= skipX.ratio(0) + skipWidth.ratio(0,1) && startY >= skipY.ratio(1) && startY <= skipY.ratio(1) + skipHeight.ratio(1,1)))
 		{
 			main_ctx.globalAlpha = 0.2;
 			main_ctx.fillStyle = "blue";
 			main_ctx.fillRect(skipX.ratio(0), (skipY).ratio(1), (skipWidth).ratio(0,1), (skipHeight).ratio(1,1));
 			main_ctx.globalAlpha = 1;
 			
-			if (mouse_is_down)
+			if (mouse_is_down || is_touch_end)
 			{
 				skipped_players[skipped_players.length] = this.key;
 				
@@ -157,6 +157,8 @@ Player.prototype.draw = function()
 					multiplayer_played_cards[multiplayer_played_cards.length] = "skip";
 				
 				mouse_is_down = false;
+				is_touch = false;
+				is_touch_end = false;
 			}
 		}
 		main_ctx.drawImage(skip_image, (skipX).ratio(0), (skipY).ratio(1), (skipWidth).ratio(0,1),(skipHeight).ratio(1,1));
@@ -348,18 +350,18 @@ Player.prototype.check_multiplayer = function()
 
 function compare_card(a,b) 
 {
-	if (a.num > b.num)
+	if (a.id > b.id)
 		return -1;
-	if (a.num < b.num)
+	if (a.id < b.id)
 		return 1;
 	return 0;
 }
 
 function compare_card_ai(a,b) 
 {
-	if (a.num < b.num)
+	if (a.id < b.id)
 		return -1;
-	if (a.num > b.num)
+	if (a.id > b.id)
 		return 1;
 	return 0;
 }

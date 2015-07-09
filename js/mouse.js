@@ -18,6 +18,18 @@ function mouse(type, e)
 			mouse_is_down = true;
 		else if (type == "up")
 			mouse_is_down = false;
+		else if (type == "touch_start")
+		{
+			is_touch = true;
+			startX = mouseX;
+			startY = mouseY;
+			is_touch_end = false;
+		}
+		else if (type == "touch_end")
+		{
+			is_touch = false;
+			is_touch_end = true;
+		}
 
 		if (!is_menu && game_type == "editor")
 			editor_mouse(mouseX, mouseY, type);
@@ -55,8 +67,23 @@ function touch_end(event)
 	if (!is_menu && game_type == "game")
 	{
 		var touches = event.changedTouches;
-		mouse("down", touches[0]);
-		console.debug("down");
+		mouse("touch_end", touches[0]);
+		
+		/*e = {};
+		e.pageX = 0;
+		e.pageY = 0;
+		
+		mouse("moved", e);*/
+		
+		event.preventDefault();
+	}
+}
+function touch_start(event)
+{
+	if (!is_menu && game_type == "game")
+	{
+		var touches = event.changedTouches;
+		mouse("touch_start", touches[0]);
 		event.preventDefault();
 	}
 }
@@ -65,8 +92,13 @@ function init_mouse()
 {
 	mouseX = 0;
 	mouseY = 0;
+	startX = 0;
+	startY = 0;
+	
 	mouse_is_down = false;
 	mouse_disable = false;
+	is_touch = false;
+	is_touch_end = false;
 	
 	document.addEventListener("mousemove", mouse_move, false);
 	document.addEventListener("mousedown", mouse_down, false);
@@ -74,7 +106,7 @@ function init_mouse()
 	document.addEventListener("click", mouse_click, false);
 	document.addEventListener("wheel", mouseWheel, false);
 	document.addEventListener("touchend", touch_end, false);
-	document.addEventListener("touchstart", touch_moved, false);
+	document.addEventListener("touchstart", touch_start, false);
 	document.addEventListener("touchmove", touch_moved, false);
 
 }
