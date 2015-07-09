@@ -108,6 +108,20 @@ function Card(id, drawX, drawY, show, rotate, player_id, key)
 	this.symbol_srcY = 0;
 	this.hide_old_cards = false;
 	
+	this.generate_canvas();
+}
+Card.prototype.generate_canvas = function()
+{
+    this.card_canvas = document.createElement('canvas');
+    this.card_canvas.width = this.width;
+    this.card_canvas.height = this.height;
+    this.card_ctx = this.card_canvas.getContext('2d');
+
+	// blank card
+	if (cards_image[this.id] == undefined || this.show == false)
+		this.card_ctx.drawImage(card_image, this.srcX, this.srcY, this.srcWidth, this.srcHeight, 0, 0, this.width, this.height);
+	else if (cards_image[this.id] != undefined)
+		this.card_ctx.drawImage(cards_image[this.id], 0, 0, this.width, this.height);
 }
 Card.prototype.draw = function()
 {
@@ -117,20 +131,29 @@ Card.prototype.draw = function()
 		main_ctx.translate(this.drawX.ratio(0) + (this.width/2).ratio(0,1), this.drawY.ratio(1) + (this.height/2).ratio(1,1));
 		main_ctx.rotate(Math.PI / this.rotate);
 		
-		// blank card
-		main_ctx.drawImage(cards_image, this.srcX, this.srcY, this.srcWidth, this.srcHeight, (-this.width / 2).ratio(0,1), (-this.height/ 2).ratio(1,1), this.width.ratio(0,1), (this.height).ratio(1,1));
 		
-		if (this.show)
+	
+		/*if (this.show)
 		{
-			// suit / symbol
-			main_ctx.drawImage(suits_image, this.symbol_srcX, this.symbol_srcY, this.symbol_srcWidth, this.symbol_srcHeight, -(this.symbol_width / 2).ratio(0,1), -(this.symbol_height / 2).ratio(1,1), this.symbol_width.ratio(0,1), this.symbol_height.ratio(1,1));
-			
-			// name
-			if (this.symbol == "heart" || this.symbol == "diamond")
-				main_ctx.fillStyle = "#a31919";
+			if (cards_image[this.id] != undefined)
+			{
+				this.card_ctx.drawImage(cards_image[this.id], 0, 0, this.width, this.height);
+			}
 			else
-				main_ctx.fillStyle = "black";
-		}
+			{
+				// suit / symbol
+				this.card_ctx.drawImage(suits_image, this.symbol_srcX, this.symbol_srcY, this.symbol_srcWidth, this.symbol_srcHeight, -(this.symbol_width / 2).ratio(0,1), -(this.symbol_height / 2).ratio(1,1), this.symbol_width.ratio(0,1), this.symbol_height.ratio(1,1));
+				
+				// name
+				if (this.symbol == "heart" || this.symbol == "diamond")
+					main_ctx.fillStyle = "#a31919";
+				else
+					main_ctx.fillStyle = "black";
+			}
+			
+			
+		}*/
+		main_ctx.drawImage(this.card_canvas, (-this.width / 2).ratio(0,1), (-this.height / 2).ratio(1,1), this.width.ratio(0,1), this.height.ratio(1,1));
 
 		if (
 				(!this.is_moving || this.moving_action == "fix")
@@ -209,14 +232,15 @@ Card.prototype.draw = function()
 			this.is_down = false;
 		}
 		
-		if (this.show)
+		/*
+		if (this.show && cards_image[this.id] == undefined)
 		{
 			//name
 			main_ctx.textBaseline = "top";
 			main_ctx.textAlign = "left";
 			main_ctx.font = (15).ratio(0,1) + "px Arial";
 			main_ctx.fillText(this.name, -(this.width / 2 - 5).ratio(0,1), -(this.height / 2 - 5).ratio(1,1));
-		}
+		}*/
 		
 		if (this.is_moving)
 		{
@@ -323,6 +347,7 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 	this.height = this.original_height;
 	this.srcX = 200;
 	this.show = true;
+	this.generate_canvas();
 	
 	if (this.player_id == 0 && is_multiplayer && not_first_card !== true && players[0].enable_multiplayer == false)
 	{
@@ -369,6 +394,7 @@ function hide_cards()
 		table_cards[i].height = card.original_height / 2;
 		table_cards[i].srcX = 0;
 		table_cards[i].done = true;
+		table_cards[i].generate_canvas();
 	}
 	
 	for (var i = 0; i < players.length; i++)

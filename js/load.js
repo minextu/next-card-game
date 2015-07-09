@@ -13,8 +13,8 @@ function load_media()
 	background_image = new Image();
 	background_image.src = "js/images/game_background.png";
 	
-	cards_image = new Image();
-	cards_image.src = "js/images/cards.png";
+	card_image = new Image();
+	card_image.src = "js/images/cards.png";
 	
 	suits_image = new Image();
 	suits_image.src = "js/images/suits.png";
@@ -30,4 +30,11 @@ function load_media()
 	
 	arrow_image = new Image();
 	arrow_image.src = "js/images/arrow_down.png";
+	
+	cards_image = [];
+	for (var i = 0; i <= 31; i++)
+	{
+		cards_image[i] = new Image();
+		cards_image[i].src = "js/images/cards/" + i + ".png";
+	}
 }
