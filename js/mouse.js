@@ -41,6 +41,26 @@ function mouseWheel(e)
 
 }
 
+function touch_moved(event)
+{
+	if (!is_menu && game_type == "game")
+	{
+		var touches = event.changedTouches;
+		mouse("moved", touches[0]);
+		event.preventDefault();
+	}
+}
+function touch_end(event)
+{
+	if (!is_menu && game_type == "game")
+	{
+		var touches = event.changedTouches;
+		mouse("down", touches[0]);
+		console.debug("down");
+		event.preventDefault();
+	}
+}
+
 function init_mouse()
 {
 	mouseX = 0;
@@ -53,4 +73,8 @@ function init_mouse()
 	document.addEventListener("mouseup", mouse_up, false);
 	document.addEventListener("click", mouse_click, false);
 	document.addEventListener("wheel", mouseWheel, false);
+	document.addEventListener("touchend", touch_end, false);
+	document.addEventListener("touchstart", touch_moved, false);
+	document.addEventListener("touchmove", touch_moved, false);
+
 }
