@@ -128,11 +128,6 @@ Player.prototype.draw = function()
 		main_ctx.fillText(text, drawX.ratio(0), (drawY).ratio(1));
 	}
 	
-	for (var i = 0; i < this.cards.length; i++)
-	{
-		this.cards[i].draw();
-	}
-	
 	if (player_turn == this.key && can_play)
 		main_ctx.drawImage(arrow_image, this.drawX.ratio(0) + (this.width / 2 - 50 / 2).ratio(0,1), this.drawY.ratio(1), (50).ratio(0,1), (50).ratio(1,1));
 	if (!game_finished && player_turn == this.key && table_cards.length != 0 && table_cards[table_cards.length-1].done != true && can_play && this.key == 0)
@@ -142,7 +137,7 @@ Player.prototype.draw = function()
 		var skipWidth = 100;
 		var skipHeight = 100;
 		
-		if (mouseX >= skipX.ratio(0) && mouseX <= skipX.ratio(0) + skipWidth.ratio(0,1) && mouseY >= skipY.ratio(1) && mouseY <= skipY.ratio(1) + skipHeight.ratio(1,1) && (!is_touch || (is_touch_end || is_touch) && startX >= skipX.ratio(0) && startX <= skipX.ratio(0) + skipWidth.ratio(0,1) && startY >= skipY.ratio(1) && startY <= skipY.ratio(1) + skipHeight.ratio(1,1)))
+		if (!mouse_is_down && !is_touch_end && mouseX >= skipX.ratio(0) && mouseX <= skipX.ratio(0) + skipWidth.ratio(0,1) && mouseY >= skipY.ratio(1) && mouseY <= skipY.ratio(1) + skipHeight.ratio(1,1) || startX >= skipX.ratio(0) && startX <= skipX.ratio(0) + skipWidth.ratio(0,1) && startY >= skipY.ratio(1) && startY <= skipY.ratio(1) + skipHeight.ratio(1,1))
 		{
 			main_ctx.globalAlpha = 0.2;
 			main_ctx.fillStyle = "blue";
@@ -162,6 +157,11 @@ Player.prototype.draw = function()
 			}
 		}
 		main_ctx.drawImage(skip_image, (skipX).ratio(0), (skipY).ratio(1), (skipWidth).ratio(0,1),(skipHeight).ratio(1,1));
+	}
+	
+	for (var i = 0; i < this.cards.length; i++)
+	{
+		this.cards[i].draw();
 	}
 };
 
