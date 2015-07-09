@@ -138,8 +138,8 @@ Card.prototype.draw = function()
 				(this.player_id == 0 && player_turn === this.player_id && can_play)
 			&& 
 				(highlight == this.player_id + "" + this.key 
-				|| mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1) 
-				|| mouse_is_down && startX >= (this.drawX).ratio(0) && startX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && startY >= (this.drawY).ratio(1) && startY <= (this.drawY).ratio(1) + (this.height).ratio(1,1)))
+				|| !mouse_is_down && mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1) 
+				|| mouse_is_down && startX >= (this.newDrawX).ratio(0) && startX <= (this.newDrawX).ratio(0) + (this.width).ratio(0,1) && startY >= (this.newDrawY).ratio(1) && startY <= (this.newDrawY).ratio(1) + (this.height).ratio(1,1)))
 		{
 			main_ctx.globalAlpha = 0.3;
 			main_ctx.fillStyle = "red";
@@ -189,6 +189,7 @@ Card.prototype.draw = function()
 			else
 				highlight = "";
 		}
+			
 		if (this.error !== false)
 		{
 			this.error -= (1).speed();

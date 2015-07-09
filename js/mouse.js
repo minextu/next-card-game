@@ -44,6 +44,7 @@ function mouse(type, e)
 			startX = mouseX;
 			startY = mouseY;
 			is_touch_end = false;
+			console.debug("down");
 		}
 		else if (type == "up")
 			mouse_is_down = false;
@@ -52,9 +53,6 @@ function mouse(type, e)
 			is_touch_end = true;
 			mouse_is_down = false;
 		}
-
-		if (!is_menu && game_type == "editor")
-			editor_mouse(mouseX, mouseY, type);
 			
 		if (is_debug)
 			document.getElementById('debug').innerHTML = 'X: ' + Math.round(mouseX, 0) + ' Y: ' + Math.round(mouseY, 0);
