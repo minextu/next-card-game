@@ -132,7 +132,7 @@ Card.prototype.draw = function()
 				main_ctx.fillStyle = "black";
 		}
 
-		if ((!this.is_moving || this.moving_action == "fix") && this.player_id == 0 && player_turn == this.player_id && can_play && (highlight == this.player_id + "" + this.key || mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1)))
+		if ((!this.is_moving || this.moving_action == "fix") && this.player_id == 0 && player_turn == this.player_id && can_play && (highlight == this.player_id + "" + this.key || mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1) || is_touch && startX >= (this.drawX).ratio(0) && startX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && startY >= (this.drawY).ratio(1) && startY <= (this.drawY).ratio(1) + (this.height).ratio(1,1)))
 		{
 			main_ctx.globalAlpha = 0.3;
 			main_ctx.fillStyle = "red";
@@ -143,7 +143,7 @@ Card.prototype.draw = function()
 			{
 				this.is_touch = true;
 				this.is_moving = false;
-				var diff = 2*((startY).ratio(1) - (mouseY).ratio(1));
+				var diff = (startY - mouseY) / game_height * original_height;
 				this.drawY = this.newDrawY - diff;
 				
 				for (var i = 1; i < players[this.player_id].cards.length; i++)
