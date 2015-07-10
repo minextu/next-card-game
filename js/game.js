@@ -252,6 +252,18 @@ function game()
 			console.debug(skipped_players.length + " Players skipped the round");
 			hide_cards();
 			player_turn = table_cards[table_cards.length - 1].from_player;
+			for (var i = 0; i < players.length; i++)
+			{
+				if (finished_players.indexOf(player_turn) !== -1)
+				{
+					if (player_turn < players.length - 1)
+						player_turn++;
+					else
+						player_turn = 0;
+				}
+				if (finished_players.indexOf(player_turn) === -1)
+					break;
+			}
 		}
 	}
 	main_ctx.drawImage(table_image, game_width / 2 - (table_width / 2).ratio(0,1), game_height / 2 - (table_height / 2).ratio(1,1), table_width.ratio(0,1), table_height.ratio(1,1));
