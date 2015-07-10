@@ -164,7 +164,13 @@ function handle_multiplayer()
 				last_id = played_cards[i]["id"];
 				
 				if (players[0].enable_multiplayer == true || players[0].multiplayer_id != played_cards[i]["player_id"])
-					multiplayer_cards_to_play[multiplayer_cards_to_play.length] = played_cards[i];
+				{
+					for (var ii = 0; ii < players.length; ii++)
+					{
+						if (players[ii].multiplayer_id == played_cards[i]["player_id"])
+							multiplayer_cards_to_play[multiplayer_cards_to_play.length] = played_cards[i];
+					}
+				}
 			}
 			
 			if ( multiplayer_cards_to_play.length <= 0 || multiplayer_cards_to_play[0].player_id != players[0].multiplayer_id && multiplayer_cards_to_play.length <= 1)
