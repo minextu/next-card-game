@@ -13,6 +13,8 @@ function Player(drawX, drawY, show_cards, card_pos, no_cards, key)
 	this.updated_cards = false;
 	
 	this.show_cards = show_cards;
+	
+
 	this.card_pos = card_pos;
 	
 	if (this.card_pos == "left")
@@ -38,7 +40,7 @@ function Player(drawX, drawY, show_cards, card_pos, no_cards, key)
 }
 
 Player.prototype.draw = function()
-{
+{	
 	if (player_turn == this.key && can_play && game_finished == false)
 	{
 		if (this.enable_ai)
@@ -362,7 +364,7 @@ Player.prototype.ai = function()
 		{
 			if (table_cards.length == 0)
 			{
-				if (this.cards[i].num == 7)
+				if (this.cards[i].id == 0)
 				{
 					this.cards[i].play(false, 0, true);
 					this.played_card = true;

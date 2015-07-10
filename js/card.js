@@ -342,7 +342,7 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 	if (offsetX == undefined)
 		offsetX = 0;
 	
-	if (players[this.player_id].cards[this.key+1] != undefined && players[this.player_id].cards[this.key+1].num == this.num)
+	if (!players[this.player_id].enable_ki && players[this.player_id].cards[this.key+1] != undefined && players[this.player_id].cards[this.key+1].num == this.num)
 	{
 		if (offsetX == 0)
 			offsetX-= 99;
