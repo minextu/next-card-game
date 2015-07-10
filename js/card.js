@@ -384,7 +384,8 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 		window.setTimeout(function() { card.play(no_new_turn, offsetX, false) }, timeout);
 		return false;
 	}
-	players[this.player_id].played_card = false;
+	if (players[this.player_id] != undefined)
+		players[this.player_id].played_card = false;
 	
 	if (is_ai != "2" && (table_cards.length == 0 || table_cards[table_cards.length-1].done == true))
 		cards_played++;
