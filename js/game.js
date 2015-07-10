@@ -265,6 +265,24 @@ function game()
 					break;
 			}
 		}
+		
+		if (!is_giving && !game_finished && has_switched && !can_play)
+		{
+			var skip = true;
+			for (var i = 0; i < players.length; i++)
+			{
+					for (var ii = 0; ii < players[i].cards.length; ii++)
+					{
+						if (players[i].cards[ii].is_moving == true)
+							skip = false;
+					}
+			}
+			if (skip == true)
+			{
+				can_play = true;
+				console.warn("bug detected, force play")
+			}
+		}
 	}
 	main_ctx.drawImage(table_image, game_width / 2 - (table_width / 2).ratio(0,1), game_height / 2 - (table_height / 2).ratio(1,1), table_width.ratio(0,1), table_height.ratio(1,1));
 	
@@ -301,6 +319,7 @@ function game()
 
 function give_cards(player_id)
 {
+	has_switched = false;
 	if (player_id == "switch")
 	{
 		handle_card_switch();
@@ -454,6 +473,7 @@ function handle_card_switch()
 	skipped_players = [];
 	game_finished = false;
 	can_play = true;
+	has_switched = true;
 }
 
 function update_card_deck(type)
