@@ -162,7 +162,7 @@ Card.prototype.draw = function()
 		if (
 				(!this.is_moving || this.moving_action == "fix")
 			&& 
-				(this.player_id == 0 && player_turn === this.player_id && can_play)
+				(this.player_id === 0 && player_turn === this.player_id && can_play)
 			&& 
 				(highlight == this.player_id + "" + this.key 
 				|| !mouse_is_down && mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1) 
@@ -316,7 +316,9 @@ Card.prototype.draw = function()
 Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 {	
 	this.is_down = false;
-	players[this.player_id].skip_timeout = false;
+	
+	if (this.player_id !== false)
+		players[this.player_id].skip_timeout = false;
 	
 	if (is_ai === true)
 	{
@@ -361,7 +363,7 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 	this.show = true;
 	this.generate_canvas();
 	
-	if (this.player_id == 0 && is_multiplayer && not_first_card !== true && players[0].enable_multiplayer == false)
+	if (this.player_id === 0 && is_multiplayer && not_first_card !== true && players[0].enable_multiplayer == false)
 	{
 		multiplayer_played_cards[multiplayer_played_cards.length] = this.key;
 		console.debug("saved card");
