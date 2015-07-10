@@ -249,7 +249,6 @@ function game()
 	{
 		for (var i = 0; i < players.length; i++)
 		{
-			players[i].draw();
 			for (var ii = 0; ii < 10; ii++)
 			{
 				for (var iii = 0; iii < players[i].cards.length; iii++)
@@ -257,6 +256,7 @@ function game()
 					players[i].cards[iii].draw();
 				}
 			}
+			players[i].draw();
 		}
 	}
 	else

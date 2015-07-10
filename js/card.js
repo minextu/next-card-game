@@ -288,7 +288,7 @@ Card.prototype.draw = function()
 					{
 						var player_id = this.player_id;
 						
-						if (players[0].enable_multiplayer == true)
+						if (is_multiplayer && multiplayer_cards_to_play.length > 0 && players[0].enable_multiplayer == true)
 							players[this.player_id].update_cards();
 						else
 							players[this.player_id].updated_cards = true;
