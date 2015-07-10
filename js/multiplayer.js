@@ -110,6 +110,8 @@ function join_multiplayer_room(id)
 			}
 			hide_cards();
 			
+			set_first_player(answer['first_player']);
+			
 			game_type = "game";
 			give_player = first_player_give;
 			is_giving = true;
@@ -341,5 +343,5 @@ function multiplayer_create_new_room()
 			join_multiplayer_room(answer['id']);
 	}
 	httpobject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
-	httpobject.send("title=" + encodeURIComponent(title) + "&slots=" + slots);
+	httpobject.send("title=" + encodeURIComponent(title) + "&slots=" + slots + "&first_player=" + game_first_player + "&cards=" + encodeURIComponent(JSON.stringify(available_cards)));
 }

@@ -90,6 +90,36 @@ function Card(id, drawX, drawY, show, rotate, player_id, key)
 		this.num = 14;
 		this.symbol = symbols[this.id - 28];
 	}
+	else if (this.id >= 32 && this.id < 36)
+	{
+		this.name = "2";
+		this.num = 2;
+		this.symbol = symbols[this.id - 32];
+	}
+	else if (this.id >= 36 && this.id < 40)
+	{
+		this.name = "3";
+		this.num = 3;
+		this.symbol = symbols[this.id - 36];
+	}
+	else if (this.id >= 40 && this.id < 44)
+	{
+		this.name = "4";
+		this.num = 4;
+		this.symbol = symbols[this.id - 40];
+	}
+	else if (this.id >= 44 && this.id < 48)
+	{
+		this.name = "5";
+		this.num = 5;
+		this.symbol = symbols[this.id - 44];
+	}
+	else if (this.id >= 48 && this.id < 52)
+	{
+		this.name = "6";
+		this.num = 6;
+		this.symbol = symbols[this.id - 48];
+	}
 	
 	this.symbol_srcWidth = 34;
 	this.symbol_srcHeight = 38;
@@ -158,49 +188,14 @@ Card.prototype.draw = function()
 			
 		}*/
 		main_ctx.drawImage(this.card_canvas, (-this.width / 2).ratio(0,1), (-this.height / 2).ratio(1,1), this.width.ratio(0,1), this.height.ratio(1,1));
-
-		if (
-				(!this.is_moving || this.moving_action == "fix")
-			&& 
-				(this.player_id === 0 && player_turn === this.player_id && can_play)
-			&& 
-				(highlight == this.player_id + "" + this.key 
-				|| !mouse_is_down && mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1) 
-				|| mouse_is_down && startX >= (this.newDrawX).ratio(0) && startX <= (this.newDrawX).ratio(0) + (this.width).ratio(0,1) && startY >= (this.newDrawY).ratio(1) && startY <= (this.newDrawY).ratio(1) + (this.height).ratio(1,1)))
+			
+		
+		if (this.hover)
 		{
 			main_ctx.globalAlpha = 0.3;
 			main_ctx.fillStyle = "red";
 			main_ctx.fillRect(-(this.width / 2).ratio(0,1), (-this.height / 2).ratio(1,1), this.width.ratio(0,1), this.height.ratio(1,1));
 			main_ctx.globalAlpha = 1;
-			
-			if (mouse_is_down && this.player_key !== false)
-			{
-				this.is_down = true;
-				this.is_moving = false;
-				var diff = (startY - mouseY) / game_height * original_height;
-				this.drawY = this.newDrawY - diff;
-				
-				for (var i = 1; i < players[this.player_id].cards.length; i++)
-				{
-					if (players[this.player_id].cards[this.key+i] != undefined && players[this.player_id].cards[this.key+i].num == this.num)
-					{
-						players[this.player_id].cards[this.key+i].drawY = players[this.player_id].cards[this.key+i].newDrawY - diff;;
-						players[this.player_id].cards[this.key+i].is_moving = false;
-					}
-				}
-				
-				if (this.drawY < this.newDrawY - this.height)
-				{
-					if (table_cards.length == 0 && this.num == 7 || table_cards.length > 0 && table_cards[table_cards.length-1].done == true)
-						this.play();
-					else if (table_cards.length > 0 && table_cards[table_cards.length-1].num < this.num && players[this.player_id].selected_cards == cards_played)
-						this.play();
-					else
-						this.error = 50;
-				
-					mouse_is_down = false;
-				}
-			}
 			
 			if (highlight == "" && players[this.player_id] != undefined)
 				players[this.player_id].selected_cards = 1;
@@ -209,14 +204,15 @@ Card.prototype.draw = function()
 			{
 				players[this.player_id].selected_cards++;
 				highlight = this.player_id + "" + (this.key+1);
-				
+				players[this.player_id].cards[this.key+1].hover = true;
+			
 				if (this.error != false)
 					players[this.player_id].cards[this.key+1].error = this.error;
 			}
 			else
 				highlight = "";
 		}
-			
+		
 		if (this.error !== false)
 		{
 			this.error -= (1).speed();
@@ -234,6 +230,7 @@ Card.prototype.draw = function()
 		{
 			players[this.player_id].updated_cards = true;
 			this.is_down = false;
+			start_card = false;
 		}
 		
 		/*
@@ -313,9 +310,62 @@ Card.prototype.draw = function()
 	}
 };
 
+Card.prototype.check_play = function()
+{
+	if (
+		(!this.is_moving || this.moving_action == "fix")
+		&& 
+		(this.player_id === 0 && player_turn === this.player_id && can_play)
+		&& 
+		(highlight == this.player_id + "" + this.key 
+		|| !mouse_is_down && is_hover && mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1) 
+		|| mouse_is_down && is_hover && (start_card === this.player_id + "" + this.key || mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1) && start_card === false)))
+	{
+		if (highlight != this.player_id + "" + this.key)
+			is_hover = false;
+		
+		this.hover = true;
+			
+		if (mouse_is_down && this.player_key !== false)
+		{
+			if (start_card === false)
+				start_card = this.player_id + "" + this.key;
+			
+			this.is_down = true;
+			this.is_moving = false;
+			var diff = (startY - mouseY) / game_height * original_height;
+			this.drawY = this.newDrawY - diff;
+				
+			for (var i = 1; i < players[this.player_id].cards.length; i++)
+			{
+				if (players[this.player_id].cards[this.key+i] != undefined && players[this.player_id].cards[this.key+i].num == this.num)
+				{
+					players[this.player_id].cards[this.key+i].drawY = players[this.player_id].cards[this.key+i].newDrawY - diff;;
+					players[this.player_id].cards[this.key+i].is_moving = false;
+				}
+			}
+			
+			if (this.drawY < this.newDrawY - this.height)
+			{
+				if (table_cards.length == 0 && this.num == 7 || game_first_player != "7" || table_cards.length > 0 && table_cards[table_cards.length-1].done == true)
+					this.play();
+				else if (table_cards.length > 0 && table_cards[table_cards.length-1].num < this.num && players[this.player_id].selected_cards == cards_played)
+					this.play();
+				else
+					this.error = 50;
+				
+				mouse_is_down = false;
+			}
+		}
+	}
+	else
+		this.hover = false;
+}
+
 Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 {	
 	this.is_down = false;
+	start_card = false;
 	
 	if (this.player_id !== false && players[this.player_id] != undefined)
 		players[this.player_id].skip_timeout = false;
@@ -369,7 +419,7 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 		console.debug("saved card");
 	}
 	
-	if (this.id >= 28)
+	if (this.id >= 28 && this.id < 32)
 	{
 		this.hide_old_cards = true;
 	}

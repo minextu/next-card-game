@@ -113,18 +113,19 @@ function init_mouse()
 	mouseY = 0;
 	startX = 0;
 	startY = 0;
+	start_card = false;
 	
 	mouse_is_down = false;
 	mouse_disable = false;
 	is_touch_end = false;
 	
-	document.addEventListener("mousemove", mouse_move, false);
-	document.addEventListener("mousedown", mouse_down, false);
-	document.addEventListener("mouseup", mouse_up, false);
-	document.addEventListener("click", mouse_click, false);
-	document.addEventListener("wheel", mouseWheel, false);
-	document.addEventListener("touchend", touch_end, false);
-	document.addEventListener("touchstart", touch_start, false);
-	document.addEventListener("touchmove", touch_moved, false);
+	game_object.addEventListener("mousemove", mouse_move, false);
+	game_object.addEventListener("mousedown", mouse_down, false);
+	game_object.addEventListener("mouseup", mouse_up, false);
+	game_object.addEventListener("click", mouse_click, false);
+	game_object.addEventListener("wheel", mouseWheel, false);
+	game_object.addEventListener("touchend", touch_end, false);
+	game_object.addEventListener("touchstart", touch_start, false);
+	game_object.addEventListener("touchmove", touch_moved, false);
 
 }

@@ -5,16 +5,27 @@ function show_hide_menu(type)
 {
 	if (type != "hide")
 	{
-		bg_canvas.style.background = "url('css/images/menu_background.png')";
 		main_canvas.style.background = "none";
 		menu_nav.style.visibility = "visible";
-		document.getElementById("speed").style.display = "none";
+		menu_nav.style.display = "block";
 		console.debug("show menu");
 	}
 	else
 	{
 		menu_nav.style.visibility = "hidden";
-		document.getElementById("speed").style.display = "block";
+		menu_nav.style.display = "none";
+	}
+}
+
+function show_hide_options(type)
+{
+	if (type != "hide")
+	{
+		document.getElementById("game_options").style.display = "block";
+	}
+	else
+	{
+		document.getElementById("game_options").style.display = "none";
 	}
 }
 

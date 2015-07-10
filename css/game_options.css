@@ -1,0 +1,95 @@
+#game_options
+{
+	width: 80%;
+	left: 10%;
+	margin-top: -1px;
+}
+#game_options:hover
+{
+	margin-top: -1px;
+}
+#game_options:hover #option_content
+{
+	height: auto; 
+	display: block;
+	padding: 10px;
+	opacity: 1;
+}
+#game_options #option_content
+{
+	background: rgba(0,0,0,0.8);
+	width: 100%;
+	color: white;
+	border: 1px solid rgba(0,0,255,0.5);
+	border-radius: 0px 0px 10px 10px;
+	height: 100px;
+	display: none;
+	padding: 1px;
+	opacity: 0;
+}
+
+#game_options #option_head
+{
+	background: rgba(0,0,0,0.8);
+	width: 20%;
+	margin: 0px auto;
+	text-align: center;
+	border-radius: 0px 0px 10px 10px;
+	padding: 5px;
+	color: white;
+	font-size: 20px;
+	border-bottom: 1px solid rgba(0,0,255,0.5);
+	border-left: 1px solid rgba(0,0,255,0.5);
+	border-right: 1px solid rgba(0,0,255,0.5);
+	margin-top: -1px;
+}
+
+#game_options #option_cards
+{
+	margin-top: 10px;
+}
+
+#game_options #option_cards .option_card_container
+{
+	height: 50px;
+	display: inline-block;
+	width: 37px;
+}
+#game_options #option_cards .option_cards_add, #game_options #option_cards .option_cards_remove
+{
+	display: block;
+	height: 13px;
+	color: black;
+	width: 100%;
+	text-align: center;
+}
+#game_options #option_cards .num
+{
+	color: red;
+	font-weight: bold;
+	float: right;
+	background: rgba(0,0,0,0.4);
+	font-size: 20px;
+}
+#game_options #option_cards .option_cards_add
+{
+	background: rgba(0,255,0, 0.5);
+	margin-top: 20px;
+	clear: both;
+	font-size: 13px;
+	font-weight: bold;
+}
+#game_options #option_cards .option_cards_remove
+{
+	background: rgba(255,0,0, 0.5);
+}
+#game_options #option_cards .option_cards_add:hover
+{
+	background: rgba(0,255,0, 1);
+	cursor: pointer;
+}
+#game_options #option_cards .option_cards_remove:hover
+{
+	background: rgba(255,0,0, 1);
+	cursor: pointer;
+}

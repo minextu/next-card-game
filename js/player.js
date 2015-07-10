@@ -206,10 +206,17 @@ Player.prototype.draw = function()
 		}
 	}
 	
+	for (var i = this.cards.length-1; i >= 0; i--)
+	{
+		this.cards[i].check_play();
+	}
+	
 	for (var i = 0; i < this.cards.length; i++)
 	{
 		this.cards[i].draw();
 	}
+	
+	
 	
 	if (this.updated_cards)
 	{
@@ -244,24 +251,37 @@ Player.prototype.update_cards = function()
 		if (this.card_pos == "top" || this.card_pos == "bottom")
 		{
 			if (this.show_cards)
-				var drawX = this.drawX - (card_num*test_card.width) / 2 + test_card.width*i + this.width / 2;
-			else
+			{
+				if ((this.cards.length*(test_card.width / 2)).ratio(0,1) > game_width)
+					var drawX = this.drawX - (card_num*(test_card.width / 3)) / 2 + (test_card.width / 3)*i + this.width / 6;
+				else if ((this.cards.length*test_card.width).ratio(0,1) > game_width)
+					var drawX = this.drawX - (card_num*(test_card.width / 2)) / 2 + (test_card.width / 2)*i + this.width / 4;
+				else
+					var drawX = this.drawX - (card_num*test_card.width) / 2 + test_card.width*i + this.width / 2;
+			}
+			else if (this.cards.length <= 8)
 				var drawX = this.drawX - (card_num*(test_card.width / 3)) / 2 + (test_card.width/3)*i + this.width / 3;
+			else
+				var drawX = this.drawX - (card_num*(test_card.width / 6)) / 2 + (test_card.width/6)*i + this.width / 6;
 			
 		}
 		else if (this.card_pos == "left")
 		{
 			if (this.show_cards)
 				var drawX = this.drawX - test_card.width - test_card.width*i;
-			else
+			else if (this.cards.length <= 8)
 				var drawX = this.drawX - test_card.width - (test_card.width / 3)*i;
+			else
+				var drawX = this.drawX - test_card.width - (test_card.width / 6)*i;
 		}
 		else
 		{
 			if (this.show_cards)
 				var drawX = this.drawX + this.width + test_card.width*i;
-			else
+			else if (this.cards.length <= 8)
 				var drawX = this.drawX + this.width + (test_card.width / 3)*i;
+			else
+				var drawX = this.drawX + this.width + (test_card.width / 6)*i;
 		}
 			
 		if (this.card_pos == "top")
@@ -277,7 +297,11 @@ Player.prototype.update_cards = function()
 			var diff = (i -(this.cards.length-1)/2);
 			if (this.card_pos == "top")
 				diff = -diff;
-			drawY-= Math.abs(diff*2);
+			
+			if (this.cards.length > 8)
+				diff = diff / 3;
+			
+			drawY-= Math.abs(diff*3);
 			this.cards[i].newRotate = diff*8;
 		}
 		else
@@ -362,7 +386,7 @@ Player.prototype.ai = function()
 	{
 		for (var i = 0; i < this.cards.length; i++)
 		{
-			if (table_cards.length == 0)
+			if (table_cards.length == 0 && game_first_player == "7")
 			{
 				if (this.cards[i].id == 0)
 				{
@@ -371,7 +395,7 @@ Player.prototype.ai = function()
 					break;
 				}
 			}
-			else if (table_cards[table_cards.length-1].done == true)
+			else if (game_first_player != "7" && table_cards.length == 0 || table_cards[table_cards.length-1].done == true)
 			{
 				this.cards[i].play(false, 0, true);
 				this.played_card = true;
@@ -438,18 +462,32 @@ Player.prototype.check_multiplayer = function()
 
 function compare_card(a,b) 
 {
-	if (a.id > b.id)
+	if (a.num == b.num)
+	{
+		if (a.id > b.id)
+			return -1;
+		else if (a.id < b.id)
+			return 1;
+	}
+	else if (a.num > b.num)
 		return -1;
-	if (a.id < b.id)
+	else if (a.num < b.num)
 		return 1;
 	return 0;
 }
 
 function compare_card_ai(a,b) 
 {
-	if (a.id < b.id)
+	if (a.num == b.num)
+	{
+		if (a.id < b.id)
+			return -1;
+		else if (a.id > b.id)
+			return 1;
+	}
+	else if (a.num < b.num)
 		return -1;
-	if (a.id > b.id)
+	else if (a.num > b.num)
 		return 1;
 	return 0;
 }

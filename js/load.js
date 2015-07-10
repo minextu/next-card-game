@@ -32,9 +32,11 @@ function load_media()
 	arrow_image.src = "js/images/arrow_down.png";
 	
 	cards_image = [];
-	for (var i = 0; i <= 31; i++)
+	for (var i = 0; i <= 51; i++)
 	{
 		cards_image[i] = new Image();
 		cards_image[i].src = "js/images/cards/" + i + ".png";
+		
+		document.getElementById("option_cards").innerHTML += "<span class='option_card_container' style='background:url(js/images/cards/" + i + ".png); background-size: 100% 100%;' id='card_" + i + "'><span class='num'>1x</span><span class='option_cards_add' onclick='add_card_to_deck(this)'>+</span><span class='option_cards_remove' onclick='remove_card_from_deck(this)'>-</span></span>";
 	}
 }

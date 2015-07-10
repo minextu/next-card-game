@@ -5,6 +5,7 @@
 	<link rel="stylesheet" href="css/main.css" type="text/css">
 	<link rel="stylesheet" href="css/menu.css" type="text/css">
 	<link rel="stylesheet" href="css/multiplayer.css" type="text/css">
+	<link rel="stylesheet" href="css/game_options.css" type="text/css">
 	<meta name='viewport' content='width=device-width, height?device-height, user-scalable=no'>
 </head>
 <body>
@@ -17,11 +18,6 @@
 			</ul>
 		</nav><!-- end: main-menu-id -->
 	</div>
-	
-	<span id="speed" class='container'>
-			<button style='display: block' id='slow' onclick='ai_speed=0; this.style.display = "none"; document.getElementById("fast").style.display = "block"'>AI: Slow</button>
-			<button style='display: none' id='fast' onclick='ai_speed="auto"; this.style.display = "none"; document.getElementById("slow").style.display = "block"'>AI: Fast</button>
-	</span>
 	
 	<div id='multiplayer_table' class='container'>
 		<table>
@@ -40,6 +36,17 @@
 		Slots: <input type="number" id='room_slots' min="2" max="7"><br>
 		
 		<button onclick='game_type = "multiplayer_table"'>Back</button> <button onclick='multiplayer_create_new_room()'>Create</button>
+	</div>
+	
+	
+	<div id="game_options" class='container'>
+		<div id='option_content'>
+			AI Speed: <select onchange='ai_speed=this.value'><option value='auto'>Slow</option><option value='0'>Fast</option></select>
+			Card deck:<select id='option_card_deck' onchange='update_card_deck(this.value)'><option value='default'>Default (7 to Ace)</option><option value='extra'>Extra (2 to Ace)</option><option value='custom'>Custom</option></select> 
+			First Player:<select onchange='set_first_player(this.value)' id='option_first_player'><option value='7'>Hearth 7</option><option value='loser'>Big Loser</option><option value='turn'>in turn</option></select>
+			<div id='option_cards'></div>
+		</div>
+		<div id='option_head'>Game Options</div>
 	</div>
 
 	<script type='text/javascript' src='js/camera.js'></script>

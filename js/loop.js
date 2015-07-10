@@ -22,6 +22,8 @@ var redraw_canvas = false;
 
 function loop()
 {
+	is_hover = true;
+	
 	buttons_num = 0;
 	main_ctx.clearRect(0,0,game_width,game_height);
 	
@@ -116,6 +118,11 @@ function check_changes()
 			show_hide_menu("hide");
 		else
 			show_hide_menu("true");
+		
+		if (!is_menu && !is_multiplayer && game_type == "game")
+			show_hide_options("true");
+		else
+			show_hide_options("hide");
 	}
 	if (old_game_type != game_type)
 	{
@@ -128,6 +135,11 @@ function check_changes()
 			show_hide_multiplayer_new_room("true");
 		else
 			show_hide_multiplayer_new_room("hide");
+		
+		if (!is_menu && (game_type == "game" && !is_multiplayer || game_type == "multiplayer_new_room"))
+			show_hide_options("true");
+		else
+			show_hide_options("hide");
 	}
 		
 	

@@ -26,7 +26,8 @@ function init()
 		return n;
 	};
   
-	document.getElementById("game_object").innerHTML = "<canvas width='" + game_width + "' height= '" + game_height + 
+	game_object = document.getElementById("game_object");
+	game_object.innerHTML = "<canvas width='" + game_width + "' height= '" + game_height + 
 		"' id='bg_canvas' style='background: gray;'></canvas>" + 
 		"<canvas width='" + game_width + "' height= '" + game_height + 
 		"' id='main_canvas'>Dein Browser ist zu alt, um dass Spiel zu starten.</canvas><span" +
@@ -69,6 +70,7 @@ function init()
 	init_mouse();
 	load_media();
 	start_loop();
+	update_card_deck("default");
 }
 
 init(); 
