@@ -347,7 +347,7 @@ Card.prototype.check_play = function()
 			
 			if (this.drawY < this.newDrawY - this.height)
 			{
-				if (table_cards.length == 0 && this.num == 7 || game_first_player != "7" || table_cards.length > 0 && table_cards[table_cards.length-1].done == true)
+				if (table_cards.length == 0 && this.num == 7 || table_cards.length == 0 && game_first_player != "7" || table_cards.length > 0 && table_cards[table_cards.length-1].done == true)
 					this.play();
 				else if (table_cards.length > 0 && table_cards[table_cards.length-1].num < this.num && players[this.player_id].selected_cards == cards_played)
 					this.play();
