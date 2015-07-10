@@ -140,6 +140,7 @@ function game()
 		last_player_turn = false;
 		if (finish_timeout <= 0)
 		{
+			finished_players = [];
 			if (is_multiplayer && !new_cards_ready)
 			{
 				table_cards = [];
@@ -150,7 +151,6 @@ function game()
 			
 			if (table_cards.length > 0)
 			{
-				finished_players = [];
 				skipped_players = [];
 				can_play = false;
 				hide_cards();
@@ -205,15 +205,6 @@ function game()
 			can_play = false;
 		}
 		
-		if (finished_players.indexOf(player_turn) !== -1)
-		{
-			if (skipped_players.indexOf(player_turn) === -1)
-			{
-				skipped_players[skipped_players.length] = player_turn;
-				console.debug("adding finished player to skiplist");
-			}
-		}
-		
 		if (skipped_players.indexOf(player_turn) !== -1)
 		{
 			for (var i = 0; i < players.length; i++)
@@ -227,6 +218,15 @@ function game()
 				
 				if (skipped_players.indexOf(player_turn) === -1)
 					break;
+			}
+		}
+		
+		if (finished_players.indexOf(player_turn) !== -1)
+		{
+			if (skipped_players.indexOf(player_turn) === -1)
+			{
+				skipped_players[skipped_players.length] = player_turn;
+				console.debug("adding finished player to skiplist");
 			}
 		}
 		
@@ -316,7 +316,7 @@ function give_cards(player_id)
 		player_turn = player_id;
 		
 	table_cards.splice(card_key, 1);
-	player.updated_cards();
+	player.updated_cards = true;
 	
 	if (table_cards.length > 0)
 	{
@@ -391,8 +391,8 @@ function handle_card_switch()
 		if (card2.id == 0)
 			player_turn = card_players["win2"].key;
 		
-		card_players["win2"].updated_cards();
-		card_players["give2"].updated_cards();
+		card_players["win2"].updated_cards = true;
+		card_players["give2"].updated_cards = true;
 		
 		if (card_players["win1"] != undefined && card_players["give1"] != undefined)
 		{
@@ -412,8 +412,8 @@ function handle_card_switch()
 			if (card1.id == 0)
 				player_turn = card_players["win1"].key;
 			
-			card_players["win1"].updated_cards();
-			card_players["give1"].updated_cards();
+			card_players["win1"].updated_cards = true;
+			card_players["give1"].updated_cards = true;
 		}
 	}
 	else

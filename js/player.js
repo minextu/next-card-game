@@ -10,6 +10,7 @@ function Player(drawX, drawY, show_cards, card_pos, no_cards, key)
 	this.win_cards = false;
 	this.skip_timeout = false;
 	this.disabled = false;
+	this.updated_cards = false;
 	
 	this.show_cards = show_cards;
 	this.card_pos = card_pos;
@@ -207,9 +208,15 @@ Player.prototype.draw = function()
 	{
 		this.cards[i].draw();
 	}
+	
+	if (this.updated_cards)
+	{
+		this.updated_cards = false;
+		this.update_cards();
+	}
 };
 
-Player.prototype.updated_cards = function()
+Player.prototype.update_cards = function()
 {
 	for (var i = 0; i < this.cards.length; i++)
 	{
@@ -343,6 +350,7 @@ Player.prototype.updated_cards = function()
 		}
 		
 		finished_players[finished_players.length] = this.key;
+		skipped_players[skipped_players.length] = this.key;
 	}
 };
 

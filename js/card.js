@@ -232,7 +232,7 @@ Card.prototype.draw = function()
 		}
 		if (this.is_down && !mouse_is_down && this.player_id !== false)
 		{
-			players[this.player_id].updated_cards();
+			players[this.player_id].updated_cards = true;
 			this.is_down = false;
 		}
 		
@@ -287,8 +287,15 @@ Card.prototype.draw = function()
 					if (no_update == false)
 					{
 						var player_id = this.player_id;
-						players[this.player_id].updated_cards();
+						
+						if (players[0].enable_multiplayer == true)
+							players[this.player_id].update_cards();
+						else
+							players[this.player_id].updated_cards = true;
+						
+						
 						can_play = true;
+
 						if (this.hide_old_cards)
 							hide_cards();
 					}
@@ -382,7 +389,7 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 function hide_cards()
 {
 	skipped_players = [];
-	skipped_players = [];
+	skipped_players = finished_players.slice();
 	
 	console.debug("new Round!");
 	
