@@ -266,6 +266,8 @@ Player.prototype.updated_cards = function()
 		if (this.show_cards == false)
 		{
 			var diff = (i -(this.cards.length-1)/2);
+			if (this.card_pos == "top")
+				diff = -diff;
 			drawY-= Math.abs(diff*2);
 			this.cards[i].newRotate = diff*8;
 		}
