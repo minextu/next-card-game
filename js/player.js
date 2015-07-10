@@ -41,7 +41,7 @@ function Player(drawX, drawY, show_cards, card_pos, no_cards, key)
 
 Player.prototype.draw = function()
 {	
-	if (player_turn == this.key && can_play && game_finished == false)
+	if (player_turn == this.key && can_play && game_finished == false && !is_giving)
 	{
 		if (this.enable_ai)
 			this.ai();
