@@ -458,6 +458,20 @@ Player.prototype.check_multiplayer = function()
 			break;
 		}
 	}
+	
+	if (this.enable_multiplayer == false)
+	{
+		for (var i = 0; i < multiplayer_cards_to_play.length; i++)
+		{
+			if (multiplayer_cards_to_play[i]['player_id'] == this.multiplayer_id)
+			{
+				multiplayer_cards_to_play[i].splice(i, 1);
+				i = -1;
+				continue;
+			}
+		}
+			
+	}
 };
 
 function compare_card(a,b) 
