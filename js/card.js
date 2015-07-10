@@ -317,7 +317,7 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 {	
 	this.is_down = false;
 	
-	if (this.player_id !== false)
+	if (this.player_id !== false && players[this.player_id] != undefined)
 		players[this.player_id].skip_timeout = false;
 	
 	if (is_ai === true)
