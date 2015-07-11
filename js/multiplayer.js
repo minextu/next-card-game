@@ -58,7 +58,7 @@ function join_multiplayer_room(id)
 			
 			new_game(answer['slots']-1, "multiplayer");
 			set_up_chat(answer['chat']);
-			
+
 			is_existing_game = false;
 			if (answer['is_existing_game'] == true)
 			{
