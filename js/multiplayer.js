@@ -257,9 +257,12 @@ function multiplayer_request_cards()
 		new_cards_ready = true;
 	}
 	var ranks = {};
-	for (var i = 0; i < players.length; i++)
+	if (waiting_players.length == 0)
 	{
-		ranks[players[i].multiplayer_id] = players[i].win_cards;
+		for (var i = 0; i < players.length; i++)
+		{
+			ranks[players[i].multiplayer_id] = players[i].win_cards;
+		}
 	}
 	httpobject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
 	httpobject.send("ranks=" +encodeURIComponent(JSON.stringify(ranks)));
