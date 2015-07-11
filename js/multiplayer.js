@@ -56,6 +56,8 @@ function join_multiplayer_room(id)
 			last_id = answer['last_id'];
 			multiplayer_played_cards = [];
 			
+			set_up_chat(answer['chat']);
+			
 			new_game(answer['slots']-1, "multiplayer");
 			is_existing_game = false;
 			if (answer['is_existing_game'] == true)
@@ -354,4 +356,34 @@ function multiplayer_create_new_room()
 	}
 	httpobject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
 	httpobject.send("title=" + encodeURIComponent(title) + "&slots=" + slots + "&first_player=" + game_first_player + "&cards=" + encodeURIComponent(JSON.stringify(available_cards)));
+}
+
+function set_up_chat(chat,i)
+{
+
+	if (i == undefined)
+	{		
+		document.getElementById("chat").innerHTML = chat;
+		i = 0;
+	}
+
+	var scripts = document.getElementsByClassName("sipac_script")
+	console.debug("load chat (" + i + "/" + scripts.length + ")");
+	if (scripts[i] != undefined)
+	{
+		if (scripts[i].src != "")
+		{
+			var script = document.createElement('script');
+			script.setAttribute("type","text/javascript");
+			script.setAttribute("src", scripts[i].src);
+			document.getElementsByTagName("head")[0].appendChild(script);
+			script.addEventListener("load", function() { set_up_chat(undefined, i+1) }, false);
+		}
+		else
+		{
+			eval(scripts[i].innerHTML);
+			set_up_chat(undefined, i+1);
+			document.getElementsByClassName("chat_message")[0].focus();
+		} 
+	}
 }

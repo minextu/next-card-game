@@ -1,7 +1,7 @@
 function key_down(e)
 {
 	var key_id = e.keyCode || e.which;
-	if (key_id == 27 || key_id == 80) //esc or p key_down
+	if (key_id == 27) //esc key_down
 	{
 		if (game_type != "menu")
 		{

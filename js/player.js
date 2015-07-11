@@ -206,6 +206,13 @@ Player.prototype.draw = function()
 		}
 	}
 	
+	
+	if (this.updated_cards)
+	{
+		this.updated_cards = false;
+		this.update_cards();
+	}
+	
 	for (var i = this.cards.length-1; i >= 0; i--)
 	{
 		this.cards[i].check_play();
@@ -215,24 +222,18 @@ Player.prototype.draw = function()
 	{
 		this.cards[i].draw();
 	}
-	
-	
-	
-	if (this.updated_cards)
-	{
-		this.updated_cards = false;
-		this.update_cards();
-	}
 };
 
 Player.prototype.update_cards = function()
 {
+	console.debug("update_cards");
 	for (var i = 0; i < this.cards.length; i++)
 	{
 		if (this.cards[i].disabled === true)
 		{
 			this.cards.splice(i, 1);
 			i = -1;
+			console.debug("deleted disabled card");
 			continue;
 		}
 	}

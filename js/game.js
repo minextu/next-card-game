@@ -249,11 +249,14 @@ function game()
 			}
 		}
 		
-		if (table_cards.length > 0 && skipped_players.length >= player_num - 1)
+		if (skipped_players.length >= player_num - 1)
 		{
 			console.debug(skipped_players.length + " Players skipped the round");
 			hide_cards();
-			player_turn = table_cards[table_cards.length - 1].from_player;
+			
+			if (table_cards.length > 0)
+				player_turn = table_cards[table_cards.length - 1].from_player;
+			
 			for (var i = 0; i < players.length; i++)
 			{
 				if (finished_players.indexOf(player_turn) !== -1)
@@ -401,6 +404,7 @@ function give_cards(player_id)
 
 function handle_card_switch()
 {
+
 	card_players = [];
 	for (var i = 0; i < players.length; i++)
 	{
@@ -419,7 +423,7 @@ function handle_card_switch()
 		if (game_first_player == "loser")
 			player_turn = card_players["give2"].key;
 		
-		console.debug("switch cards");
+		console.debug("switch cards of big loser and winner");
 		card_players["win2"].cards.sort(compare_card);
 		card1 = card_players["win2"].cards[card_players["win2"].cards.length-1];
 		card2 = card_players["win2"].cards[card_players["win2"].cards.length-2];
@@ -430,7 +434,7 @@ function handle_card_switch()
 		if (card1.id == 0 && game_first_player == "7")
 			player_turn = card_players["give2"].key;
 		
-		card_players["give2"].cards[card_players["give2"].cards.length] = new Card(card2.id, card2.drawX, card1.drawY, card_players["give2"].show_cards);
+		card_players["give2"].cards[card_players["give2"].cards.length] = new Card(card2.id, card2.drawX, card2.drawY, card_players["give2"].show_cards);
 		
 		if (card2.id == 0 && game_first_player == "7")
 			player_turn = card_players["give2"].key;
@@ -445,16 +449,17 @@ function handle_card_switch()
 		if (card1.id == 0 && game_first_player == "7")
 			player_turn = card_players["win2"].key;
 		
-		card_players["win2"].cards[card_players["win2"].cards.length] = new Card(card2.id, card2.drawX, card1.drawY, card_players["win2"].show_cards);
+		card_players["win2"].cards[card_players["win2"].cards.length] = new Card(card2.id, card2.drawX, card2.drawY, card_players["win2"].show_cards);
 		
 		if (card2.id == 0 && game_first_player == "7")
 			player_turn = card_players["win2"].key;
 		
-		card_players["win2"].updated_cards = true;
-		card_players["give2"].updated_cards = true;
+		card_players["win2"].update_cards();
+		card_players["give2"].update_cards();
 		
 		if (card_players["win1"] != undefined && card_players["give1"] != undefined && card_players["win1"].cards.length >= 2 && card_players["give1"].cards.length >= 2)
 		{
+			console.debug("switch cards of small loser and winner");
 			card_players["win1"].cards.sort(compare_card);
 			card1 = card_players["win1"].cards[card_players["win1"].cards.length-1];
 			card1.disabled = true;
@@ -471,8 +476,8 @@ function handle_card_switch()
 			if (card1.id == 0 && game_first_player == "7")
 				player_turn = card_players["win1"].key;
 			
-			card_players["win1"].updated_cards = true;
-			card_players["give1"].updated_cards = true;
+			card_players["win1"].update_cards();
+			card_players["give1"].update_cards();
 		}
 	}
 	else
