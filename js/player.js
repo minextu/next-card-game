@@ -163,7 +163,7 @@ Player.prototype.draw = function()
 			main_ctx.fillRect(skipRectX.ratio(0), skipRectY.ratio(1), skipProgressWidth.ratio(0,1), skipRectHeight.ratio(1,1));
 			main_ctx.globalAlpha = 1;
 			
-			if (skip_diff <= 0 && this.key == 0)
+			if (skip_diff <= 0 && this.key == 0 && !this.enable_multiplayer && !this.enable_ai)
 			{
 				if (table_cards.length != 0 && table_cards[table_cards.length-1].done != true && this.key == 0)
 				{
@@ -179,7 +179,7 @@ Player.prototype.draw = function()
 			}
 		}
 		
-		if (table_cards.length != 0 && table_cards[table_cards.length-1].done != true && this.key == 0)
+		if (table_cards.length != 0 && table_cards[table_cards.length-1].done != true && this.key == 0 && !this.enable_multiplayer && !this.enable_ai)
 		{
 			table_cards.length != 0 && table_cards[table_cards.length-1].done != true
 			if (!mouse_is_down && !is_touch_end && mouseX >= skipRectX.ratio(0) && mouseX <= skipRectX.ratio(0) + skipRectWidth.ratio(0,1) && mouseY >= skipRectY.ratio(1) && mouseY <= skipRectY.ratio(1) + skipRectHeight.ratio(1,1) || startX >= skipRectX.ratio(0) && startX <= skipRectX.ratio(0) + skipRectWidth.ratio(0,1) && startY >= skipRectY.ratio(1) && startY <= skipRectY.ratio(1) + skipRectHeight.ratio(1,1))

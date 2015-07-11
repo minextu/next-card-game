@@ -46,6 +46,8 @@ function new_game(num, type)
 	give_timeout = 0;
 	give_player = first_player_give;
 	
+	waiting_players = [];
+	
 	table_cards = [];
 	for (var i = 0; i < available_cards.length; i++)
 	{
@@ -247,7 +249,7 @@ function game()
 			}
 		}
 		
-		if (table_cards.length > 0 && skipped_players.length >= players.length - 1)
+		if (table_cards.length > 0 && skipped_players.length >= player_num - 1)
 		{
 			console.debug(skipped_players.length + " Players skipped the round");
 			hide_cards();
@@ -314,6 +316,12 @@ function game()
 		}
 	}
 	
+	
+	for (var i = 0; i < waiting_players.length; i++)
+	{
+		waiting_players[i].draw();
+	}
+		
 	//camera.post();
 }
 
@@ -574,5 +582,18 @@ function set_first_player(type)
 	{
 		game_first_player = "turn";
 		document.getElementById("option_first_player").selectedIndex = 2;
+	}
+}
+
+function set_waiting_player_position()
+{
+	var test_player = new Player(0,0,0,0,true);
+	for (var i = 0; i < waiting_players.length; i++)
+	{
+		var drawX = -table_width / 2 - test_player.width / 2 - 100 + (test_player.width*3)*i;
+		var drawY = 0;
+		waiting_players[i].drawX = drawX;
+		waiting_players[i].drawY = drawY;
+		waiting_players[i].card_pos = "top";
 	}
 }

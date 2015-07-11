@@ -315,7 +315,7 @@ Card.prototype.check_play = function()
 	if (
 		(!this.is_moving || this.moving_action == "fix")
 		&& 
-		(this.player_id === 0 && player_turn === this.player_id && can_play)
+		(this.player_id === 0 && player_turn === this.player_id && can_play && !is_existing_game)
 		&& 
 		(highlight == this.player_id + "" + this.key 
 		|| !mouse_is_down && is_hover && mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1) 
@@ -414,7 +414,7 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 	this.show = true;
 	this.generate_canvas();
 	
-	if (this.player_id === 0 && is_multiplayer && not_first_card !== true && players[0].enable_multiplayer == false)
+	if (this.player_id === 0 && is_multiplayer && not_first_card !== true && players[0].enable_multiplayer == false && !this.enable_ai)
 	{
 		multiplayer_played_cards[multiplayer_played_cards.length] = this.key;
 		console.debug("saved card");
@@ -441,7 +441,7 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 
 function hide_cards()
 {
-	skipped_players = [];
+	skipped_players = new Array();
 	skipped_players = finished_players.slice();
 	
 	console.debug("new Round!");

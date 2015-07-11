@@ -26,6 +26,7 @@ function show_hide_multiplayer_new_room(type)
 	}
 }
 
+is_existing_game = false;
 function join_multiplayer_room(id)
 {
 	var httpobject = new XMLHttpRequest();
@@ -56,32 +57,20 @@ function join_multiplayer_room(id)
 			multiplayer_played_cards = [];
 			
 			new_game(answer['slots']-1, "multiplayer");
+			is_existing_game = false;
 			if (answer['is_existing_game'] == true)
 			{
-				var is_existing_game = true;
+				is_existing_game = true;
 				for (var i = 0; i < answer['players'].length; i++)
 				{
 					if (answer['players'][i]["id"] == multiplayer_id)
 						is_existing_game = false;
 				}
-				
 				if (is_existing_game)
-				{
-					player_num++;
-					set_players_position();
-					player_num--;
-					
-					answer['players'][answer['players'].length] = [];
-					var player = answer['players'][answer['players'].length-1];
-					player["id"] = multiplayer_id;
-					player["name"] = multiplayer_name + " Waiting...";
-				}
+					console.debug("Is existing game!");
 			}
 			else
-			{
-
-				var is_existing_game = false;
-			}
+				is_existing_game = false;
 			
 			
 			var player_position = 0;
@@ -163,7 +152,7 @@ function handle_multiplayer()
 			{
 				last_id = played_cards[i]["id"];
 				
-				if (players[0].enable_multiplayer == true || players[0].multiplayer_id != played_cards[i]["player_id"])
+				if (players[0].enable_multiplayer == true || multiplayer_id != played_cards[i]["player_id"])
 				{
 					for (var ii = 0; ii < players.length; ii++)
 					{
@@ -173,9 +162,17 @@ function handle_multiplayer()
 				}
 			}
 			
-			if ( multiplayer_cards_to_play.length <= 0 || multiplayer_cards_to_play[0].player_id != players[0].multiplayer_id && multiplayer_cards_to_play.length <= 1)
+			waiting_players = [];
+			for (var i = 0; i < answer['waiting_players'].length; i++)
+			{
+				waiting_players[i] = new Player(0,0,0,0,true);
+				waiting_players[i].text = answer['waiting_players'][i]['name'] + " Waiting";
+			}
+			set_waiting_player_position();
+			
+			if (!is_existing_game && (multiplayer_cards_to_play.length <= 0 || multiplayer_cards_to_play[0].player_id != players[0].multiplayer_id && multiplayer_cards_to_play.length <= 1))
 				players[0].enable_multiplayer = false;
-			else
+			else if (!is_existing_game)
 				players[0].enable_multiplayer = true;
 			
 			window.setTimeout(handle_multiplayer, 1000);
@@ -224,6 +221,7 @@ function multiplayer_request_cards()
 {
 	cards_requested = true;
 	new_cards_ready = false;
+	is_existing_game = false;
 	
 	var httpobject = new XMLHttpRequest();
 	httpobject.open("POST", server_url + "next_card_game.php?task=request_new_cards&last_id=" + last_id, true);
@@ -273,6 +271,8 @@ function set_multiplayer_players(player_key, answer, is_existing_game)
 	{
 		if (player_key < 0)
 			key = players.length + player_key;
+		else if (is_existing_game)
+			key = player_key;
 		else if (player_key >= 0)
 			key = player_key + 1;
 				
@@ -285,6 +285,7 @@ function set_multiplayer_players(player_key, answer, is_existing_game)
 			}
 			
 			players[key].text = answer['players'][i]['name'];
+			players[key].show_cards = false;
 				
 			players[key].multiplayer_id = answer['players'][i]['id'];
 			
