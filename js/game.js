@@ -63,6 +63,8 @@ function new_game(num, type)
 	
 	if (is_multiplayer)
 		handle_multiplayer();
+	
+	document.getElementById("chat").innerHTML = "";
 }
 
 function set_players_position()
