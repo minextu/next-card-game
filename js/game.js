@@ -328,6 +328,7 @@ function game()
 	}
 		
 	//camera.post();
+	redraw_canvas = false;
 }
 
 function give_cards(player_id)
