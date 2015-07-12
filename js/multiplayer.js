@@ -106,6 +106,7 @@ function join_multiplayer_room(id)
 			game_type = "game";
 			give_player = first_player_give;
 			is_giving = true;
+			multiplayer_stats = answer['stats'];
 		}
 		else
 			alert("Couldn't Join the Room!")
@@ -254,6 +255,8 @@ function multiplayer_request_cards()
 			table_cards[i] = new Card(available_cards[i], 0, 0, false, 0, false, false);
 		}
 		hide_cards();
+		
+		multiplayer_stats = answer['stats'];
 		
 		cards_requested = false;
 		new_cards_ready = true;

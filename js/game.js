@@ -327,6 +327,39 @@ function game()
 		waiting_players[i].draw();
 	}
 		
+		
+	if (is_multiplayer)
+	{
+		var font_size = 20;
+		var width = 200;
+		
+		main_ctx.textAlign = "center";
+		main_ctx.textBaseline = "top";
+		main_ctx.font = font_size.ratio(1,1) + "px Arial";
+		
+		var num = 0;
+		
+		for (var id in multiplayer_stats)
+		{
+			var drawY = num*font_size;
+			for (var i = 0; i < players.length; i++)
+			{
+				if (players[i].multiplayer_id == id)
+				{
+					main_ctx.fillStyle = "black";
+					main_ctx.globalAlpha = 0.8;
+					main_ctx.fillRect(game_width - width.ratio(0,1), drawY.ratio(0,1), width.ratio(0,1), font_size.ratio(1,1));
+					main_ctx.globalAlpha = 1;
+					main_ctx.fillStyle = "white";
+					
+					var name = players[i].text;
+					main_ctx.fillText(name + ":" + multiplayer_stats[id], game_width - (width / 2).ratio(0,1), drawY.ratio(1,1));
+					break;
+				}
+			}
+			num++;
+		}
+	}
 	//camera.post();
 	redraw_canvas = false;
 }

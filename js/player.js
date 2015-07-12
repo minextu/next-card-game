@@ -64,8 +64,8 @@ Player.prototype.draw = function()
 
 		if (this.card_pos == "bottom")
 		{
-			var drawY = this.drawY;
-			var rectY = this.drawY - font_size;
+			var drawY = this.drawY - font_size;
+			var rectY = this.drawY - 2*font_size;
 			main_ctx.textBaseline = "bottom";
 		}
 		else if (this.card_pos == "top" || this.card_pos == "left" || this.card_pos == "right")
@@ -109,8 +109,8 @@ Player.prototype.draw = function()
 
 		if (this.card_pos == "bottom")
 		{
-			var drawY = this.drawY - font_size;
-			var rectY = this.drawY - font_size*2;
+			var drawY = this.drawY;
+			var rectY = this.drawY - font_size;
 			main_ctx.textBaseline = "bottom";
 		}
 		else if (this.card_pos == "top" || this.card_pos == "left" || this.card_pos == "right")
@@ -127,7 +127,7 @@ Player.prototype.draw = function()
 		main_ctx.fillRect(rectX, rectY.ratio(1), rectWidth.ratio(0,1), font_size.ratio(0,1));
 		main_ctx.globalAlpha = 1;
 		
-		main_ctx.fillStyle = "blue";
+		main_ctx.fillStyle = "lightblue";
 		main_ctx.font = (font_size).ratio(0,1) + "px Arial";
 		main_ctx.fillText(text, drawX.ratio(0), (drawY).ratio(1));
 	}
@@ -226,7 +226,6 @@ Player.prototype.draw = function()
 
 Player.prototype.update_cards = function()
 {
-	console.debug("update_cards");
 	for (var i = 0; i < this.cards.length; i++)
 	{
 		if (this.cards[i].disabled === true)
