@@ -27,6 +27,8 @@ function show_hide_multiplayer_new_room(type)
 }
 
 is_existing_game = false;
+is_room_admin = false;
+
 function join_multiplayer_room(id)
 {
 	var httpobject = new XMLHttpRequest();
@@ -101,12 +103,18 @@ function join_multiplayer_room(id)
 			}
 			hide_cards();
 			
-			set_first_player(answer['first_player']);
+			set_first_player(answer['first_player'], true);
 			
 			game_type = "game";
 			give_player = first_player_give;
 			is_giving = true;
-			multiplayer_stats = answer['stats'];
+			
+			multiplayer_stats = [];
+			for (id in answer['stats'])
+			{
+				multiplayer_stats[multiplayer_stats.length] = new Stat(id, answer['stats'][id]);
+			}
+			multiplayer_stats.sort(stat_compare);
 		}
 		else
 			alert("Couldn't Join the Room!")
@@ -144,6 +152,8 @@ function handle_multiplayer()
 		}
 		else
 		{
+			is_room_admin = answer['admin'];
+			
 			if (players[player_turn].multiplayer_id == answer['last_turn']['player_id'] && can_play)
 			{
 				var t = answer['last_turn']['time'].split(/[- :]/);
@@ -157,10 +167,13 @@ function handle_multiplayer()
 				
 				if (players[0].enable_multiplayer == true || multiplayer_id != played_cards[i]["player_id"])
 				{
-					for (var ii = 0; ii < players.length; ii++)
+					if (played_cards[i]['card_key'] != "done")
 					{
-						if (players[ii].multiplayer_id == played_cards[i]["player_id"])
-							multiplayer_cards_to_play[multiplayer_cards_to_play.length] = played_cards[i];
+						for (var ii = 0; ii < players.length; ii++)
+						{
+							if (players[ii].multiplayer_id == played_cards[i]["player_id"])
+								multiplayer_cards_to_play[multiplayer_cards_to_play.length] = played_cards[i];
+						}
 					}
 				}
 			}
@@ -177,6 +190,9 @@ function handle_multiplayer()
 				players[0].enable_multiplayer = false;
 			else if (!is_existing_game)
 				players[0].enable_multiplayer = true;
+			
+			if (answer['skip'] == true && !is_skipping)
+				skip_round(true);
 			
 			window.setTimeout(handle_multiplayer, 1000);
 		}
@@ -255,14 +271,21 @@ function multiplayer_request_cards()
 			table_cards[i] = new Card(available_cards[i], 0, 0, false, 0, false, false);
 		}
 		hide_cards();
+		set_first_player(answer['first_player'], true);
 		
-		multiplayer_stats = answer['stats'];
-		
+		multiplayer_stats = [];
+		for (id in answer['stats'])
+		{
+			multiplayer_stats[multiplayer_stats.length] = new Stat(id, answer['stats'][id]);
+		}
+		multiplayer_stats.sort(stat_compare);
+	
 		cards_requested = false;
 		new_cards_ready = true;
+		is_skipping = false;
 	}
 	var ranks = {};
-	if (waiting_players.length == 0)
+	if (waiting_players.length == 0 && !is_skipping)
 	{
 		for (var i = 0; i < players.length; i++)
 		{
@@ -359,6 +382,22 @@ function multiplayer_create_new_room()
 	}
 	httpobject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
 	httpobject.send("title=" + encodeURIComponent(title) + "&slots=" + slots + "&first_player=" + game_first_player + "&cards=" + encodeURIComponent(JSON.stringify(available_cards)));
+}
+
+function multiplayer_save_options()
+{
+	var httpobject = new XMLHttpRequest();
+	httpobject.open("POST", server_url + "next_card_game.php?task=update_room", true);
+	httpobject.onload = function ()
+	{
+		var answer = JSON.parse(httpobject.responseText);
+		if (answer['error'] != undefined)
+			alert(answer['error']);
+		else if (httpobject.responseText == "true")
+			alert("Successfull! Changes will take Effect next round.");
+	}
+	httpobject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
+	httpobject.send("cards=" + encodeURIComponent(JSON.stringify(available_cards)) + "&first_player=" + new_game_first_player);
 }
 
 function set_up_chat(chat,i)

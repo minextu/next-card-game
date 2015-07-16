@@ -112,6 +112,15 @@ function loop()
 
 function check_changes()
 {
+	
+	if (is_room_admin != old_is_room_admin)
+	{
+		if (is_multiplayer && !is_room_admin)
+			show_hide_options("hide");
+		else if (is_room_admin)
+			show_hide_options("true");
+	}
+	
 	if (is_menu != old_is_menu)
 	{
 		if (!is_menu)
@@ -136,7 +145,7 @@ function check_changes()
 		else
 			show_hide_multiplayer_new_room("hide");
 		
-		if (!is_menu && (game_type == "game" && !is_multiplayer || game_type == "multiplayer_new_room"))
+		if (!is_menu && (game_type == "game" && (is_room_admin || !is_multiplayer) || game_type == "multiplayer_new_room"))
 			show_hide_options("true");
 		else
 			show_hide_options("hide");
@@ -145,4 +154,5 @@ function check_changes()
 	
 	old_is_menu = is_menu;
 	old_game_type = game_type;
+	old_is_room_admin = is_room_admin;
 }

@@ -39,4 +39,9 @@ function load_media()
 		
 		document.getElementById("option_cards").innerHTML += "<span class='option_card_container' style='background:url(js/images/cards/" + i + ".png); background-size: 100% 100%;' id='card_" + i + "'><span class='num'>1x</span><span class='option_cards_add' onclick='add_card_to_deck(this)'>+</span><span class='option_cards_remove' onclick='remove_card_from_deck(this)'>-</span></span>";
 	}
+	
+	bug_audio = new Audio();
+	bug_audio .autobuffer = true;
+	bug_audio .type= 'audio/mpeg';
+	bug_audio .src = 'js/sounds/bug.mp3';
 }

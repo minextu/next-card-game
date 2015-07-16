@@ -376,7 +376,6 @@ Player.prototype.update_cards = function()
 		}
 		
 		finished_players[finished_players.length] = this.key;
-		skipped_players[skipped_players.length] = this.key;
 	}
 };
 

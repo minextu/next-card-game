@@ -210,8 +210,10 @@ function game()
 			
 			game_finished = true;
 			finish_timeout = 200;
+			multiplayer_cards_to_play = [];
 			
 			console.debug("game finished");
+			
 			for (var i = 0; i < players.length; i++)
 			{
 				if (finished_players.indexOf(i) === -1)
@@ -287,6 +289,8 @@ function game()
 			if (skip == true)
 			{
 				can_play = true;
+				cards_played = 0;
+				bug_audio.play();
 				console.warn("bug detected, force play")
 			}
 		}
@@ -333,31 +337,16 @@ function game()
 		var font_size = 20;
 		var width = 200;
 		
-		main_ctx.textAlign = "center";
-		main_ctx.textBaseline = "top";
-		main_ctx.font = font_size.ratio(1,1) + "px Arial";
-		
 		var num = 0;
 		
-		for (var id in multiplayer_stats)
+		for (var i = 0; i < multiplayer_stats.length; i++)
 		{
-			var drawY = num*font_size;
-			for (var i = 0; i < players.length; i++)
+			if (multiplayer_stats[i].enable == true)
 			{
-				if (players[i].multiplayer_id == id)
-				{
-					main_ctx.fillStyle = "black";
-					main_ctx.globalAlpha = 0.8;
-					main_ctx.fillRect(game_width - width.ratio(0,1), drawY.ratio(0,1), width.ratio(0,1), font_size.ratio(1,1));
-					main_ctx.globalAlpha = 1;
-					main_ctx.fillStyle = "white";
-					
-					var name = players[i].text;
-					main_ctx.fillText(name + ":" + multiplayer_stats[id], game_width - (width / 2).ratio(0,1), drawY.ratio(1,1));
-					break;
-				}
+				var drawY = num*font_size;
+				multiplayer_stats[i].draw(width, font_size, drawY);
+				num++;
 			}
-			num++;
 		}
 	}
 	//camera.post();
@@ -374,7 +363,6 @@ function give_cards(player_id)
 		return false;
 	}
 	console.debug("give");
-	is_giving = true;
 	
 	can_play = false;
 	
@@ -523,118 +511,4 @@ function handle_card_switch()
 	game_finished = false;
 	can_play = true;
 	has_switched = true;
-}
-
-function update_card_deck(type)
-{
-	if (type == "default" || type == "extra" || type == "custom")
-	{
-		for (var i = 0; i <= 51; i++)
-		{
-			if (type != "custom" && (i <= 31 || type == "extra"))
-			{
-				document.getElementById("card_" + i).style.opacity = 1;
-				document.getElementById("card_" + i).getElementsByClassName("num")[0].innerHTML = "1x";
-			}
-			else
-			{
-				document.getElementById("card_" + i).style.opacity = 0.3;
-				document.getElementById("card_" + i).getElementsByClassName("num")[0].innerHTML = "0x";
-			}
-		}
-		
-		if (type == "extra")
-		{
-			available_cards = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51];
-			document.getElementById("option_card_deck").selectedIndex = 1;
-		}
-		else if (type == "default")
-		{
-			available_cards = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
-			document.getElementById("option_card_deck").selectedIndex = 0;
-		}
-		else
-		{
-			available_cards = [];
-			document.getElementById("option_card_deck").selectedIndex = 2;
-		}
-	}
-}
-
-function add_card_to_deck(add)
-{
-	document.getElementById("option_card_deck").selectedIndex = 2;
-	var card = add.parentNode.id.replace("card_", "");
-	
-	available_cards[available_cards.length] = card;
-	document.getElementById("card_" + card).style.opacity = 1;
-	
-	var card_num_in = 0;
-	for (var i = 0; i < available_cards.length; i++)
-	{
-		if (available_cards[i] == card)
-			card_num_in++;
-	}
-	document.getElementById("card_" + card).getElementsByClassName("num")[0].innerHTML = card_num_in + "x";
-	
-}
-
-function remove_card_from_deck(d)
-{
-	document.getElementById("option_card_deck").selectedIndex = 2;
-	var card = d.parentNode.id.replace("card_", "");
-	
-
-	
-	var card_num_in = 0;
-	var remove = false;
-	for (var i = 0; i < available_cards.length; i++)
-	{
-		if (available_cards[i] == card)
-		{
-			card_num_in++;
-			if (remove === false)
-				remove = i;
-		}
-	}
-	if (card_num_in == 0)
-		card_num_in++;
-	
-	available_cards.splice(remove,1);
-	
-	if (card_num_in <= 1)
-		document.getElementById("card_" + card).style.opacity = 0.3;
-	document.getElementById("card_" + card).getElementsByClassName("num")[0].innerHTML = (card_num_in -1) + "x";	
-}
-
-function set_first_player(type)
-{
-	if (type == "7")
-	{
-		game_first_player = "7";
-		document.getElementById("option_first_player").selectedIndex = 0;
-	}
-	else if (type == "loser")
-	{
-		game_first_player = "loser";
-		document.getElementById("option_first_player").selectedIndex = 1;
-	}
-	else
-	{
-		game_first_player = "turn";
-		document.getElementById("option_first_player").selectedIndex = 2;
-	}
-}
-
-function set_waiting_player_position()
-{
-	var test_player = new Player(0,0,0,0,true);
-	for (var i = 0; i < waiting_players.length; i++)
-	{
-		var drawX = -table_width / 2 - test_player.width / 2 - 100 + (test_player.width*3)*i;
-		var drawY = 0;
-		waiting_players[i].drawX = drawX;
-		waiting_players[i].drawY = drawY;
-		waiting_players[i].card_pos = "top";
-	}
 }

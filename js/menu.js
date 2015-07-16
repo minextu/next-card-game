@@ -17,18 +17,6 @@ function show_hide_menu(type)
 	}
 }
 
-function show_hide_options(type)
-{
-	if (type != "hide")
-	{
-		document.getElementById("game_options").style.display = "block";
-	}
-	else
-	{
-		document.getElementById("game_options").style.display = "none";
-	}
-}
-
 try{gui = require('nw.gui');}catch(e){}
 menu_place = "main";
 old_menu_place = menu_place;

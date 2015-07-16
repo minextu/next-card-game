@@ -49,6 +49,7 @@
 			Card deck:<select id='option_card_deck' onchange='update_card_deck(this.value)'><option value='default'>Default (7 to Ace)</option><option value='extra'>Extra (2 to Ace)</option><option value='custom'>Custom</option></select> 
 			First Player:<select onchange='set_first_player(this.value)' id='option_first_player'><option value='7'>Hearth 7</option><option value='loser'>Big Loser</option><option value='turn'>in turn</option></select>
 			<div id='option_cards'></div>
+			<button id='options_save' onclick='multiplayer_save_options();'>Save</button> <button onclick='skip_round()' id='options_skip'>Skip Round</button>
 		</div>
 		<div id='option_head'>Game Options</div>
 	</div>
@@ -56,6 +57,8 @@
 	<script type='text/javascript' src='js/camera.js'></script>
 	<script type='text/javascript' src='js/player.js'></script>
 	<script type='text/javascript' src='js/card.js'></script>
+	<script type='text/javascript' src='js/stat.js'></script>
+	<script type='text/javascript' src='js/game_options.js'></script>
 	<script type='text/javascript' src='js/multiplayer.js'></script>
 	
 	<script type='text/javascript' src='js/game.js'></script>
