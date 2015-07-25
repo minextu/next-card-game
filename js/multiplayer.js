@@ -284,7 +284,7 @@ function multiplayer_request_cards()
 		new_cards_ready = true;
 		is_skipping = false;
 		
-		last_id = answe['last_id'];
+		last_id = answer['last_id'];
 	}
 	var ranks = {};
 	if (waiting_players.length == 0 && !is_skipping)
