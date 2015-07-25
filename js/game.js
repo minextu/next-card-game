@@ -256,7 +256,6 @@ function game()
 		if (skipped_players.length >= player_num - 1)
 		{
 			console.debug(skipped_players.length + " Players skipped the round");
-			hide_cards();
 			
 			if (table_cards.length > 0)
 				player_turn = table_cards[table_cards.length - 1].from_player;
@@ -273,6 +272,7 @@ function game()
 				if (finished_players.indexOf(player_turn) === -1)
 					break;
 			}
+			hide_cards();
 		}
 		
 		if (!is_giving && !game_finished && has_switched && !can_play)
