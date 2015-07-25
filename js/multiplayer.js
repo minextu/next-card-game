@@ -283,6 +283,8 @@ function multiplayer_request_cards()
 		cards_requested = false;
 		new_cards_ready = true;
 		is_skipping = false;
+		
+		last_id = answe['last_id'];
 	}
 	var ranks = {};
 	if (waiting_players.length == 0 && !is_skipping)

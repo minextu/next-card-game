@@ -232,7 +232,6 @@ Player.prototype.update_cards = function()
 		{
 			this.cards.splice(i, 1);
 			i = -1;
-			console.debug("deleted disabled card");
 			continue;
 		}
 	}
