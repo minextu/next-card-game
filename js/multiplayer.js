@@ -52,6 +52,8 @@ function join_multiplayer_room(id)
 		
 		if (answer['can_join'] === true)
 		{
+			table_cards_id = answer['table_cards_id'];
+			
 			multiplayer_id = answer['id'];
 			multiplayer_name = answer['name'];
 			
@@ -198,7 +200,7 @@ function handle_multiplayer()
 		}
 	}
 	httpobject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
-	httpobject.send("played_cards=" +encodeURIComponent(JSON.stringify(multiplayer_played_cards)));
+	httpobject.send("played_cards=" +encodeURIComponent(JSON.stringify(multiplayer_played_cards)) + "&table_cards_id=" + table_cards_id);
 	multiplayer_played_cards = [];
 }
 
@@ -285,6 +287,7 @@ function multiplayer_request_cards()
 		is_skipping = false;
 		
 		last_id = answer['last_id'];
+		table_cards_id = answer['id'];
 	}
 	var ranks = {};
 	if (waiting_players.length == 0 && !is_skipping)
