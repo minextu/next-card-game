@@ -143,7 +143,7 @@ function game()
 	}
 	
 	
-	if (game_finished == true && !is_giving && !cards_requested)
+	if (game_finished == true && (!is_giving || is_skipping) && !cards_requested)
 	{
 		player_turn = first_player_give;
 		
@@ -182,7 +182,7 @@ function game()
 		else
 			finish_timeout -= (1).speed();
 	}
-	else if (!is_giving)
+	else if (can_play && (!is_giving || is_skipping) && !game_finished)
 	{
 			
 		if (player_turn != last_player_turn)
@@ -201,7 +201,7 @@ function game()
 			console.debug("to " + player_turn);
 		}
 		
-		if (finished_players.length == player_num-1)
+		if (finished_players.length >= player_num-1)
 		{
 			if (first_player_give < players.length - 1)
 				first_player_give++;
@@ -211,6 +211,7 @@ function game()
 			game_finished = true;
 			finish_timeout = 200;
 			multiplayer_cards_to_play = [];
+			is_skipping = false;
 			
 			console.debug("game finished");
 			
@@ -220,15 +221,16 @@ function game()
 				{
 					for (var ii = 0; ii < players[i].cards.length; ii++)
 					{
-						players[i].cards[ii].play(true, -200 + 100*ii, false, true);
+						players[i].cards[ii].play(true, -200 + 100*ii, false, true, true);
 					}
+					players[i].check_finished();
 				}
 			}
 			
 			can_play = false;
 		}
 		
-		if (skipped_players.indexOf(player_turn) !== -1)
+		else if (skipped_players.indexOf(player_turn) !== -1)
 		{
 			for (var i = 0; i < players.length; i++)
 			{
@@ -274,55 +276,32 @@ function game()
 			}
 			hide_cards();
 		}
-		
-		if (!is_giving && !game_finished && has_switched && !can_play)
-		{
-			var skip = true;
-			for (var i = 0; i < players.length; i++)
-			{
-					for (var ii = 0; ii < players[i].cards.length; ii++)
-					{
-						if (players[i].cards[ii].is_moving == true)
-							skip = false;
-					}
-			}
-			if (skip == true)
-			{
-				can_play = true;
-				cards_played = 0;
-				bug_audio.play();
-				console.warn("bug detected, force play")
-			}
-		}
 	}
 	main_ctx.drawImage(table_image, game_width / 2 - (table_width / 2).ratio(0,1), game_height / 2 - (table_height / 2).ratio(1,1), table_width.ratio(0,1), table_height.ratio(1,1));
 	
 	
-	for (var i = 0; i < table_cards.length; i++)
-	{
-		table_cards[i].draw();
-	}
-	
+
 	if (is_multiplayer && multiplayer_cards_to_play.length > 0 && players[0].enable_multiplayer)
 	{
-		for (var i = 0; i < players.length; i++)
+		for (var i = 0; i < 10; i++)
 		{
-			for (var ii = 0; ii < 10; ii++)
+			for (var ii = 0; ii < table_cards.length; ii++)
 			{
-				for (var iii = 0; iii < players[i].cards.length; iii++)
-				{
-					players[i].cards[iii].draw();
-				}
+				table_cards[ii].draw();
 			}
-			players[i].draw();
 		}
 	}
 	else
 	{
-		for (var i = 0; i < players.length; i++)
+		for (var i = 0; i < table_cards.length; i++)
 		{
-			players[i].draw();
+			table_cards[i].draw();
 		}
+	}
+
+	for (var i = 0; i < players.length; i++)
+	{
+		players[i].draw();
 	}
 	
 	

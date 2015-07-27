@@ -310,12 +310,15 @@ Player.prototype.update_cards = function()
 		this.cards[i].newDrawY = drawY;
 		
 		this.cards[i].is_moving = true;
-		this.cards[i].moving_action = "fix";
+		this.cards[i].moving_type = "fix";
 		this.cards[i].key = i;
 		this.cards[i].player_id = this.key;
 	}
-	
-	if (this.cards.length <= 0)
+};
+
+Player.prototype.check_finished = function()
+{
+	if (this.cards.length <= 0 && finished_players.indexOf(this.key) === -1)
 	{
 		if (finished_players.length == 0)
 			this.win_cards = 2;
@@ -377,6 +380,7 @@ Player.prototype.update_cards = function()
 		finished_players[finished_players.length] = this.key;
 	}
 };
+
 
 Player.prototype.ai = function()
 {

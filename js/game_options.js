@@ -144,6 +144,7 @@ function skip_round(singleplayer)
 		is_skipping = true;
 		console.debug("Skipping round!");
 		is_giving = false;
+		game_finished = false;
 		
 		for (var i = 0; i < players.length; i++)
 		{
@@ -151,9 +152,10 @@ function skip_round(singleplayer)
 			{
 				for (var ii = 0; ii < players[i].cards.length; ii++)
 				{
-					players[i].cards[ii].play(true, -200 + 100*ii, false, true);
+					players[i].cards[ii].play(true, -200 + 100*ii, false, true, true);
 				}
 			}
+			finished_players[finished_players.length] = i;
 		}
 		
 		if (is_multiplayer)

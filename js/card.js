@@ -51,7 +51,7 @@ function Card(id, drawX, drawY, show, rotate, player_id, key)
 	else if (this.id >= 4 && this.id < 8)
 	{
 		this.name = "8";
-			this.num = 8;
+		this.num = 8;
 		this.symbol = symbols[this.id - 4];
 	}
 	else if (this.id >= 8 && this.id < 12)
@@ -121,21 +121,6 @@ function Card(id, drawX, drawY, show, rotate, player_id, key)
 		this.symbol = symbols[this.id - 48];
 	}
 	
-	this.symbol_srcWidth = 34;
-	this.symbol_srcHeight = 38;
-	this.symbol_width = 34;
-	this.symbol_height = 38;
-	
-	if (this.symbol == "club")
-		this.symbol_srcX = 78;
-	else if (this.symbol == "diamond")
-		this.symbol_srcX = 39;
-	else if (this.symbol == "spade")
-		this.symbol_srcX = 0;
-	else
-		this.symbol_srcX = 118;
-	
-	this.symbol_srcY = 0;
 	this.hide_old_cards = false;
 	
 	this.generate_canvas();
@@ -160,33 +145,11 @@ Card.prototype.draw = function()
 		main_ctx.save();
 		main_ctx.translate(this.drawX.ratio(0) + (this.width/2).ratio(0,1), this.drawY.ratio(1) + (this.height/2).ratio(1,1));
 		
-		if (this.moving_action != "fix")
+		if (this.moving_type != "fix")
 			main_ctx.rotate(Math.PI / this.rotate);
 		else
 			main_ctx.rotate(this.rotate * Math.PI / 180);
 		
-		
-	
-		/*if (this.show)
-		{
-			if (cards_image[this.id] != undefined)
-			{
-				this.card_ctx.drawImage(cards_image[this.id], 0, 0, this.width, this.height);
-			}
-			else
-			{
-				// suit / symbol
-				this.card_ctx.drawImage(suits_image, this.symbol_srcX, this.symbol_srcY, this.symbol_srcWidth, this.symbol_srcHeight, -(this.symbol_width / 2).ratio(0,1), -(this.symbol_height / 2).ratio(1,1), this.symbol_width.ratio(0,1), this.symbol_height.ratio(1,1));
-				
-				// name
-				if (this.symbol == "heart" || this.symbol == "diamond")
-					main_ctx.fillStyle = "#a31919";
-				else
-					main_ctx.fillStyle = "black";
-			}
-			
-			
-		}*/
 		main_ctx.drawImage(this.card_canvas, (-this.width / 2).ratio(0,1), (-this.height / 2).ratio(1,1), this.width.ratio(0,1), this.height.ratio(1,1));
 			
 		
@@ -233,78 +196,7 @@ Card.prototype.draw = function()
 			start_card = false;
 		}
 		
-		/*
-		if (this.show && cards_image[this.id] == undefined)
-		{
-			//name
-			main_ctx.textBaseline = "top";
-			main_ctx.textAlign = "left";
-			main_ctx.font = (15).ratio(0,1) + "px Arial";
-			main_ctx.fillText(this.name, -(this.width / 2 - 5).ratio(0,1), -(this.height / 2 - 5).ratio(1,1));
-		}*/
-		
-		if (this.is_moving)
-		{
-			if (this.moving_action == "fix")
-			{
-				this.diffX = this.newDrawX  - this.drawX;
-				this.diffY = this.newDrawY - this.drawY;
-			}
-			else
-			{
-				this.diffX = this.newDrawX  - this.drawX + this.width / 2;
-				this.diffY = this.newDrawY - this.drawY + this.height / 2;
-			}
-			
-			this.speed = (Math.abs(this.diffX) + Math.abs(this.diffY)) / 20;
-			this.angle = Math.atan2(this.diffY, this.diffX);
-			this.drawX += Math.cos(this.angle) * this.speed.speed();
-			this.drawY += Math.sin(this.angle) * this.speed.speed();
-			
-			this.rotateSpeed = (this.newRotate - this.rotate) / 100;
-			this.rotate += this.rotateSpeed.speed();
-			
-			if (this.speed < 1 && this.moving_action !== "fix" || this.speed <= 0.1)
-			{
-				this.is_moving = false;
-				
-				if (this.player_id !== false && this.moving_action !== "fix")
-				{
-					players[this.player_id].played_card = false;
-					this.disabled = true;
-					table_cards[table_cards.length] = new Card(this.id, this.drawX, this.drawY, true, this.rotate, false);
-					table_cards[table_cards.length-1].from_player = this.player_id;
-					
-					var no_update = false;
-					for (var i = 0; i < players[this.player_id].cards.length; i++)
-					{
-						if (players[this.player_id].cards[i].is_moving && players[this.player_id].cards[i].moving_action != "fix")
-							no_update = true;
-					}
-					if (no_update == false)
-					{
-						var player_id = this.player_id;
-						
-						if (is_multiplayer && multiplayer_cards_to_play.length > 0 && players[0].enable_multiplayer == true)
-							players[this.player_id].update_cards();
-						else
-							players[this.player_id].updated_cards = true;
-						
-						
-						can_play = true;
-
-						if (this.hide_old_cards)
-							hide_cards();
-					}
-				}
-				else if (this.moving_action == "fix")
-				{
-					this.drawX = this.newDrawX;
-					this.drawY = this.newDrawY;
-					this.rotate = this.newRotate;
-				}
-			}
-		}
+		this.check_move();
 		
 		main_ctx.restore();
 	}
@@ -313,7 +205,7 @@ Card.prototype.draw = function()
 Card.prototype.check_play = function()
 {
 	if (
-		(!this.is_moving || this.moving_action == "fix")
+		(!this.is_moving || this.moving_type == "fix")
 		&& 
 		(this.player_id === 0 && player_turn === this.player_id && can_play && !is_existing_game)
 		&& 
@@ -362,14 +254,17 @@ Card.prototype.check_play = function()
 		this.hover = false;
 }
 
-Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
+Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card, is_skip, done)
 {	
+	//reset mouse 
 	this.is_down = false;
 	start_card = false;
 	
+	// reset skip timeout
 	if (this.player_id !== false && players[this.player_id] != undefined)
 		players[this.player_id].skip_timeout = false;
 	
+	// ai timeout
 	if (is_ai === true)
 	{
 		var card = this;
@@ -384,46 +279,42 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 		window.setTimeout(function() { card.play(no_new_turn, offsetX, false) }, timeout);
 		return false;
 	}
-	if (players[this.player_id] != undefined)
-		players[this.player_id].played_card = false;
 	
-	if (is_ai != "2" && (table_cards.length == 0 || table_cards[table_cards.length-1].done == true))
+	// count played cards
+	if (table_cards.length == 0 || table_cards[table_cards.length-1].done == true || done == true)
+	{
+		done = true;
 		cards_played++;
+	}
 	
 	if (offsetX == undefined)
 		offsetX = 0;
 	
-	if (players[this.player_id] != undefined && !players[this.player_id].enable_ki && players[this.player_id].cards[this.key+1] != undefined && players[this.player_id].cards[this.key+1].num == this.num)
+	
+	
+	// disable this card (a copy is stored on table)
+	var table_key = table_cards.length;
+	this.disabled = true;
+	table_cards[table_key] = new Card(this.id, this.drawX, this.drawY, true, this.rotate, false);
+	table_cards[table_key].from_player = this.player_id;
+			
+	// if multible cards where played, set offset and play other card
+	if (is_skip != true && (players[this.player_id] != undefined && players[this.player_id].cards[this.key+1] != undefined && players[this.player_id].cards[this.key+1].num == this.num))
 	{
 		if (offsetX == 0)
 			offsetX-= 99;
-		players[this.player_id].cards[this.key+1].play(true, offsetX+100, false, true);
+		players[this.player_id].cards[this.key+1].play(true, offsetX+100, false, true, false, done);
 	}
-	
-	this.is_moving = true;
-	this.moving_action = false;
-	can_play = false;
-	this.newDrawX = 0 - this.width + offsetX;
-	this.newDrawY = original_height / 2 - this.height;
-	this.newRotate = Math.round(Math.random()*20);
-	this.rotate = 0;
-	this.show = true;
-	this.width = this.original_width;
-	this.height = this.original_height;
-	this.srcX = 200;
-	this.show = true;
-	this.generate_canvas();
-	
-	if (this.player_id === 0 && is_multiplayer && not_first_card !== true && players[0].enable_multiplayer == false && !this.enable_ai)
+	else if (is_skip !== true)
+		table_cards[table_key].moving_action = "can_play";
+		
+		
+	// check, if cards should hide
+	if (this.id >= 28 && this.id < 32 && is_skip !== true)
 	{
-		multiplayer_played_cards[multiplayer_played_cards.length] = this.key;
-		console.debug("saved card");
+		table_cards[table_key].hide_old_cards = true;
 	}
-	
-	if (this.id >= 28 && this.id < 32)
-	{
-		this.hide_old_cards = true;
-	}
+	// else next player will play
 	else if (no_new_turn !== true)
 	{
 		for (var i = 0; i < players.length; i++)
@@ -437,8 +328,94 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card)
 				break;
 		}
 	}
+	
+	// set card to move to table
+	table_cards[table_key].is_moving = true;
+	table_cards[table_key].moving_type = false;
+	
+	can_play = false;
+	table_cards[table_key].newDrawX = 0 - this.width + offsetX;
+	table_cards[table_key].newDrawY = original_height / 2 - this.height;
+	table_cards[table_key].newRotate = Math.round(Math.random()*20);
+	table_cards[table_key].rotate = 0;
+	
+	
+	// updated hand cards (remove disabled card)
+	if (is_multiplayer && multiplayer_cards_to_play.length > 0 && players[0].enable_multiplayer == true)
+		players[this.player_id].update_cards();
+	else
+		players[this.player_id].updated_cards = true;
+	
+	
+	
+	// set played card to false, since can_play is false
+	if (players[this.player_id] != undefined && players[this.player_id].enable_ai )
+		players[this.player_id].played_card = false;
+	
+	// save card for multiplayer
+	if (this.player_id === 0 && is_multiplayer && not_first_card !== true && players[0].enable_multiplayer == false && !players[0].enable_ai)
+	{
+		multiplayer_played_cards[multiplayer_played_cards.length] = this.key;
+		console.debug("saved card");
+	}
+	
 };
 
+Card.prototype.check_move = function()
+{
+	if (this.is_moving)
+	{
+		if (this.moving_type == "fix")
+		{
+			this.diffX = this.newDrawX  - this.drawX;
+			this.diffY = this.newDrawY - this.drawY;
+		}
+		else
+		{
+			this.diffX = this.newDrawX  - this.drawX + this.width / 2;
+			this.diffY = this.newDrawY - this.drawY + this.height / 2;
+		}
+			
+		this.speed = (Math.abs(this.diffX) + Math.abs(this.diffY)) / 20;
+		this.angle = Math.atan2(this.diffY, this.diffX);
+		this.drawX += Math.cos(this.angle) * this.speed.speed();
+		this.drawY += Math.sin(this.angle) * this.speed.speed();
+		
+		this.rotateSpeed = (this.newRotate - this.rotate) / 100;
+		this.rotate += this.rotateSpeed.speed();
+			
+		if (this.speed < 1 && this.moving_type !== "fix" || this.speed <= 0.1)
+		{
+			this.is_moving = false;
+			
+				
+			if (this.moving_action == "can_play")
+			{
+				console.debug("can play again");
+				can_play = true;
+						
+				if (this.hide_old_cards)
+					hide_cards();
+				
+				// check if a player has no cards
+				for (var i = 0; i < players.length; i++)
+				{
+					players[i].check_finished();
+				}
+			}
+				
+			if (this.moving_type == "fix")
+			{
+				this.drawX = this.newDrawX;
+				this.drawY = this.newDrawY;
+				this.rotate = this.newRotate;
+			}
+			
+			this.moving_action = false;
+			this.hide_old_cards = false;
+		}
+	}
+};
 function hide_cards()
 {
 	skipped_players = new Array();
