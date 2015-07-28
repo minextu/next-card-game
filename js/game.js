@@ -182,7 +182,7 @@ function game()
 		else
 			finish_timeout -= (1).speed();
 	}
-	else if (can_play && (!is_giving || is_skipping) && !game_finished)
+	else if (can_play && !is_giving && !game_finished || is_skipping)
 	{
 			
 		if (player_turn != last_player_turn)
@@ -223,13 +223,13 @@ function game()
 					{
 						players[i].cards[ii].play(true, -200 + 100*ii, false, true, true);
 					}
+					players[i].update_cards();
 					players[i].check_finished();
 				}
 			}
 			
 			can_play = false;
 		}
-		
 		else if (skipped_players.indexOf(player_turn) !== -1)
 		{
 			for (var i = 0; i < players.length; i++)
@@ -245,8 +245,7 @@ function game()
 					break;
 			}
 		}
-		
-		if (finished_players.indexOf(player_turn) !== -1)
+		else if (finished_players.indexOf(player_turn) !== -1)
 		{
 			if (skipped_players.indexOf(player_turn) === -1)
 			{
