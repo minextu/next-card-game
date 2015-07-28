@@ -448,7 +448,7 @@ Player.prototype.ai = function()
 			}
 		}
 		
-		if (!this.played_card && game_ai_difficulty >= 2 && table_cards.length > 0 && table_cards[table_cards.length-1].done == true)
+		if (!this.played_card && game_ai_difficulty >= 2)
 		{
 			// do not play lowest card, if next player only has only one card left
 			
@@ -464,18 +464,21 @@ Player.prototype.ai = function()
 					break;
 			}
 			
-			if (players[next_player].cards.length == 1 || finished_players.length == players.length - 2 && players[next_player].cards.length == 2
-				&& this.cards.length > 1)
+			if (table_cards.length > 0 && table_cards[table_cards.length-1].done == true || finished_players.length == players.length - 2)
 			{
-				var lowest_num = this.cards[0].num;
-				for (var i = 0; i < this.cards.length; i++)
+				if (players[next_player].cards.length == 1 || finished_players.length == players.length - 2 && players[next_player].cards.length == 2
+					&& this.cards.length > 1)
 				{
-					if (this.cards[i].num != lowest_num)
+					var lowest_num = this.cards[0].num;
+					for (var i = 0; i < this.cards.length; i++)
 					{
-						this.cards[i].play(false, 0, true);
-						this.played_card = true;
-						console.debug("AI: Not playing lowest card");
-						break;
+						if (this.cards[i].num != lowest_num)
+						{
+							this.cards[i].play(false, 0, true);
+							this.played_card = true;
+							console.debug("AI: Not playing lowest card");
+							break;
+						}
 					}
 				}
 			}
