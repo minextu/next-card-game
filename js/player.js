@@ -495,6 +495,8 @@ Player.prototype.ai = function()
 		
 		if (!this.played_card)
 		{
+			var ai_self_highest_num = this.cards[this.cards.length-1].num;
+			
 			for (var i = 0; i < this.cards.length; i++)
 			{
 				if (table_cards.length == 0 && game_first_player == "low")
@@ -523,7 +525,7 @@ Player.prototype.ai = function()
 					if (current_played == cards_played)
 					{
 						if (game_ai_difficulty < 1 || 
-							game_ai_difficulty >= 1 && (this.cards[i].num != ai_highest_num || this.cards[i-1] == undefined || this.cards[i-1].num == this.cards[i].num))
+							game_ai_difficulty >= 1 && (this.cards[i].num != ai_self_highest_num || this.cards[i-1] == undefined || this.cards[i-1].num == this.cards[i].num))
 						{
 							this.cards[i].play(false, 0, true);
 							this.played_card = true;
