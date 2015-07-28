@@ -255,12 +255,14 @@ function compare_array(array1, array2)
 	if (array1.length != array2.length)
 		return false;
 
-	array1.sort();
-	array2.sort();
+	a1 = array1.slice();
+	a1.sort();
+	a2 = array2.slice();
+	a2.sort();
 	
-	for (var i = 0, l = array1.length; i < l; i++) 
+	for (var i = 0, l = a1.length; i < l; i++) 
 	{      
-		if (array1[i] != array2[i]) 
+		if (a1[i] != a2[i]) 
 			return false;           
 	}       
 	return true;
