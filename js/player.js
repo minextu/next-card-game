@@ -474,10 +474,19 @@ Player.prototype.ai = function()
 					{
 						if (this.cards[i].num != lowest_num)
 						{
-							this.cards[i].play(false, 0, true);
-							this.played_card = true;
-							console.debug("AI: Not playing lowest card");
-							break;
+							var current_played = 0;
+							for (var ii = 0; ii < 4; ii++)
+							{
+								if (this.cards[i+ii] != undefined && this.cards[i+ii].num == this.cards[i].num)
+									current_played++;
+							}
+							if (table_cards.length > 0 && table_cards[table_cards.length-1].done == true  || current_played == cards_played && table_cards[table_cards.length-1].num < this.cards[i].num)
+							{
+								this.cards[i].play(false, 0, true);
+								this.played_card = true;
+								console.debug("AI: Not playing lowest card");
+								break;
+							}
 						}
 					}
 				}
