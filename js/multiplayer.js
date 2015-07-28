@@ -97,7 +97,8 @@ function join_multiplayer_room(id)
 				}
 			}
 			
-			available_cards = answer['table_cards'];
+			set_card_deck(answer['table_cards']);
+			
 			table_cards = [];
 			for (var i = 0; i < available_cards.length; i++)
 			{
@@ -249,7 +250,7 @@ function multiplayer_request_cards()
 	httpobject.onload = function ()
 	{
 		answer =  JSON.parse(httpobject.responseText);
-		available_cards = answer["cards"];
+		set_card_deck(answer["cards"]);
 		
 		set_players_position();
 		var player_position = get_player_position(answer);

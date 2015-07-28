@@ -50,10 +50,14 @@ function update_card_deck(type)
 	}
 }
 
-function add_card_to_deck(add)
+function add_card_to_deck(add, is_id)
 {
 	document.getElementById("option_card_deck").selectedIndex = 2;
-	var card = add.parentNode.id.replace("card_", "");
+	
+	if (is_id == true)
+		var card = add;
+	else
+		var card = add.parentNode.id.replace("card_", "");
 	
 	available_cards[available_cards.length] = card;
 	document.getElementById("card_" + card).style.opacity = 1;
@@ -95,6 +99,16 @@ function remove_card_from_deck(d)
 		document.getElementById("card_" + card).style.opacity = 0.3;
 	document.getElementById("card_" + card).getElementsByClassName("num")[0].innerHTML = (card_num_in -1) + "x";	
 }
+
+function set_card_deck(cards)
+{
+	update_card_deck("custom");
+	for (var i = 0; i < cards.length; i++)
+	{
+		add_card_to_deck(cards[i], true);
+	}
+}
+
 game_first_player = "7";
 function set_first_player(type, no_user)
 {
