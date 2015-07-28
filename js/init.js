@@ -58,7 +58,7 @@ function init()
 					window.clearTimeout(cancel);
 				};
 	})();
-	
+
 	loop_timeout = undefined;
 	is_playing = false;
 	old_is_menu = false;
@@ -75,3 +75,4 @@ function init()
 }
 
 init(); 
+

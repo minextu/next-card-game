@@ -47,7 +47,7 @@
 		<div id='option_content'>
 			AI Speed: <select onchange='ai_speed=this.value'><option value='auto'>Slow</option><option value='0'>Fast</option></select>
 			Card deck:<select id='option_card_deck' onchange='update_card_deck(this.value)'><option value='default'>Default (7 to Ace)</option><option value='extra'>Extra (2 to Ace)</option><option value='custom'>Custom</option></select> 
-			First Player:<select onchange='set_first_player(this.value)' id='option_first_player'><option value='7'>Hearth 7</option><option value='loser'>Big Loser</option><option value='turn'>in turn</option></select>
+			First Player:<select onchange='set_first_player(this.value)' id='option_first_player'><option value='low'>Lowest Card</option><option value='loser'>Big Loser</option><option value='turn'>in turn</option></select>
 			<div id='option_cards'></div>
 			<button id='options_save' onclick='multiplayer_save_options();'>Save</button> <button onclick='skip_round()' id='options_skip'>Skip Round</button>
 		</div>

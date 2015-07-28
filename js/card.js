@@ -44,80 +44,80 @@ function Card(id, drawX, drawY, show, rotate, player_id, key)
 	this.id = Number(id);
 	if (this.id >= 0 && this.id < 4)
 	{
-		this.name = "7";
-		this.num = 7;
+		this.name = "2";
+		this.num = 2;
 		this.symbol = symbols[this.id];
 	}
 	else if (this.id >= 4 && this.id < 8)
 	{
-		this.name = "8";
-		this.num = 8;
+		this.name = "3";
+		this.num = 3;
 		this.symbol = symbols[this.id - 4];
 	}
 	else if (this.id >= 8 && this.id < 12)
 	{
-		this.name = "9";
-		this.num = 9;
+		this.name = "4";
+		this.num = 4;
 		this.symbol = symbols[this.id - 8];
 	}
 	else if (this.id >= 12 && this.id < 16)
 	{
-		this.name = "10";
-		this.num = 10;
+		this.name = "5";
+		this.num = 5;
 		this.symbol = symbols[this.id - 12];
 	}
 	else if (this.id >= 16 && this.id < 20)
 	{
-		this.name = "jack";
-		this.num = 11;
+		this.name = "6";
+		this.num = 6;
 		this.symbol = symbols[this.id - 16];
 	}
 	else if (this.id >= 20 && this.id < 24)
 	{
-		this.name = "queen";
-		this.num = 12;
+		this.name = "7";
+		this.num = 7;
 		this.symbol = symbols[this.id - 20];
 	}
 	else if (this.id >= 24 && this.id < 28)
 	{
-		this.name = "king";
-		this.num = 13;
+		this.name = "8";
+		this.num = 8;
 		this.symbol = symbols[this.id - 24];
 	}
 	else if (this.id >= 28 && this.id < 32)
 	{
-		this.name = "ace";
-		this.num = 14;
+		this.name = "9";
+		this.num = 9;
 		this.symbol = symbols[this.id - 28];
 	}
 	else if (this.id >= 32 && this.id < 36)
 	{
 		this.name = "2";
-		this.num = 2;
+		this.num = 10;
 		this.symbol = symbols[this.id - 32];
 	}
 	else if (this.id >= 36 && this.id < 40)
 	{
-		this.name = "3";
-		this.num = 3;
+		this.name = "jack";
+		this.num = 11;
 		this.symbol = symbols[this.id - 36];
 	}
 	else if (this.id >= 40 && this.id < 44)
 	{
-		this.name = "4";
-		this.num = 4;
+		this.name = "queen";
+		this.num = 12;
 		this.symbol = symbols[this.id - 40];
 	}
 	else if (this.id >= 44 && this.id < 48)
 	{
-		this.name = "5";
-		this.num = 5;
+		this.name = "king";
+		this.num = 13;
 		this.symbol = symbols[this.id - 44];
 	}
 	else if (this.id >= 48 && this.id < 52)
 	{
-		this.name = "6";
-		this.num = 6;
+		this.name = "ace";
+		this.num = 14;
 		this.symbol = symbols[this.id - 48];
 	}
 	
@@ -239,7 +239,7 @@ Card.prototype.check_play = function()
 			
 			if (this.drawY < this.newDrawY - this.height)
 			{
-				if (table_cards.length == 0 && this.num == 7 || table_cards.length == 0 && game_first_player != "7" || table_cards.length > 0 && table_cards[table_cards.length-1].done == true)
+				if (table_cards.length == 0 && this.num == lowest_num || table_cards.length == 0 && game_first_player != "low" || table_cards.length > 0 && table_cards[table_cards.length-1].done == true)
 					this.play();
 				else if (table_cards.length > 0 && table_cards[table_cards.length-1].num < this.num && players[this.player_id].selected_cards == cards_played)
 					this.play();
@@ -310,7 +310,7 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card, is_s
 		
 		
 	// check, if cards should hide
-	if (this.id >= 28 && this.id < 32 && is_skip !== true)
+	if (this.num == highest_num && is_skip !== true)
 	{
 		table_cards[table_key].hide_old_cards = true;
 	}

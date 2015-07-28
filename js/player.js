@@ -388,22 +388,22 @@ Player.prototype.ai = function()
 	{
 		for (var i = 0; i < this.cards.length; i++)
 		{
-			if (table_cards.length == 0 && game_first_player == "7")
+			if (table_cards.length == lowest_card && game_first_player == "low")
 			{
-				if (this.cards[i].id == 0)
+				if (this.cards[i].id == lowest_card)
 				{
 					this.cards[i].play(false, 0, true);
 					this.played_card = true;
 					break;
 				}
 			}
-			else if (game_first_player != "7" && table_cards.length == 0 || table_cards[table_cards.length-1].done == true)
+			else if (game_first_player != "low" && table_cards.length == 0 || table_cards.length > 0 && table_cards[table_cards.length-1].done == true)
 			{
 				this.cards[i].play(false, 0, true);
 				this.played_card = true;
 				break;
 			}
-			else if (table_cards[table_cards.length-1].num < this.cards[i].num)
+			else if (table_cards.length > 0 && table_cards[table_cards.length-1].num < this.cards[i].num)
 			{
 				var current_played = 0;
 				for (var ii = 0; ii < 4; ii++)

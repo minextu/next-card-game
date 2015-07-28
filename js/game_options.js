@@ -14,50 +14,41 @@ function show_hide_options(type)
 	}
 }
 
+var default_cards = [20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51];
+var extra_cards = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51];
+
 function update_card_deck(type)
 {
-	if (type == "default" || type == "extra" || type == "custom")
+	if (type == "custom")
 	{
+		available_cards = [];
 		for (var i = 0; i <= 51; i++)
 		{
-			if (type != "custom" && (i <= 31 || type == "extra"))
-			{
-				document.getElementById("card_" + i).style.opacity = 1;
-				document.getElementById("card_" + i).getElementsByClassName("num")[0].innerHTML = "1x";
-			}
-			else
-			{
-				document.getElementById("card_" + i).style.opacity = 0.3;
-				document.getElementById("card_" + i).getElementsByClassName("num")[0].innerHTML = "0x";
-			}
+			document.getElementById("card_" + i).style.opacity = 0.3;
+			document.getElementById("card_" + i).getElementsByClassName("num")[0].innerHTML = "0x";
 		}
-		
+	}
+	else
+	{
 		if (type == "extra")
-		{
-			available_cards = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51];
-			document.getElementById("option_card_deck").selectedIndex = 1;
-		}
+			var cards = extra_cards.slice();
 		else if (type == "default")
-		{
-			available_cards = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31];
-			document.getElementById("option_card_deck").selectedIndex = 0;
-		}
+			var cards = default_cards.slice();
 		else
-		{
-			available_cards = [];
-			document.getElementById("option_card_deck").selectedIndex = 2;
-		}
+			var cards = [];
+		set_card_deck(cards);
 	}
 }
 
 function add_card_to_deck(add, is_id)
 {
-	document.getElementById("option_card_deck").selectedIndex = 2;
-	
 	if (is_id == true)
 		var card = add;
 	else
+	{
+		document.getElementById("option_card_deck").selectedIndex = 2;
 		var card = add.parentNode.id.replace("card_", "");
+	}
 	
 	available_cards[available_cards.length] = card;
 	document.getElementById("card_" + card).style.opacity = 1;
@@ -69,7 +60,6 @@ function add_card_to_deck(add, is_id)
 			card_num_in++;
 	}
 	document.getElementById("card_" + card).getElementsByClassName("num")[0].innerHTML = card_num_in + "x";
-	
 }
 
 function remove_card_from_deck(d)
@@ -105,18 +95,29 @@ function set_card_deck(cards)
 	update_card_deck("custom");
 	for (var i = 0; i < cards.length; i++)
 	{
-		add_card_to_deck(cards[i], true);
+		add_card_to_deck(Number(cards[i]), true);
 	}
+	check_selected_card_set();
 }
 
-game_first_player = "7";
+function check_selected_card_set()
+{
+	if (compare_array(available_cards, default_cards))
+		document.getElementById("option_card_deck").selectedIndex = 0;
+	else if (compare_array(available_cards, extra_cards))
+		document.getElementById("option_card_deck").selectedIndex = 1;
+	else
+		document.getElementById("option_card_deck").selectedIndex = 2;
+}
+
+game_first_player = "low";
 function set_first_player(type, no_user)
 {
 	old_game_first_player = game_first_player;
 	
-	if (type == "7")
+	if (type == "low")
 	{
-		game_first_player = "7";
+		game_first_player = "low";
 		document.getElementById("option_first_player").selectedIndex = 0;
 	}
 	else if (type == "loser")
@@ -149,6 +150,25 @@ function set_waiting_player_position()
 	}
 }
 
+lowest_card = 20;
+lowest_num = 7;
+highest_num = 14;
+function check_lowest_and_highest_card()
+{
+	lowest_card = 99999;
+	lowest_num = 999999;
+	highest_num = 0;
+	for (var i = 0; i < available_cards.length; i++)
+	{
+		var tmp_card = new Card(available_cards[i]);
+		if (available_cards[i] < lowest_card)
+			lowest_card = available_cards[i];
+		if (tmp_card.num < lowest_num)
+			lowest_num = tmp_card.num;
+		if (tmp_card.num > highest_num)
+			highest_num = tmp_card.num;
+	}
+}
 var is_skipping = false;
 
 function skip_round(singleplayer)
@@ -194,4 +214,24 @@ function skip_round(singleplayer)
 		}
 		httpobject.send();
 	}
+}
+
+	
+function compare_array(array1, array2) 
+{
+	if (!array1 || !array2)
+		return false;
+
+	if (array1.length != array2.length)
+		return false;
+
+	array1.sort();
+	array2.sort();
+	
+	for (var i = 0, l = array1.length; i < l; i++) 
+	{      
+		if (array1[i] != array2[i]) 
+			return false;           
+	}       
+	return true;
 }

@@ -21,7 +21,7 @@ function new_game(num, type)
 		update_card_deck("default");
 	}
 	
-	set_first_player("7");
+	set_first_player("low");
 	
 	available_card_num = available_cards.length;
 	cards_played = 0;
@@ -170,6 +170,7 @@ function game()
 			
 			if (table_cards.length > 0)
 			{
+				check_lowest_and_highest_card();
 				skipped_players = [];
 				can_play = false;
 				hide_cards();
@@ -373,7 +374,7 @@ function give_cards(player_id)
 	
 	player.cards[player.cards.length] = new Card(table_cards[card_key].id, table_cards[card_key].drawX, table_cards[card_key].drawY, player.show_cards, 0, player.key, player.cards.length);
 	
-	if (table_cards[card_key].id == 0 && game_first_player == "7")
+	if (table_cards[card_key].id == lowest_card && game_first_player == "low")
 		player_turn = player_id;
 		
 	table_cards.splice(card_key, 1);
@@ -433,12 +434,12 @@ function handle_card_switch()
 		card2.disabled = true;
 		
 		card_players["give2"].cards[card_players["give2"].cards.length] = new Card(card1.id, card1.drawX, card1.drawY, card_players["give2"].show_cards);
-		if (card1.id == 0 && game_first_player == "7")
+		if (card1.id == lowest_card && game_first_player == "low")
 			player_turn = card_players["give2"].key;
 		
 		card_players["give2"].cards[card_players["give2"].cards.length] = new Card(card2.id, card2.drawX, card2.drawY, card_players["give2"].show_cards);
 		
-		if (card2.id == 0 && game_first_player == "7")
+		if (card2.id == lowest_card && game_first_player == "low")
 			player_turn = card_players["give2"].key;
 		
 		card_players["give2"].cards.sort(compare_card);
@@ -448,12 +449,12 @@ function handle_card_switch()
 		card2.disabled = true;
 		
 		card_players["win2"].cards[card_players["win2"].cards.length] = new Card(card1.id, card1.drawX, card1.drawY, card_players["win2"].show_cards);
-		if (card1.id == 0 && game_first_player == "7")
+		if (card1.id == lowest_card && game_first_player == "low")
 			player_turn = card_players["win2"].key;
 		
 		card_players["win2"].cards[card_players["win2"].cards.length] = new Card(card2.id, card2.drawX, card2.drawY, card_players["win2"].show_cards);
 		
-		if (card2.id == 0 && game_first_player == "7")
+		if (card2.id == lowest_card && game_first_player == "low")
 			player_turn = card_players["win2"].key;
 		
 		card_players["win2"].update_cards();
@@ -467,7 +468,7 @@ function handle_card_switch()
 			card1.disabled = true;
 			
 			card_players["give1"].cards[card_players["give1"].cards.length] = new Card(card1.id, card1.drawX, card1.drawY, card_players["give1"].show_cards);
-			if (card1.id == 0 && game_first_player == "7")
+			if (card1.id == lowest_card && game_first_player == "low")
 				player_turn = card_players["give1"].key;
 			
 			card_players["give1"].cards.sort(compare_card);
@@ -475,7 +476,7 @@ function handle_card_switch()
 			card1.disabled = true;
 			
 			card_players["win1"].cards[card_players["win1"].cards.length] = new Card(card1.id, card1.drawX, card1.drawY, card_players["win1"].show_cards);
-			if (card1.id == 0 && game_first_player == "7")
+			if (card1.id == lowest_card && game_first_player == "low")
 				player_turn = card_players["win1"].key;
 			
 			card_players["win1"].update_cards();
