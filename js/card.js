@@ -271,10 +271,10 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card, is_s
 		
 		if (is_multiplayer && multiplayer_cards_to_play.length > 0)
 			var timeout = 0;
-		else if (ai_speed == "auto")
+		else if (game_ai_speed == "auto")
 			var timeout = Math.round(Math.random()*2000);
 		else
-			var timeout = ai_speed;
+			var timeout = game_ai_speed;
 		
 		window.setTimeout(function() { card.play(no_new_turn, offsetX, false) }, timeout);
 		return false;
@@ -391,7 +391,6 @@ Card.prototype.check_move = function()
 				
 			if (this.moving_action == "can_play")
 			{
-				console.debug("can play again");
 				can_play = true;
 						
 				if (this.hide_old_cards)

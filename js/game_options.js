@@ -215,7 +215,37 @@ function skip_round(singleplayer)
 		httpobject.send();
 	}
 }
+game_ai_speed = "auto";
+function set_ai_speed(speed, singleplayer)
+{
+	if (!is_multiplayer || singleplayer == true)
+	{
+		game_ai_speed = speed;
+		if (game_ai_speed == "auto")
+			document.getElementById("option_ai_speed").selectedIndex = 0;
+		else
+			document.getElementById("option_ai_speed").selectedIndex = 1;
+	}
 
+	new_game_ai_speed = speed
+}
+
+game_ai_difficulty = 2;
+function set_ai_difficulty(type, singleplayer)
+{
+	if (!is_multiplayer || singleplayer == true)
+	{
+		game_ai_difficulty = Number(type);
+		if (game_ai_difficulty == 0)
+			document.getElementById("option_ai_difficulty").selectedIndex = 0;
+		else if (game_ai_difficulty == 1)
+			document.getElementById("option_ai_difficulty").selectedIndex = 1;
+		else
+			document.getElementById("option_ai_difficulty").selectedIndex = 2;
+	}
+	
+	new_game_ai_difficulty = type;
+}
 	
 function compare_array(array1, array2) 
 {

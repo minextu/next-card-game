@@ -22,6 +22,8 @@ function new_game(num, type)
 	}
 	
 	set_first_player("low");
+	set_ai_speed("auto");
+	set_ai_difficulty("2");
 	
 	available_card_num = available_cards.length;
 	cards_played = 0;
@@ -41,7 +43,6 @@ function new_game(num, type)
 
 	first_player_give = 0;
 	game_finished = false;
-	ai_speed = "auto";
 	is_giving = false;
 	give_timeout = 0;
 	give_player = first_player_give;
@@ -281,6 +282,18 @@ function game()
 	
 	
 
+	for (var i = 0; i < players.length; i++)
+	{
+		players[i].draw();
+	}
+	
+	
+	for (var i = 0; i < waiting_players.length; i++)
+	{
+		waiting_players[i].draw();
+	}
+		
+		
 	if (is_multiplayer && multiplayer_cards_to_play.length > 0 && players[0].enable_multiplayer)
 	{
 		for (var i = 0; i < 10; i++)
@@ -298,19 +311,7 @@ function game()
 			table_cards[i].draw();
 		}
 	}
-
-	for (var i = 0; i < players.length; i++)
-	{
-		players[i].draw();
-	}
 	
-	
-	for (var i = 0; i < waiting_players.length; i++)
-	{
-		waiting_players[i].draw();
-	}
-		
-		
 	if (is_multiplayer)
 	{
 		var font_size = 20;

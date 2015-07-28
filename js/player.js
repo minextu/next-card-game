@@ -386,36 +386,141 @@ Player.prototype.ai = function()
 {
 	if (this.played_card == false && this.skipped == false)
 	{
-		for (var i = 0; i < this.cards.length; i++)
+		var ai_highest_num = highest_num;
+		
+		if (game_ai_difficulty >= 2)
 		{
-			if (table_cards.length == lowest_card && game_first_player == "low")
+			var cards_in_game = available_cards.slice();
+			
+			// get current games, still in game
+			for (var i = 0; i < table_cards.length; i++)
 			{
-				if (this.cards[i].id == lowest_card)
+				var remove_card_key = cards_in_game.indexOf(table_cards[i].id);
+				if (remove_card_key !== -1)
+					cards_in_game.splice(remove_card_key, 1);
+			}
+			
+			// get current highest card
+			ai_highest_num = 0;
+			for (var i = 0; i < cards_in_game.length; i++)
+			{
+				var tmp_card = new Card(cards_in_game[i]);
+				if (tmp_card.num > ai_highest_num)
+					ai_highest_num = tmp_card.num;
+			}
+		}
+		
+		if (game_ai_difficulty >= 1)
+		{
+			// check, if I can win in one round
+			var last_card = "";
+			var cards_left = 0;
+			for (var i = 0; i < this.cards.length; i++)
+			{
+				if (last_card != this.cards[i].num)
+				{
+					cards_left++;
+					last_card = this.cards[i].num;
+				}
+			}
+			
+			if (last_card == ai_highest_num && cards_left == 2)
+			{
+				for (var i = 0; i < this.cards.length; i++)
+				{
+					if (this.cards[i].num == ai_highest_num)
+					{
+						var current_played = 0;
+						for (var ii = 0; ii < 4; ii++)
+						{
+							if (this.cards[i+ii] != undefined && this.cards[i+ii].num == this.cards[i].num)
+								current_played++;
+						}
+						if (current_played == cards_played && table_cards.length > 0 && table_cards[table_cards.length-1].num < this.cards[i].num || table_cards.length == 0 && game_first_player != "low!" || table_cards.length > 0 && table_cards[table_cards.length-1].done == true)
+						{
+							this.cards[i].play(false, 0, true);
+							this.played_card = true;
+							console.debug("AI: Playing highest card")
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		if (!this.played_card && game_ai_difficulty >= 2 && table_cards.length > 0 && table_cards[table_cards.length-1].done == true)
+		{
+			// do not play lowest card, if next player only has only one card left
+			
+			var next_player = player_turn;
+			
+			for (var i = 0; i < players.length; i++)
+			{
+				next_player++;
+				if (next_player > players.length - 1)
+					next_player = 0;
+				
+				if (skipped_players.indexOf(next_player) === -1 && finished_players.indexOf(next_player) === -1)
+					break;
+			}
+			
+			if (players[next_player].cards.length == 1 || finished_players.length == players.length - 2 && players[next_player].cards.length == 2
+				&& this.cards.length > 1)
+			{
+				var lowest_num = this.cards[0].num;
+				for (var i = 0; i < this.cards.length; i++)
+				{
+					if (this.cards[i].num != lowest_num)
+					{
+						this.cards[i].play(false, 0, true);
+						this.played_card = true;
+						console.debug("AI: Not playing lowest card");
+						break;
+					}
+				}
+			}
+		}
+		
+		if (!this.played_card)
+		{
+			for (var i = 0; i < this.cards.length; i++)
+			{
+				if (table_cards.length == 0 && game_first_player == "low")
+				{
+					if (this.cards[i].id == lowest_card)
+					{
+						this.cards[i].play(false, 0, true);
+						this.played_card = true;
+						break;
+					}
+				}
+				else if (game_first_player != "low" && table_cards.length == 0 || table_cards.length > 0 && table_cards[table_cards.length-1].done == true)
 				{
 					this.cards[i].play(false, 0, true);
 					this.played_card = true;
 					break;
 				}
-			}
-			else if (game_first_player != "low" && table_cards.length == 0 || table_cards.length > 0 && table_cards[table_cards.length-1].done == true)
-			{
-				this.cards[i].play(false, 0, true);
-				this.played_card = true;
-				break;
-			}
-			else if (table_cards.length > 0 && table_cards[table_cards.length-1].num < this.cards[i].num)
-			{
-				var current_played = 0;
-				for (var ii = 0; ii < 4; ii++)
+				else if (table_cards.length > 0 && table_cards[table_cards.length-1].num < this.cards[i].num)
 				{
-					if (this.cards[i+ii] != undefined && this.cards[i+ii].num == this.cards[i].num)
-						current_played++;
-				}
-				if (current_played == cards_played)
-				{
-					this.cards[i].play(false, 0, true);
-					this.played_card = true;
-					break;
+					var current_played = 0;
+					for (var ii = 0; ii < 4; ii++)
+					{
+						if (this.cards[i+ii] != undefined && this.cards[i+ii].num == this.cards[i].num)
+							current_played++;
+					}
+					if (current_played == cards_played)
+					{
+						if (game_ai_difficulty < 1 || 
+							game_ai_difficulty >= 1 && (this.cards[i].num != ai_highest_num || this.cards[i-1] == undefined || this.cards[i-1].num == this.cards[i].num))
+						{
+							this.cards[i].play(false, 0, true);
+							this.played_card = true;
+						}
+						else
+							console.debug("AI: will not play highest card");
+						
+						break;
+					}
 				}
 			}
 		}
@@ -423,14 +528,14 @@ Player.prototype.ai = function()
 		if (this.played_card == false)
 		{
 			this.skipped = true;
-			console.debug("Player " + this.key + " will skip")
+			console.debug("AI: Player " + this.key + " will skip")
 			
 			if (is_multiplayer && multiplayer_cards_to_play.length > 0)
 				var timeout = 0;
-			else if (ai_speed == "auto")
+			else if (game_ai_speed == "auto")
 				var timeout = Math.round(Math.random()*2000);
 			else
-				var timeout = ai_speed;
+				var timeout = game_ai_speed;
 			var player = this;
 			window.setTimeout(function() {
 				skipped_players[skipped_players.length] = player.key;
