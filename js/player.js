@@ -378,6 +378,19 @@ Player.prototype.check_finished = function()
 		}
 		
 		finished_players[finished_players.length] = this.key;
+		
+		if (!is_multiplayer)
+		{
+			for (var i = 0; i < game_stats.length; i++)
+			{
+				if (game_stats[i].player == this)
+				{
+					var old_score = game_stats[i].value;
+					game_stats[i] = new Stat(this.key, old_score + this.win_cards);
+				}
+			}
+			game_stats.sort(stat_compare);
+		}
 	}
 };
 

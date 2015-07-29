@@ -114,12 +114,12 @@ function join_multiplayer_room(id)
 			give_player = first_player_give;
 			is_giving = true;
 			
-			multiplayer_stats = [];
+			game_stats = [];
 			for (id in answer['stats'])
 			{
-				multiplayer_stats[multiplayer_stats.length] = new Stat(id, answer['stats'][id]);
+				game_stats[game_stats.length] = new Stat(id, answer['stats'][id]);
 			}
-			multiplayer_stats.sort(stat_compare);
+			game_stats.sort(stat_compare);
 		}
 		else
 			alert("Couldn't Join the Room!")
@@ -280,12 +280,12 @@ function multiplayer_request_cards()
 		set_ai_speed(answer['ai_speed'], true);
 		set_ai_difficulty(answer['ai_difficulty'], true);
 		
-		multiplayer_stats = [];
+		game_stats = [];
 		for (id in answer['stats'])
 		{
-			multiplayer_stats[multiplayer_stats.length] = new Stat(id, answer['stats'][id]);
+			game_stats[game_stats.length] = new Stat(id, answer['stats'][id]);
 		}
-		multiplayer_stats.sort(stat_compare);
+		game_stats.sort(stat_compare);
 	
 		cards_requested = false;
 		new_cards_ready = true;

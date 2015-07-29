@@ -3,14 +3,22 @@ function Stat(player_id, value)
 	this.player_id = player_id;
 	this.value = value;
 	
-	this.enable = false;
-	for (var i = 0; i < players.length; i++)
+	if (!is_multiplayer)
 	{
-		if (players[i].multiplayer_id == this.player_id)
+		this.enable = true;
+		this.player = players[player_id];
+	}
+	else
+	{
+		this.enable = false;
+		for (var i = 0; i < players.length; i++)
 		{
-			this.enable = true;
-			this.player = players[i];
-			break;
+			if (players[i].multiplayer_id == this.player_id)
+			{
+				this.enable = true;
+				this.player = players[i];
+				break;
+			}
 		}
 	}
 }

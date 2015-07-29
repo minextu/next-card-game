@@ -24,6 +24,7 @@ function new_game(num, type)
 	set_first_player("low");
 	set_ai_speed("auto");
 	set_ai_difficulty("2");
+	game_stats = [];
 	
 	available_card_num = available_cards.length;
 	cards_played = 0;
@@ -122,6 +123,16 @@ function set_players_position()
 				players[i].enable_ai = true;
 			
 			players[i].enable_multiplayer = false;
+		}
+		
+		if (!is_multiplayer)
+		{
+			if (i == 0)
+				players[i].text = "You";
+			else
+				players[i].text = "Bot " + i;
+			
+			game_stats[i] = new Stat(i, 0);
 		}
 	}
 	
@@ -312,23 +323,22 @@ function game()
 		}
 	}
 	
-	if (is_multiplayer)
+
+	var font_size = 20;
+	var width = 200;
+		
+	var num = 0;
+		
+	for (var i = 0; i < game_stats.length; i++)
 	{
-		var font_size = 20;
-		var width = 200;
-		
-		var num = 0;
-		
-		for (var i = 0; i < multiplayer_stats.length; i++)
+		if (game_stats[i].enable == true)
 		{
-			if (multiplayer_stats[i].enable == true)
-			{
-				var drawY = num*font_size;
-				multiplayer_stats[i].draw(width, font_size, drawY);
-				num++;
-			}
+			var drawY = num*font_size;
+			game_stats[i].draw(width, font_size, drawY);
+			num++;
 		}
 	}
+	
 	//camera.post();
 	redraw_canvas = false;
 }
