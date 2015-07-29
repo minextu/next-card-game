@@ -495,12 +495,16 @@ function handle_card_switch()
 			card_players["win1"].update_cards();
 			card_players["give1"].update_cards();
 		}
+		
+		window.setTimeout(function() { can_play = true }, 1000);
 	}
 	else
-		console.debug("No cards to switch!")
+	{
+		console.debug("No cards to switch!");
+		can_play = true;
+	}
 
 	skipped_players = [];
 	game_finished = false;
-	can_play = true;
 	has_switched = true;
 }
