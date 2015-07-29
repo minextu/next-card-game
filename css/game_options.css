@@ -3,6 +3,7 @@
 	width: 80%;
 	left: 10%;
 	margin-top: -1px;
+	display: none;
 }
 #game_options:hover
 {

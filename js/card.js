@@ -402,6 +402,10 @@ Card.prototype.check_move = function()
 					players[i].check_finished();
 				}
 			}
+			else if (this.moving_action == "stop_load")
+			{
+				 load_media("start");
+			}
 				
 			if (this.moving_type == "fix")
 			{

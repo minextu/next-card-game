@@ -2,8 +2,6 @@ function start_loop()
 {
 	is_playing = true;
 	loop();
-	new_game(0);
-	is_menu = true;
 }
 function stop_loop()
 {
@@ -52,6 +50,10 @@ function loop()
 		if (typeof game_finished != "undefined" && game_type != "multiplayer_table")
 			game();
 		menu();
+	}
+	else if (is_loading)
+	{
+		loading_screen();
 	}
 	else
 	{

@@ -70,8 +70,6 @@ function init()
   
 	init_mouse();
 	load_media();
-	start_loop();
-	update_card_deck("default");
 }
 
 init(); 
