@@ -1,5 +1,5 @@
 var loading_status = -1;
-var loading_elements = 5 + 52;
+var loading_elements = 5 + (6 + 6 + 1) + 52;
 
 function load_media(element)
 {
@@ -11,7 +11,19 @@ function load_media(element)
 		is_menu = false;
 		start_loop();
 		
+		var audio_test = document.createElement("audio");
+		can_play_audio = audio_test.play? true : false;
+		if (can_play_audio)
+		{
+			if (!audio_test.canPlayType('audio/mpeg;') && !audio_test.canPlayType('audio/x-wav;'))
+				can_play_audio = false;
+		}
+		
+		land_audio = [];
+		play_audio = [];
 		cards_image = [];
+		loading_cards = [];
+		
 		background_image = new Image();
 		background_image.src = "js/images/game_background.png";
 		background_image.addEventListener('load', function() { load_media(element + 1) },false);
@@ -46,9 +58,64 @@ function load_media(element)
 		arrow_image.src = "js/images/arrow_down.png";
 		arrow_image.addEventListener('load', function() { load_media(element + 1) },false);
 	}
-	else if (element >= 6 && element <= loading_elements + 1)
+	else if (element >= 6 && element <= 11)
 	{
-		var i = element - 6;
+		if (!can_play_audio)
+			load_media(14);
+		else
+		{
+			var i = element - 6;
+			land_audio[i] = new Audio();
+			land_audio[i].autobuffer = true;
+			if (land_audio[i].canPlayType('audio/x-wav;')) 
+			{
+				land_audio[i].type = 'audio/x-wav';
+				land_audio[i].src = 'js/sounds/land' + (i+1) + '.wav';
+			}
+		    else 
+			{
+				land_audio[i].type = 'audio/mpeg';
+				land_audio[i].src = 'sounds/land' + (i+1) + '.mp3';
+			}
+			load_media(element+1);
+		}
+	}
+	else if (element == 12)
+	{
+		shuffle_audio = new Audio();
+		shuffle_audio.autobuffer = true;
+		if (shuffle_audio.canPlayType('audio/x-wav;')) 
+		{
+			shuffle_audio.type = 'audio/x-wav';
+			shuffle_audio.src = 'js/sounds/shuffle.wav';
+		}
+		else 
+		{
+			shuffle_audio.type = 'audio/mpeg';
+			shuffle_audio.src = 'sounds/shuffle.mp3';
+		}
+		load_media(element+1);
+	}
+	else if (element >= 13 && element <= 18)
+	{
+		var i = element - 13;
+		play_audio[i] = new Audio();
+		play_audio[i].autobuffer = true;
+		if (play_audio[i].canPlayType('audio/x-wav;')) 
+		{
+			play_audio[i].type = 'audio/x-wav';
+			play_audio[i].src = 'js/sounds/play' + (i+1) + '.wav';
+		}
+		else 
+		{
+			play_audio[i].type = 'audio/mpeg';
+			play_audio[i].src = 'sounds/play' + (i+1) + '.mp3';
+		}
+		load_media(element+1);
+	}
+	else if (element >= 19 && element <= loading_elements + 1)
+	{
+		var i = element - 19;
 		
 		if (element <= loading_elements)
 		{
@@ -81,8 +148,6 @@ function load_media(element)
 	}
 }
 
-var loading_cards = [];
-
 function loading_screen()
 {
 	if (loading_status >= 1)
@@ -95,7 +160,7 @@ function loading_screen()
 	if (loading_status >= 4)
 		main_ctx.drawImage(table_image, game_width / 2 - (table_width / 2).ratio(0,1), game_height / 2 - (table_height / 2).ratio(1,1), table_width.ratio(0,1), table_height.ratio(1,1));
 	
-	if (loading_status >= 7)
+	if (loading_status >= 20)
 	{
 		for (var i = 0; i < loading_cards.length; i++)
 		{

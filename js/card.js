@@ -10,6 +10,7 @@ function Card(id, drawX, drawY, show, rotate, player_id, key)
 	this.error = false;
 	this.key = key;
 	this.is_down = false;
+	this.has_landed = false;
 	
 	this.rotate = rotate;
 	if (this.rotate == undefined)
@@ -218,10 +219,13 @@ Card.prototype.check_play = function()
 		
 		this.hover = true;
 			
-		if (mouse_is_down && this.player_key !== false && player_turn === this.player_id && can_play && !is_existing_game)
+		if (mouse_is_down && this.player_id !== false && player_turn === this.player_id && can_play && !is_existing_game)
 		{
 			if (start_card === false)
 				start_card = this.player_id + "" + this.key;
+			
+			if (this.is_down == false)
+				this.audio_play();
 			
 			this.is_down = true;
 			this.is_moving = false;
@@ -280,6 +284,8 @@ Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card, is_s
 		return false;
 	}
 	
+	if (players[this.player_id] == undefined || players[this.player_id].enable_ai == true)
+		this.audio_play();
 	// count played cards
 	if (table_cards.length == 0 || table_cards[table_cards.length-1].done == true || done == true)
 	{
@@ -417,8 +423,34 @@ Card.prototype.check_move = function()
 			this.moving_action = false;
 			this.hide_old_cards = false;
 		}
+		if (this.drawX <= 0 + table_width / 2 && this.drawX + this.width >= 0 - table_width / 2 && this.drawY <= original_height / 2 + table_height / 2 && this.drawY + this.height >= original_height / 2 - table_height / 2 && this.has_landed == false && this.moving_type != "fix")
+		{
+			this.has_landed = true;
+			this.audio_land();
+		}
 	}
 };
+
+Card.prototype.audio_play = function()
+{
+	if (can_play_audio)
+	{
+		var key = Math.round(Math.random()*(play_audio.length-1));
+		try { play_audio[key].currentTime = 0; } catch(e){}
+		play_audio[key].play();
+	}
+};
+
+Card.prototype.audio_land = function()
+{
+	if (can_play_audio && this.show)
+	{
+		var key = Math.round(Math.random()*(land_audio.length-1));
+		var key = Math.round(Math.random()*(land_audio.length-1));
+		land_audio[key].play();
+	}
+};
+
 function hide_cards()
 {
 	skipped_players = new Array();
