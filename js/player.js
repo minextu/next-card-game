@@ -403,7 +403,7 @@ Player.prototype.ai = function()
 		
 		if (game_ai_difficulty >= 2)
 		{
-			var cards_in_game = available_cards.slice();
+			var cards_in_game = current_available_cards.slice();
 			
 			// get current games, still in game
 			for (var i = 0; i < table_cards.length; i++)

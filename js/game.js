@@ -20,6 +20,7 @@ function new_game(num, type)
 	{
 		update_card_deck("default");
 	}
+	current_available_cards = available_cards.slice();
 	
 	set_first_player("low");
 	set_ai_speed("auto");
@@ -170,6 +171,7 @@ function game()
 				{
 					table_cards[i] = new Card(available_cards[i], 0, 0, false, 0, false, false);
 				}	
+				current_available_cards = available_cards.slice();
 			}
 			finished_players = [];
 			if (is_multiplayer && !new_cards_ready)

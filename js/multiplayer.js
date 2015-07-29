@@ -104,6 +104,8 @@ function join_multiplayer_room(id)
 			{
 				table_cards[i] = new Card(available_cards[i], 0, 0, false, 0, false, false);
 			}
+			current_available_cards = available_cards.slice();
+			
 			hide_cards();
 			
 			set_first_player(answer['first_player'], true);
@@ -275,6 +277,8 @@ function multiplayer_request_cards()
 		{
 			table_cards[i] = new Card(available_cards[i], 0, 0, false, 0, false, false);
 		}
+		current_available_cards = available_cards.slice();
+		
 		hide_cards();
 		set_first_player(answer['first_player'], true);
 		set_ai_speed(answer['ai_speed'], true);
