@@ -207,7 +207,7 @@ Card.prototype.check_play = function()
 	if (
 		(!this.is_moving || this.moving_type == "fix")
 		&& 
-		(this.player_id === 0 && player_turn === this.player_id && can_play && !is_existing_game)
+		(this.player_id === 0)
 		&& 
 		(highlight == this.player_id + "" + this.key 
 		|| !mouse_is_down && is_hover && mouseX >= (this.drawX).ratio(0) && mouseX <= (this.drawX).ratio(0) + (this.width).ratio(0,1) && mouseY >= (this.drawY).ratio(1) && mouseY <= (this.drawY).ratio(1) + (this.height).ratio(1,1) 
@@ -218,7 +218,7 @@ Card.prototype.check_play = function()
 		
 		this.hover = true;
 			
-		if (mouse_is_down && this.player_key !== false)
+		if (mouse_is_down && this.player_key !== false && player_turn === this.player_id && can_play && !is_existing_game)
 		{
 			if (start_card === false)
 				start_card = this.player_id + "" + this.key;
