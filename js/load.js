@@ -76,7 +76,7 @@ function load_media(element)
 	{
 		is_loading = false;
 		update_card_deck("default");
-		new_game(0);
+		//new_game(0);
 		is_menu = true;
 	}
 }

@@ -24,6 +24,7 @@ old_buttons = "";
 
 function menu()
 {
+	main_ctx.drawImage(background_image, 0, 0, game_width, game_height);
 	if (old_menu_place == menu_place)
 	{
 		is_error = false;

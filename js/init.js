@@ -67,6 +67,7 @@ function init()
 	old_is_room_admin = false;
 	is_debug = true;
 	is_menu = true;
+	is_multiplayer = false;
   
 	init_mouse();
 	load_media();
