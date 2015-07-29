@@ -464,9 +464,9 @@ Player.prototype.ai = function()
 					break;
 			}
 			
-			if (table_cards.length > 0 && table_cards[table_cards.length-1].done == true || finished_players.length == players.length - 2)
+			if (table_cards.length > 0 && table_cards[table_cards.length-1].done == true || finished_players.length >= players.length - 2)
 			{
-				if (players[next_player].cards.length == 1 || finished_players.length == players.length - 2 && players[next_player].cards.length == 2
+				if (players[next_player].cards.length == 1 || finished_players.length >= players.length - 2 && players[next_player].cards.length <= 2
 					&& this.cards.length > 1)
 				{
 					var lowest_num = this.cards[0].num;
@@ -525,7 +525,7 @@ Player.prototype.ai = function()
 					if (current_played == cards_played)
 					{
 						if (game_ai_difficulty < 1 || 
-							game_ai_difficulty >= 1 && (this.cards[i].num != ai_self_highest_num || this.cards[i-1] == undefined || this.cards[i-1].num == this.cards[i].num))
+							game_ai_difficulty >= 1 && (this.cards[i].num != ai_self_highest_num || this.cards[i-1] == undefined || this.cards[i-1].num == this.cards[i].num || this.cards[i-1].num >= ai_highest_num - 1))
 						{
 							this.cards[i].play(false, 0, true);
 							this.played_card = true;
