@@ -89,7 +89,9 @@ Player.prototype.draw = function()
 	
 	if (this.win_cards !== false)
 	{
-		if (this.win_cards == 2)
+		if (this.win_cards == 3)
+			var text = "Very Big Winner";
+		else if (this.win_cards == 2)
 			var text = "Big Winner";
 		else if (this.win_cards == 1)
 			var text = "Small Winner";
@@ -99,6 +101,8 @@ Player.prototype.draw = function()
 			var text = "Small Loser";
 		else if (this.win_cards == -2)
 			var text = "Big Loser";
+		else if (this.win_cards == -3)
+			var text = "Very Big Loser";
 		else
 			var text = "Unknown!";
 		
@@ -321,10 +325,17 @@ Player.prototype.check_finished = function()
 	if (this.cards.length <= 0 && finished_players.indexOf(this.key) === -1)
 	{
 		if (finished_players.length == 0)
-			this.win_cards = 2;
+		{
+			if (player_num > 5)
+				this.win_cards = 3;
+			else
+				this.win_cards = 2;
+		}
 		else if (finished_players.length == 1)
 		{
-			if (player_num > 3)
+			if (player_num > 5)
+				this.win_cards = 2;
+			else if (player_num > 3)
 				this.win_cards = 1;
 			else if (player_num == 3)
 				this.win_cards = 0;
@@ -333,7 +344,9 @@ Player.prototype.check_finished = function()
 		}
 		else if (finished_players.length == 2)
 		{
-			if (player_num > 4)
+			if (player_num > 5)
+				this.win_cards = 1;
+			else if (player_num > 4)
 				this.win_cards = 0;
 			else if (player_num == 4)
 				this.win_cards = -1;
@@ -342,8 +355,10 @@ Player.prototype.check_finished = function()
 		}
 		else if (finished_players.length == 3)
 		{
-			if (player_num > 5)
+			if (player_num > 6)
 				this.win_cards = 0;
+			if (player_num == 6)
+				this.win_cards = -1;
 			else if (player_num == 5)
 				this.win_cards = -1;
 			else if (player_num == 4)
@@ -351,30 +366,28 @@ Player.prototype.check_finished = function()
 		}
 		else if (finished_players.length == 4)
 		{
-			if (player_num > 6)
-				this.win_cards = 0;
-			else if (player_num == 6)
+			if (player_num == 6)
+				this.win_cards = -2;
+			else if (player_num == 7)
 				this.win_cards = -1;
+			else if (player_num > 6)
+				this.win_cards = 0;
 			else if (player_num == 5)
 				this.win_cards = -2;
 		}
 		else if (finished_players.length == 5)
 		{
-			if (player_num > 7)
-				this.win_cards = 0;
+			if (player_num == 6)
+				this.win_cards = -3;
 			else if (player_num == 7)
-				this.win_cards = -1;
+				this.win_cards = -2;
 			else if (player_num == 6)
 				this.win_cards = -2;
 		}
 		else if (finished_players.length == 6)
 		{
-			if (player_num > 8)
-				this.win_cards = 0;
-			else if (player_num == 8)
-				this.win_cards = -1;
-			else if (player_num == 7)
-				this.win_cards = -2;
+			if (player_num == 7)
+				this.win_cards = -3;
 		}
 		
 		finished_players[finished_players.length] = this.key;

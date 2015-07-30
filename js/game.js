@@ -430,44 +430,43 @@ function give_cards(player_id)
 
 function handle_card_switch()
 {
-
-	card_players = [];
+	console.debug("switch cards");
+	
+	// search loser and winners
+	var losers = [];
+	var winners = [];
 	for (var i = 0; i < players.length; i++)
 	{
-		if (players[i].win_cards === 2)
-			card_players["win2"] = players[i];
-		else if (players[i].win_cards === 1)
-			card_players["win1"] = players[i];
-		else if (players[i].win_cards === -1)
-			card_players["give1"] = players[i];
-		else if (players[i].win_cards === -2)
-			card_players["give2"] = players[i];
-	}
-	
-	
-	if (card_players["win2"] != undefined && card_players["give2"] != undefined && card_players["win2"].cards.length >= 2 && card_players["give2"].cards.length >= 2)
-	{
-		if (game_first_player == "loser")
-			player_turn = card_players["give2"].key;
-		
-		switch_cards_between(card_players["give2"], card_players["win2"], 2);
-		console.debug("switch cards of big loser and winner");
-		
-		
-		if (card_players["win1"] != undefined && card_players["give1"] != undefined && card_players["win1"].cards.length >= 2 && card_players["give1"].cards.length >= 2)
+		if (players[i].win_cards > 0)
+			winners[players[i].win_cards] = players[i];
+		else if (players[i].win_cards < 0)
 		{
-			console.debug("switch cards of small loser and winner");
-			switch_cards_between(card_players["give1"], card_players["win1"], 1);
+			losers[-players[i].win_cards] = players[i];
+			if (game_first_player == "loser" && players[player_turn].win_cards >= players[i].win_cards)
+				player_turn = players[i].key;
 		}
-		
-		window.setTimeout(function() { can_play = true }, 1000);
 	}
-	else
+	
+	
+	// combine loser and winners, to switch cards
+	var has_switched = false;
+	for (var i in losers)
 	{
-		console.debug("No cards to switch!");
-		can_play = true;
+		if (winners[i] != undefined)
+		{
+			if (switch_cards_between(losers[i], winners[i], i))
+				has_switched = true;
+		}
 	}
 
+	if (has_switched)
+		window.setTimeout(function() { can_play = true }, 1000);
+	else
+	{
+		can_play = true;
+		console.debug("No cards to switch!");
+	}
+	
 	skipped_players = [];
 	game_finished = false;
 	has_switched = true;
@@ -483,7 +482,8 @@ function switch_cards_between (loser, winner, num)
 	var lowest_cards = [];
 	for (var i = 1; i <= num; i++)
 	{
-		lowest_cards[i-1] = winner.cards[i-1];
+		if (winner.cards[i-1] != undefined)
+			lowest_cards[i-1] = winner.cards[i-1];
 	}
 	
 	// get lowest cards, excluding lowest id (so you wont give up the heart 7, if not necessary)
@@ -494,11 +494,8 @@ function switch_cards_between (loser, winner, num)
 			if (winner.cards[i].num < lowest_cards[ii].num)
 			{
 				lowest_cards[ii] = winner.cards[i];
-				console.debug("set lowest card");
 				break;
 			}
-			else
-				console.debug("not lower");
 		}
 	}
 	
@@ -506,25 +503,33 @@ function switch_cards_between (loser, winner, num)
 	var highest_cards = [];
 	for (var i = 1; i <= num; i++)
 	{
-		highest_cards[i-1] = loser.cards[i-1];
+		if (loser.cards[i-1] != undefined)
+			highest_cards[i-1] = loser.cards[i-1];
 	}
 	
-	// switch cards
-	for (var i = 0; i < highest_cards.length; i++)
+	if (highest_cards.length == lowest_cards.length && highest_cards.length == num)
 	{
-		highest_cards[i].disabled = true;
-		lowest_cards[i].disabled = true;
+		// switch cards
+		for (var i = 0; i < highest_cards.length; i++)
+		{
+			highest_cards[i].disabled = true;
+			lowest_cards[i].disabled = true;
+			
+			loser.cards[loser.cards.length] = new Card(lowest_cards[i].id, lowest_cards[i].drawX, lowest_cards[i].drawY, loser.show_cards);
+			winner.cards[winner.cards.length] = new Card(highest_cards[i].id, highest_cards[i].drawX, highest_cards[i].drawY, winner.show_cards);
+			
+			if (lowest_cards[i].id == lowest_card && game_first_player == "low")
+				player_turn = loser.key;
+			else if (highest_cards[i].id == lowest_card && game_first_player == "low")
+				player_turn = winner.key;
+		}
 		
-		loser.cards[loser.cards.length] = new Card(lowest_cards[i].id, lowest_cards[i].drawX, lowest_cards[i].drawY, loser.show_cards);
-		winner.cards[winner.cards.length] = new Card(highest_cards[i].id, highest_cards[i].drawX, highest_cards[i].drawY, winner.show_cards);
+		// update cards, to move them to the new player
+		winner.update_cards();
+		loser.update_cards();
 		
-		if (lowest_cards[i].id == lowest_card && game_first_player == "low")
-			player_turn = loser.key;
-		else if (highest_cards[i].id == lowest_card && game_first_player == "low")
-			player_turn = winner.key;
+		return true;
 	}
-	
-	// update cards, to move them to the new player
-	winner.update_cards();
-	loser.update_cards();
+	else
+		return false;
 }
