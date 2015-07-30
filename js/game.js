@@ -424,7 +424,7 @@ function give_cards(player_id)
 	{
 		give_player = "switch";
 		if (!is_multiplayer || multiplayer_cards_to_play.length <= 0)
-			give_timeout = 100;
+			give_timeout = 150;
 	}
 }
 
@@ -444,66 +444,20 @@ function handle_card_switch()
 			card_players["give2"] = players[i];
 	}
 	
+	
 	if (card_players["win2"] != undefined && card_players["give2"] != undefined && card_players["win2"].cards.length >= 2 && card_players["give2"].cards.length >= 2)
 	{
 		if (game_first_player == "loser")
 			player_turn = card_players["give2"].key;
 		
+		switch_cards_between(card_players["give2"], card_players["win2"], 2);
 		console.debug("switch cards of big loser and winner");
-		card_players["win2"].cards.sort(compare_card);
-		card1 = card_players["win2"].cards[card_players["win2"].cards.length-1];
-		card2 = card_players["win2"].cards[card_players["win2"].cards.length-2];
-		card1.disabled = true;
-		card2.disabled = true;
 		
-		card_players["give2"].cards[card_players["give2"].cards.length] = new Card(card1.id, card1.drawX, card1.drawY, card_players["give2"].show_cards);
-		if (card1.id == lowest_card && game_first_player == "low")
-			player_turn = card_players["give2"].key;
-		
-		card_players["give2"].cards[card_players["give2"].cards.length] = new Card(card2.id, card2.drawX, card2.drawY, card_players["give2"].show_cards);
-		
-		if (card2.id == lowest_card && game_first_player == "low")
-			player_turn = card_players["give2"].key;
-		
-		card_players["give2"].cards.sort(compare_card);
-		card1 = card_players["give2"].cards[0];
-		card2 = card_players["give2"].cards[1];
-		card1.disabled = true;
-		card2.disabled = true;
-		
-		card_players["win2"].cards[card_players["win2"].cards.length] = new Card(card1.id, card1.drawX, card1.drawY, card_players["win2"].show_cards);
-		if (card1.id == lowest_card && game_first_player == "low")
-			player_turn = card_players["win2"].key;
-		
-		card_players["win2"].cards[card_players["win2"].cards.length] = new Card(card2.id, card2.drawX, card2.drawY, card_players["win2"].show_cards);
-		
-		if (card2.id == lowest_card && game_first_player == "low")
-			player_turn = card_players["win2"].key;
-		
-		card_players["win2"].update_cards();
-		card_players["give2"].update_cards();
 		
 		if (card_players["win1"] != undefined && card_players["give1"] != undefined && card_players["win1"].cards.length >= 2 && card_players["give1"].cards.length >= 2)
 		{
 			console.debug("switch cards of small loser and winner");
-			card_players["win1"].cards.sort(compare_card);
-			card1 = card_players["win1"].cards[card_players["win1"].cards.length-1];
-			card1.disabled = true;
-			
-			card_players["give1"].cards[card_players["give1"].cards.length] = new Card(card1.id, card1.drawX, card1.drawY, card_players["give1"].show_cards);
-			if (card1.id == lowest_card && game_first_player == "low")
-				player_turn = card_players["give1"].key;
-			
-			card_players["give1"].cards.sort(compare_card);
-			card1 = card_players["give1"].cards[0];
-			card1.disabled = true;
-			
-			card_players["win1"].cards[card_players["win1"].cards.length] = new Card(card1.id, card1.drawX, card1.drawY, card_players["win1"].show_cards);
-			if (card1.id == lowest_card && game_first_player == "low")
-				player_turn = card_players["win1"].key;
-			
-			card_players["win1"].update_cards();
-			card_players["give1"].update_cards();
+			switch_cards_between(card_players["give1"], card_players["win1"], 1);
 		}
 		
 		window.setTimeout(function() { can_play = true }, 1000);
@@ -517,4 +471,60 @@ function handle_card_switch()
 	skipped_players = [];
 	game_finished = false;
 	has_switched = true;
+}
+
+function switch_cards_between (loser, winner, num)
+{
+	// sort cards
+	winner.cards.sort(compare_card);
+	loser.cards.sort(compare_card);
+
+	// first set lowest cards, to the highest cards
+	var lowest_cards = [];
+	for (var i = 1; i <= num; i++)
+	{
+		lowest_cards[i-1] = winner.cards[i-1];
+	}
+	
+	// get lowest cards, excluding lowest id (so you wont give up the heart 7, if not necessary)
+	for (var i = 0; i < winner.cards.length; i++)
+	{
+		for (var ii = 0; ii < lowest_cards.length; ii++)
+		{
+			if (winner.cards[i].num < lowest_cards[ii].num)
+			{
+				lowest_cards[ii] = winner.cards[i];
+				console.debug("set lowest card");
+				break;
+			}
+			else
+				console.debug("not lower");
+		}
+	}
+	
+	// set highest card
+	var highest_cards = [];
+	for (var i = 1; i <= num; i++)
+	{
+		highest_cards[i-1] = loser.cards[i-1];
+	}
+	
+	// switch cards
+	for (var i = 0; i < highest_cards.length; i++)
+	{
+		highest_cards[i].disabled = true;
+		lowest_cards[i].disabled = true;
+		
+		loser.cards[loser.cards.length] = new Card(lowest_cards[i].id, lowest_cards[i].drawX, lowest_cards[i].drawY, loser.show_cards);
+		winner.cards[winner.cards.length] = new Card(highest_cards[i].id, highest_cards[i].drawX, highest_cards[i].drawY, winner.show_cards);
+		
+		if (lowest_cards[i].id == lowest_card && game_first_player == "low")
+			player_turn = loser.key;
+		else if (highest_cards[i].id == lowest_card && game_first_player == "low")
+			player_turn = winner.key;
+	}
+	
+	// update cards, to move them to the new player
+	winner.update_cards();
+	loser.update_cards();
 }
