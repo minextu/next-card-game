@@ -423,7 +423,8 @@ Card.prototype.check_move = function()
 			this.moving_action = false;
 			this.hide_old_cards = false;
 		}
-		if (this.drawX <= 0 + table_width / 2 && this.drawX + this.width >= 0 - table_width / 2 && this.drawY <= original_height / 2 + table_height / 2 && this.drawY + this.height >= original_height / 2 - table_height / 2 && this.has_landed == false && this.moving_type != "fix")
+		//if (this.drawX <= 0 + table_width / 2 && this.drawX + this.width >= 0 - table_width / 2 && this.drawY <= original_height / 2 + table_height / 2 && this.drawY + this.height >= original_height / 2 - table_height / 2 && this.has_landed == false && this.moving_type != "fix")
+		if (this.speed < 5 && !this.has_landed && this.moving_type != "fix")
 		{
 			this.has_landed = true;
 			this.audio_land();
