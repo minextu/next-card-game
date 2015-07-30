@@ -358,6 +358,12 @@ function give_cards(player_id)
 		is_giving = false;
 		return false;
 	}
+	if (can_play_audio)
+	{
+		try { deal_audio.currentTime = 0; } catch(e){}
+		deal_audio.play();
+	}
+	
 	console.debug("give");
 	
 	can_play = false;
@@ -390,9 +396,6 @@ function give_cards(player_id)
 		console.warn("Unknown Cardkey: " + card_key);
 	
 	player.cards[player.cards.length] = new Card(table_cards[card_key].id, table_cards[card_key].drawX, table_cards[card_key].drawY, player.show_cards, 0, player.key, player.cards.length);
-	
-	
-	player.cards[player.cards.length-1].audio_play();
 	
 	if (table_cards[card_key].id == lowest_card && game_first_player == "low")
 		player_turn = player_id;

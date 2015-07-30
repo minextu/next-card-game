@@ -436,6 +436,7 @@ Card.prototype.audio_play = function()
 	if (can_play_audio)
 	{
 		var key = Math.round(Math.random()*(play_audio.length-1));
+		
 		try { play_audio[key].currentTime = 0; } catch(e){}
 		play_audio[key].play();
 	}

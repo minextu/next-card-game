@@ -1,5 +1,5 @@
 var loading_status = -1;
-var loading_elements = 5 + (6 + 6 + 1) + 52;
+var loading_elements = 5 + (6 + 6 + 1 + 1) + 52;
 
 function load_media(element)
 {
@@ -96,9 +96,25 @@ function load_media(element)
 		}
 		load_media(element+1);
 	}
-	else if (element >= 13 && element <= 18)
+	else if (element == 13)
 	{
-		var i = element - 13;
+		deal_audio = new Audio();
+		deal_audio.autobuffer = true;
+		if (deal_audio.canPlayType('audio/x-wav;')) 
+		{
+			deal_audio.type = 'audio/x-wav';
+			deal_audio.src = 'js/sounds/deal.wav';
+		}
+		else 
+		{
+			deal_audio.type = 'audio/mpeg';
+			deal_audio.src = 'sounds/deal.mp3';
+		}
+		load_media(element+1);
+	}
+	else if (element >= 14 && element <= 19)
+	{
+		var i = element - 14;
 		play_audio[i] = new Audio();
 		play_audio[i].autobuffer = true;
 		if (play_audio[i].canPlayType('audio/x-wav;')) 
@@ -113,9 +129,9 @@ function load_media(element)
 		}
 		load_media(element+1);
 	}
-	else if (element >= 19 && element <= loading_elements + 1)
+	else if (element >= 20 && element <= loading_elements + 1)
 	{
-		var i = element - 19;
+		var i = element - 20;
 		
 		if (element <= loading_elements)
 		{
@@ -160,7 +176,7 @@ function loading_screen()
 	if (loading_status >= 4)
 		main_ctx.drawImage(table_image, game_width / 2 - (table_width / 2).ratio(0,1), game_height / 2 - (table_height / 2).ratio(1,1), table_width.ratio(0,1), table_height.ratio(1,1));
 	
-	if (loading_status >= 20)
+	if (loading_status >= 21)
 	{
 		for (var i = 0; i < loading_cards.length; i++)
 		{
