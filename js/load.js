@@ -75,7 +75,7 @@ function load_media(element)
 		    else 
 			{
 				land_audio[i].type = 'audio/mpeg';
-				land_audio[i].src = 'sounds/land' + (i+1) + '.mp3';
+				land_audio[i].src = 'js/sounds/land' + (i+1) + '.mp3';
 			}
 			load_media(element+1);
 		}
@@ -92,7 +92,7 @@ function load_media(element)
 		else 
 		{
 			shuffle_audio.type = 'audio/mpeg';
-			shuffle_audio.src = 'sounds/shuffle.mp3';
+			shuffle_audio.src = 'js/sounds/shuffle.mp3';
 		}
 		load_media(element+1);
 	}
@@ -108,7 +108,7 @@ function load_media(element)
 		else 
 		{
 			deal_audio.type = 'audio/mpeg';
-			deal_audio.src = 'sounds/deal.mp3';
+			deal_audio.src = 'js/sounds/deal.mp3';
 		}
 		load_media(element+1);
 	}
@@ -125,7 +125,7 @@ function load_media(element)
 		else 
 		{
 			play_audio[i].type = 'audio/mpeg';
-			play_audio[i].src = 'sounds/play' + (i+1) + '.mp3';
+			play_audio[i].src = 'js/sounds/play' + (i+1) + '.mp3';
 		}
 		load_media(element+1);
 	}
