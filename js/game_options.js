@@ -240,8 +240,28 @@ function set_ai_difficulty(type, singleplayer)
 			document.getElementById("option_ai_difficulty").selectedIndex = 0;
 		else if (game_ai_difficulty == 1)
 			document.getElementById("option_ai_difficulty").selectedIndex = 1;
-		else
+		else if (game_ai_difficulty == 2)
 			document.getElementById("option_ai_difficulty").selectedIndex = 2;
+		else
+			document.getElementById("option_ai_difficulty").selectedIndex = 3;
+		
+		if (typeof players != "undefined")
+		{
+			for (var i = 0; i < players.length; i++)
+			{
+				if (type == "misc")
+				{
+					if (players[i].multiplayer_id == "bot_1")
+						players[i].ai_difficulty = 2;
+					else if (players[i].multiplayer_id == "bot_2")
+						players[i].ai_difficulty = 1;
+					else
+						players[i].ai_difficulty = 0;
+				}
+				else
+					players[i].ai_difficulty = game_ai_difficulty;
+			}
+		}
 	}
 	
 	new_game_ai_difficulty = type;

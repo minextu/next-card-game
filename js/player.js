@@ -414,7 +414,7 @@ Player.prototype.ai = function()
 	{
 		var ai_highest_num = highest_num;
 		
-		if (game_ai_difficulty >= 2)
+		if (this.ai_difficulty >= 2)
 		{
 			var cards_in_game = current_available_cards.slice();
 			
@@ -436,7 +436,7 @@ Player.prototype.ai = function()
 			}
 		}
 		
-		if (game_ai_difficulty >= 1)
+		if (this.ai_difficulty >= 1)
 		{
 			// check, if I can win in one round
 			var last_card = "";
@@ -474,7 +474,7 @@ Player.prototype.ai = function()
 			}
 		}
 		
-		if (!this.played_card && game_ai_difficulty >= 2)
+		if (!this.played_card && this.ai_difficulty >= 2)
 		{
 			// do not play lowest card, if next player only has only one card left
 			
@@ -550,8 +550,8 @@ Player.prototype.ai = function()
 					}
 					if (current_played == cards_played)
 					{
-						if (game_ai_difficulty < 1 || 
-							game_ai_difficulty >= 1 && (this.cards[i].num != ai_self_highest_num || this.cards[i-1] == undefined || this.cards[i-1].num == this.cards[i].num || this.cards[i-1].num >= ai_highest_num - 1))
+						if (this.ai_difficulty < 1 || 
+							this.ai_difficulty >= 1 && (this.cards[i].num != ai_self_highest_num || this.cards[i-1] == undefined || this.cards[i-1].num == this.cards[i].num || this.cards[i-1].num >= ai_highest_num - 1))
 						{
 							this.cards[i].play(false, 0, true);
 							this.played_card = true;

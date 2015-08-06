@@ -24,7 +24,6 @@ function new_game(num, type)
 	
 	set_first_player("low");
 	set_ai_speed("auto");
-	set_ai_difficulty("2");
 	game_stats = [];
 	
 	available_card_num = available_cards.length;
@@ -35,6 +34,8 @@ function new_game(num, type)
 	player_num = num + 1;
 	players = [];
 	set_players_position();
+	
+	set_ai_difficulty("2");
 	
 	player_turn = 0;
 	last_player_turn = false;
@@ -131,7 +132,10 @@ function set_players_position()
 			if (i == 0)
 				players[i].text = "You";
 			else
+			{
 				players[i].text = "Bot " + i;
+				players[i].multiplayer_id = "bot_" + i;
+			}
 			
 			game_stats[i] = new Stat(i, 0);
 		}
