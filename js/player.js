@@ -297,7 +297,7 @@ Player.prototype.update_cards = function()
 		if (this.show_cards == false)
 		{
 			var diff = (i -(this.cards.length-1)/2);
-			if (this.card_pos == "top")
+			if (this.card_pos == "top" || this.card_pos == "right")
 				diff = -diff;
 			
 			if (this.cards.length > 8)
