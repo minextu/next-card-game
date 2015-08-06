@@ -482,25 +482,20 @@ function switch_cards_between (loser, winner, num)
 	winner.cards.sort(compare_card);
 	loser.cards.sort(compare_card);
 
-	// first set lowest cards, to the highest cards
+	// first set lowest cards
 	var lowest_cards = [];
 	for (var i = 1; i <= num; i++)
 	{
 		if (winner.cards[i-1] != undefined)
-			lowest_cards[i-1] = winner.cards[i-1];
+			lowest_cards[i-1] = winner.cards[winner.cards.length-i];
 	}
 	
-	// get lowest cards, excluding lowest id (so you wont give up the heart 7, if not necessary)
-	for (var i = 0; i < winner.cards.length; i++)
+	// try to not give up lowest card
+	if (lowest_cards[0].id == lowest_card && game_first_player == "low")
 	{
-		for (var ii = 0; ii < lowest_cards.length; ii++)
-		{
-			if (winner.cards[i].num < lowest_cards[ii].num)
-			{
-				lowest_cards[ii] = winner.cards[i];
-				break;
-			}
-		}
+		var i = winner.cards.length - num - 1;
+		if (winner.cards[i].num == lowest_cards[0].num)
+			lowest_cards[0] = winner.cards[i];
 	}
 	
 	// set highest card

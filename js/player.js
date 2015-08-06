@@ -14,7 +14,6 @@ function Player(drawX, drawY, show_cards, card_pos, no_cards, key)
 	
 	this.show_cards = show_cards;
 	
-
 	this.card_pos = card_pos;
 	
 	if (this.card_pos == "left")
