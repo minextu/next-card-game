@@ -111,6 +111,7 @@ function join_multiplayer_room(id)
 			set_first_player(answer['first_player'], true);
 			set_ai_speed(answer['ai_speed'], true);
 			set_ai_difficulty(answer['ai_difficulty'], true);
+			set_slots(answer['slots'], true);
 			
 			game_type = "game";
 			give_player = first_player_give;
@@ -256,6 +257,15 @@ function multiplayer_request_cards()
 		answer =  JSON.parse(httpobject.responseText);
 		set_card_deck(answer["cards"]);
 		
+		if (answer['slots'] != game_slots)
+		{
+			console.debug("slot change!");
+			player_num = Number(answer['slots']);
+			players = [];
+		}
+		else
+			console.debug(answer['slots']);
+		
 		set_players_position();
 		var player_position = get_player_position(answer);
 		var player_key = -player_position;
@@ -283,6 +293,7 @@ function multiplayer_request_cards()
 		set_first_player(answer['first_player'], true);
 		set_ai_speed(answer['ai_speed'], true);
 		set_ai_difficulty(answer['ai_difficulty'], true);
+		set_slots(answer['slots'], true);
 		
 		game_stats = [];
 		for (id in answer['stats'])
@@ -411,7 +422,7 @@ function multiplayer_save_options()
 			alert("Successfull! Changes will take Effect next round.");
 	}
 	httpobject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
-	httpobject.send("cards=" + encodeURIComponent(JSON.stringify(available_cards)) + "&first_player=" + new_game_first_player + "&ai_speed=" + new_game_ai_speed + "&ai_difficulty=" + new_game_ai_difficulty);
+	httpobject.send("cards=" + encodeURIComponent(JSON.stringify(available_cards)) + "&first_player=" + new_game_first_player + "&ai_speed=" + new_game_ai_speed + "&ai_difficulty=" + new_game_ai_difficulty + "&slots=" + new_slots);
 }
 
 function set_up_chat(chat,i)

@@ -230,6 +230,21 @@ function set_ai_speed(speed, singleplayer)
 	new_game_ai_speed = speed
 }
 
+game_slots = 7;
+function set_slots(slots, singleplayer)
+{
+	if (!is_multiplayer || singleplayer == true)
+	{
+		game_slots = slots;
+		document.getElementById("room_slots").value = slots;
+		
+		if (singleplayer != true)
+			alert('Only for multiplayer!');
+	}
+
+	new_slots = slots;
+}
+
 game_ai_difficulty = 2;
 function set_ai_difficulty(type, singleplayer)
 {
