@@ -238,7 +238,7 @@ function set_slots(slots, singleplayer)
 		game_slots = slots;
 		document.getElementById("room_slots").value = slots;
 		
-		if (singleplayer != true)
+		if (singleplayer != true && game_type != "multiplayer_new_room")
 			alert('Only for multiplayer!');
 	}
 

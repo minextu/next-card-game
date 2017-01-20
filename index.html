@@ -36,19 +36,20 @@
 	</div>
 
 	<div id='multiplayer_new_room' class='container'>
+		<p>Open "Game Options' above for options</p>
 		Title: <input type='text' id='room_title'>
 		
-		<button onclick='game_type = "multiplayer_table"'>Back</button> <button onclick='multiplayer_create_new_room()'>Create</button>
+		<button onclick='multiplayer_create_new_room()'>Create</button><br><br>
+		<button onclick='game_type = "multiplayer_table"'>Back</button> 
 	</div>
 	
 	
 	<div id="game_options" class='container'>
 		<div id='option_content'>
-			AI Speed: <select id='option_ai_speed' onchange='set_ai_speed(this.value)'><option value='auto'>Slow</option><option value='0'>Fast</option></select>
+			Slots: <input type="number" id='room_slots' onchange='set_slots(this.value)' value="7" min="2" max="7"> AI Speed: <select id='option_ai_speed' onchange='set_ai_speed(this.value)'><option value='auto'>Slow</option><option value='0'>Fast</option></select>
 			Card deck:<select id='option_card_deck' onchange='update_card_deck(this.value)'><option value='default'>Default (7 to Ace)</option><option value='extra'>Extra (2 to Ace)</option><option value='custom'>Custom</option></select> 
 			First Player:<select onchange='set_first_player(this.value)' id='option_first_player'><option value='low'>Lowest Card</option><option value='loser'>Big Loser</option><option value='turn'>in turn</option></select>
 			Bot Difficulty:<select onchange='set_ai_difficulty(this.value)' id='option_ai_difficulty'><option value='0'>Easy</option><option value='1'>Normal</option><option value='2'>Hard</option><option value='misc'>Misc</option></select>
-			Slots: <input type="number" id='room_slots' onchange='set_slots(this.value)' value="7" min="2" max="7">
 			<div id='option_cards'></div>
 			<button id='options_save' onclick='multiplayer_save_options();'>Save</button> <button onclick='skip_round()' id='options_skip'>Skip Round</button>
 		</div>
