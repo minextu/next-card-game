@@ -299,7 +299,7 @@ function multiplayer_request_cards()
 		table_cards_id = answer['id'];
 	}
 	var ranks = {};
-	if (waiting_players.length == 0 && !is_skipping)
+	if (!is_skipping)
 	{
 		for (var i = 0; i < players.length; i++)
 		{
