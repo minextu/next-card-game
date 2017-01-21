@@ -295,6 +295,7 @@ Card.prototype.fake_play = function(no_new_turn, offsetX, is_ai, not_first_card,
 	// set card to move to table
 	table_cards[table_key].is_moving = true;
 	table_cards[table_key].moving_type = false;
+	can_play = false;
 	
 	table_cards[table_key].newDrawX = 0 - this.width + offsetX;
 	table_cards[table_key].newDrawY = original_height / 2 - this.height;
@@ -316,6 +317,7 @@ Card.prototype.fake_play = function(no_new_turn, offsetX, is_ai, not_first_card,
 	
 	var card = this;
 	window.setTimeout(function() {
+		can_play = true;
 		// enable real card
 		card.disabled = false;
 		card.is_moving = true;
@@ -329,7 +331,7 @@ Card.prototype.fake_play = function(no_new_turn, offsetX, is_ai, not_first_card,
 		if (can_play_audio)
 			fake_audio.play();
 		
-	}, 1000);
+	}, 200);
 	
 }; 
 
