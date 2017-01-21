@@ -234,6 +234,7 @@ function game()
 			game_finished = true;
 			finish_timeout = 200;
 			multiplayer_cards_to_play = [];
+			multiplayer_fake_cards_to_play = [];
 			is_skipping = false;
 			
 			console.debug("game finished");

@@ -59,6 +59,7 @@ function join_multiplayer_room(id)
 			
 			last_id = answer['last_id'];
 			multiplayer_played_cards = [];
+			multiplayer_played_fake_cards = [];
 			
 			new_game(answer['slots']-1, "multiplayer");
 			set_up_chat(answer['chat']);
@@ -206,8 +207,9 @@ function handle_multiplayer()
 		}
 	}
 	httpobject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
-	httpobject.send("played_cards=" +encodeURIComponent(JSON.stringify(multiplayer_played_cards)) + "&table_cards_id=" + table_cards_id);
+	httpobject.send("played_cards=" +encodeURIComponent(JSON.stringify(multiplayer_played_cards)) + "&played_fake_cards=" +encodeURIComponent(JSON.stringify(multiplayer_played_fake_cards))+ "&table_cards_id=" + table_cards_id);
 	multiplayer_played_cards = [];
+	multiplayer_played_fake_cards = [];
 }
 
 function get_multiplayer_table()

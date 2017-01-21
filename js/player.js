@@ -597,6 +597,11 @@ Player.prototype.check_multiplayer = function()
 				this.enable_ai = true;
 				this.text = "Offline (Bot)";
 			}
+			else if (multiplayer_cards_to_play[i]['type'] == "fake")
+			{
+				if (is_multiplayer && multiplayer_cards_to_play.length <= 1)
+					this.cards[multiplayer_cards_to_play[i]['card_key']].fake_play();
+			}
 			else
 				this.cards[multiplayer_cards_to_play[i]['card_key']].play();
 			
