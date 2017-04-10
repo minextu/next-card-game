@@ -30,4 +30,5 @@ mkdir -p ~/.ssh
 # upload builds
 scp *.zip deploy@builds.et.tc:/var/www/et.tc/Builds/next-card-game/
 # upload html5
-scp -r html5/ deploy@builds.et.tc:/var/www/et.tc/Builds/next-card-game/$CI_COMMIT_REF_NAME-html5
+cd html5
+scp -r . deploy@builds.et.tc:/var/www/et.tc/Builds/next-card-game/$CI_COMMIT_REF_NAME-html5
