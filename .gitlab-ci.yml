@@ -1,0 +1,15 @@
+image: node:latest
+
+stages:
+  - deploy
+
+deploy_all:
+  stage: deploy
+  script:
+    - bash ci/build.sh
+    - bash ci/deploy.sh
+  environment:
+    name: $CI_BUILD_REF_NAME
+    url: https://builds.et.tc/next-card-game
+  only:
+  - branches@Jan/next-card-game

@@ -1,10 +1,14 @@
 {
-	"name": "Next Card Game",
-	"main": "index.html",
-	"window": 
-	{
-	    "title": "Next Card Game",
-		"toolbar": false,
-		"frame": true
-	}
+  "name": "NextCardGame",
+  "version": "0.0.1",
+  "main": "index.html",
+  "window": {
+    "title": "Next Card Game",
+    "toolbar": false,
+    "frame": true
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "nw-builder": "^3.2.0"
+  }
 }
