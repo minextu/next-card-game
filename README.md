@@ -1,4 +1,4 @@
-[![build status](https://git.et.tc/Jan/next-card-ga,e/badges/master/build.svg)](https://builds.et.tc/next-card-game)
+[![build status](https://git.et.tc/Jan/next-card-game/badges/master/build.svg)](https://builds.et.tc/next-card-game)
 # Next Card Game
 A multitplayer Daifugō card game written in HTML5
 
