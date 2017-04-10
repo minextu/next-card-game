@@ -18,8 +18,8 @@ done
 # create html5 version
 mkdir html5
 cp ../../*.html html5/
-cp ../../js html5/
-cp ../../css html5/
+cp -R ../../js html5/
+cp -R ../../css html5/
 
 # init ssh
 eval $(ssh-agent -s)
@@ -30,4 +30,4 @@ mkdir -p ~/.ssh
 # upload builds
 scp *.zip deploy@builds.et.tc:/var/www/et.tc/Builds/next-card-game/
 # upload html5
-scp -r html5 deploy@builds.et.tc:/var/www/et.tc/Builds/next-card-game/$CI_COMMIT_REF_NAME-html5
+scp -r html5/ deploy@builds.et.tc:/var/www/et.tc/Builds/next-card-game/$CI_COMMIT_REF_NAME-html5
