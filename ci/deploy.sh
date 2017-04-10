@@ -1,4 +1,6 @@
 #!/bin/bash
+apt-get update -yqq
+apt-get install zip -yqq
 
 cd build/NextCardGame
 
