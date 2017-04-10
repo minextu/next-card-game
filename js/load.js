@@ -110,6 +110,19 @@ function load_media(element)
 			deal_audio.type = 'audio/mpeg';
 			deal_audio.src = 'js/sounds/deal.mp3';
 		}
+		
+		fake_audio = new Audio();
+		fake_audio.autobuffer = true;
+		if (fake_audio.canPlayType('audio/x-wav;')) 
+		{
+			fake_audio.type = 'audio/x-wav';
+			fake_audio.src = 'js/sounds/fake.wav';
+		}
+		else 
+		{
+			fake_audio.type = 'audio/mpeg';
+			fake_audio.src = 'js/sounds/fake.mp3';
+		}
 		load_media(element+1);
 	}
 	else if (element >= 14 && element <= 19)

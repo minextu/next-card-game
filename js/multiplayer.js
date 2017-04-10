@@ -59,6 +59,7 @@ function join_multiplayer_room(id)
 			
 			last_id = answer['last_id'];
 			multiplayer_played_cards = [];
+			multiplayer_played_fake_cards = [];
 			
 			new_game(answer['slots']-1, "multiplayer");
 			set_up_chat(answer['chat']);
@@ -111,6 +112,7 @@ function join_multiplayer_room(id)
 			set_first_player(answer['first_player'], true);
 			set_ai_speed(answer['ai_speed'], true);
 			set_ai_difficulty(answer['ai_difficulty'], true);
+			set_slots(answer['slots'], true);
 			
 			game_type = "game";
 			give_player = first_player_give;
@@ -205,8 +207,9 @@ function handle_multiplayer()
 		}
 	}
 	httpobject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
-	httpobject.send("played_cards=" +encodeURIComponent(JSON.stringify(multiplayer_played_cards)) + "&table_cards_id=" + table_cards_id);
+	httpobject.send("played_cards=" +encodeURIComponent(JSON.stringify(multiplayer_played_cards)) + "&played_fake_cards=" +encodeURIComponent(JSON.stringify(multiplayer_played_fake_cards))+ "&table_cards_id=" + table_cards_id);
 	multiplayer_played_cards = [];
+	multiplayer_played_fake_cards = [];
 }
 
 function get_multiplayer_table()
@@ -256,6 +259,15 @@ function multiplayer_request_cards()
 		answer =  JSON.parse(httpobject.responseText);
 		set_card_deck(answer["cards"]);
 		
+		if (answer['slots'] != game_slots)
+		{
+			console.debug("slot change!");
+			player_num = Number(answer['slots']);
+			players = [];
+		}
+		else
+			console.debug(answer['slots']);
+		
 		set_players_position();
 		var player_position = get_player_position(answer);
 		var player_key = -player_position;
@@ -283,6 +295,7 @@ function multiplayer_request_cards()
 		set_first_player(answer['first_player'], true);
 		set_ai_speed(answer['ai_speed'], true);
 		set_ai_difficulty(answer['ai_difficulty'], true);
+		set_slots(answer['slots'], true);
 		
 		game_stats = [];
 		for (id in answer['stats'])
@@ -299,7 +312,7 @@ function multiplayer_request_cards()
 		table_cards_id = answer['id'];
 	}
 	var ranks = {};
-	if (waiting_players.length == 0 && !is_skipping)
+	if (!is_skipping)
 	{
 		for (var i = 0; i < players.length; i++)
 		{
@@ -411,7 +424,7 @@ function multiplayer_save_options()
 			alert("Successfull! Changes will take Effect next round.");
 	}
 	httpobject.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;');
-	httpobject.send("cards=" + encodeURIComponent(JSON.stringify(available_cards)) + "&first_player=" + new_game_first_player + "&ai_speed=" + new_game_ai_speed + "&ai_difficulty=" + new_game_ai_difficulty);
+	httpobject.send("cards=" + encodeURIComponent(JSON.stringify(available_cards)) + "&first_player=" + new_game_first_player + "&ai_speed=" + new_game_ai_speed + "&ai_difficulty=" + new_game_ai_difficulty + "&slots=" + new_slots);
 }
 
 function set_up_chat(chat,i)

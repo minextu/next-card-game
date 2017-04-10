@@ -248,7 +248,10 @@ Card.prototype.check_play = function()
 				else if (table_cards.length > 0 && table_cards[table_cards.length-1].num < this.num && players[this.player_id].selected_cards == cards_played)
 					this.play();
 				else
+				{
+					this.fake_play();
 					this.error = 50;
+				}
 				
 				mouse_is_down = false;
 			}
@@ -257,6 +260,80 @@ Card.prototype.check_play = function()
 	else
 		this.hover = false;
 }
+
+Card.prototype.fake_play = function(no_new_turn, offsetX, is_ai, not_first_card, is_skip, done)
+{	
+	//reset mouse 
+	this.is_down = false;
+	start_card = false;
+	
+	if (players[this.player_id] == undefined || players[this.player_id].enable_ai == true)
+		this.audio_play();
+	
+	if (offsetX == undefined)
+		offsetX = 0;
+	
+	
+	
+	// disable this card (a copy is stored on table)
+	var table_key = table_cards.length;
+	this.disabled = true;
+	table_cards[table_key] = new Card(this.id, this.drawX, this.drawY, true, this.rotate, false);
+	table_cards[table_key].from_player = this.player_id;
+			
+	// if multible cards where played, set offset and play other card
+	if (is_skip != true && (players[this.player_id] != undefined && players[this.player_id].cards[this.key+1] != undefined && players[this.player_id].cards[this.key+1].num == this.num))
+	{
+		if (offsetX == 0)
+			offsetX-= 99;
+		players[this.player_id].cards[this.key+1].fake_play(true, offsetX+100, false, true, false, done);
+	}
+	else if (is_skip !== true)
+		table_cards[table_key].moving_action = "can_play";
+		
+	
+	// set card to move to table
+	table_cards[table_key].is_moving = true;
+	table_cards[table_key].moving_type = false;
+	can_play = false;
+	
+	table_cards[table_key].newDrawX = 0 - this.width + offsetX;
+	table_cards[table_key].newDrawY = original_height / 2 - this.height;
+	table_cards[table_key].newRotate = Math.round(Math.random()*20);
+	table_cards[table_key].rotate = 0;
+	
+	
+	
+	// set played card to false, since can_play is false
+	if (players[this.player_id] != undefined && players[this.player_id].enable_ai )
+		players[this.player_id].played_card = false;
+	
+	// save card for multiplayer
+	if (this.player_id === 0 && is_multiplayer && not_first_card !== true && players[0].enable_multiplayer == false && !players[0].enable_ai)
+	{
+		multiplayer_played_fake_cards[multiplayer_played_fake_cards.length] = this.key;
+		console.debug("saved fake card");
+	}
+	
+	var card = this;
+	window.setTimeout(function() {
+		can_play = true;
+		// enable real card
+		card.disabled = false;
+		card.is_moving = true;
+		card.drawX = table_cards[table_key].drawX;
+		card.drawY = table_cards[table_key].drawY;
+		card.moving_type = "fix";
+		
+		// delete fake card again
+		table_cards.splice(table_key, 1);
+		
+		if (can_play_audio)
+			fake_audio.play();
+		
+	}, 200);
+	
+}; 
 
 Card.prototype.play = function(no_new_turn, offsetX, is_ai, not_first_card, is_skip, done)
 {	
