@@ -48,6 +48,11 @@ function menu()
 				menu_buttons["6 Enemies"] = 'new_game(6)';
 				menu_buttons["Back"] = 'menu_place = "main";';
 				break;
+			case "pause":
+				menu_buttons = {};
+				menu_buttons["Return"] = 'is_menu = false;';
+				menu_buttons["Back to mainmenu"] = 'menu_place = "main";';
+				break;
 			default:
 				menu_buttons ={};
 				menu_buttons["Error"] = "";
