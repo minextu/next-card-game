@@ -17,6 +17,19 @@ function show_hide_menu(type)
 	}
 }
 
+
+function show_hide_credits(type)
+{
+    if (type != "hide")
+    {
+        document.getElementById("credits").style.display = "block";
+    }
+    else
+    {
+        document.getElementById("credits").style.display = "none";
+    }
+}
+
 try{gui = require('nw.gui');}catch(e){}
 menu_place = "main";
 old_menu_place = menu_place;
@@ -34,8 +47,8 @@ function menu()
 				menu_buttons = {};
 				menu_buttons["Singleplayer"] = 'menu_place = "singleplayer";';
 				menu_buttons["Multiplayer"] = 'is_menu = false; game_type = "multiplayer_table"';
-				menu_buttons["Options"] = "";
-				menu_buttons["Credits"] = "";
+				//menu_buttons["Options"] = "";
+				menu_buttons["Credits"] = 'is_menu = false; game_type = "credits"';
 				menu_buttons["Exit"] = 'try { gui.App.quit(); } catch(e) { alert("You are playing in a Browser. Just close the tab ;)"); }';
 				break;
 			case "singleplayer":

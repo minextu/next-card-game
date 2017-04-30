@@ -47,7 +47,7 @@ function loop()
 	/*Loop function*/
 	if (is_menu)
 	{
-		if (typeof game_finished != "undefined" && game_type != "multiplayer_table")
+		if (typeof game_finished != "undefined" && game_type != "multiplayer_table" && game_type != "credits")
 			game();
 		menu();
 	}
@@ -63,6 +63,8 @@ function loop()
 				game();
 				break;
 			case "multiplayer_table":
+				break;
+			case "credits":
 				break;
 			case "multiplayer_new_room":
 				break;
@@ -146,6 +148,11 @@ function check_changes()
 			show_hide_multiplayer_new_room("true");
 		else
 			show_hide_multiplayer_new_room("hide");
+		
+		if (game_type == "credits")
+			show_hide_credits("true");
+		else
+			show_hide_credits("hide");
 		
 		if (!is_menu && (game_type == "game" && (is_room_admin || !is_multiplayer) || game_type == "multiplayer_new_room"))
 			show_hide_options("true");
