@@ -6,7 +6,7 @@ gulp.task('nw', function()
 {
     var nw = new NwBuilder(
     {
-        files: ['index.html', 'menu.html', 'package.json', 'js/**', 'css/**'],
+        files: ['index.html', 'package.json', 'js/**', 'css/**'],
         platforms: ['linux64', 'win64', 'osx64'],
         flavor: 'normal'
     });
