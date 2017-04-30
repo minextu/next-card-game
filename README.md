@@ -1,10 +1,11 @@
 [![build status](https://git.et.tc/Jan/next-card-game/badges/master/build.svg)](https://builds.et.tc/next-card-game)
 # Next Card Game
-A multitplayer Daifugō card game written in HTML5
+A multitplayer Daifugō card game written in HTML5. 
+Bugs won't get fixed any time soon.
 
 ## Online (HTML5 Version)
 
-[Game](https://builds.et.tc/next-card-game/master-html5/)
+[HTML5](https://builds.et.tc/next-card-game/master-html5/)
 
 
 ## Download
