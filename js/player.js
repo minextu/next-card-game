@@ -398,7 +398,11 @@ Player.prototype.check_finished = function()
 				if (game_stats[i].player == this)
 				{
 					var old_score = game_stats[i].value;
-					game_stats[i] = new Stat(this.key, old_score + this.win_cards);
+					var new_score = old_score + this.win_cards;
+					if (new_score < 0)
+						new_score = 0;
+					
+					game_stats[i] = new Stat(this.key, new_score);
 				}
 			}
 			game_stats.sort(stat_compare);
