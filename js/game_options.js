@@ -250,7 +250,7 @@ function set_slots(slots, singleplayer)
     new_slots = slots;
 }
 
-game_ai_difficulty = 2;
+game_ai_difficulty = 1;
 
 function set_ai_difficulty(type, singleplayer)
 {

@@ -35,7 +35,7 @@ function new_game(num, type)
 	players = [];
 	set_players_position();
 	
-	set_ai_difficulty("2");
+	set_ai_difficulty("1");
 	
 	player_turn = 0;
 	last_player_turn = false;
